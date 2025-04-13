@@ -966,3 +966,479 @@ loadStoredData();
 updateAuthUI();
 });
 
+// Test Configuration System
+// Add this code to your main.js file
+
+// ----- TEST CONFIGURATION FUNCTIONALITY -----
+
+// Define the test configuration modal HTML
+const testConfigModalHTML = `
+<div class="modal" id="testConfigModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Configure Your Test</h2>
+      <span class="close" onclick="closeModal('testConfigModal')">&times;</span>
+    </div>
+    <form id="testConfigForm">
+      <div class="form-group">
+        <label for="configSubject">Subject</label>
+        <select id="configSubject" class="form-control" onchange="updateTopicOptions()">
+          <option value="biology">Biology</option>
+          <option value="chemistry">Chemistry</option>
+          <option value="physics">Physics</option>
+          <option value="earth-science">Earth Science</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="configTopics">Topics</label>
+        <div id="topicCheckboxes" class="checkbox-group">
+          <!-- Topics will be loaded dynamically -->
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="configDifficulty">Difficulty</label>
+        <select id="configDifficulty" class="form-control">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+          <option value="mixed">Mixed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="configQuestionCount">Number of Questions</label>
+        <input type="number" id="configQuestionCount" class="form-control" min="5" max="50" value="10">
+      </div>
+      <div class="form-group">
+        <label for="configTimeLimit">Time Limit (minutes)</label>
+        <input type="number" id="configTimeLimit" class="form-control" min="5" max="120" value="20">
+      </div>
+      <button type="submit" class="btn btn-primary">Generate Test</button>
+    </form>
+  </div>
+</div>
+`;
+
+// Topic data for each subject
+const topicsBySubject = {
+  biology: [
+    { id: 'cell-biology', name: 'Cell Biology' },
+    { id: 'genetics', name: 'Genetics' },
+    { id: 'evolution', name: 'Evolution' },
+    { id: 'ecology', name: 'Ecology' },
+    { id: 'physiology', name: 'Human Physiology' },
+    { id: 'botany', name: 'Botany' }
+  ],
+  chemistry: [
+    { id: 'atomic-structure', name: 'Atomic Structure' },
+    { id: 'periodic-table', name: 'Periodic Table' },
+    { id: 'chemical-bonding', name: 'Chemical Bonding' },
+    { id: 'reactions', name: 'Chemical Reactions' },
+    { id: 'acids-bases', name: 'Acids and Bases' },
+    { id: 'organic-chemistry', name: 'Organic Chemistry' }
+  ],
+  physics: [
+    { id: 'mechanics', name: 'Mechanics' },
+    { id: 'electricity', name: 'Electricity' },
+    { id: 'magnetism', name: 'Magnetism' },
+    { id: 'thermodynamics', name: 'Thermodynamics' },
+    { id: 'waves', name: 'Waves and Optics' },
+    { id: 'modern-physics', name: 'Modern Physics' }
+  ],
+  'earth-science': [
+    { id: 'geology', name: 'Geology' },
+    { id: 'meteorology', name: 'Meteorology' },
+    { id: 'oceanography', name: 'Oceanography' },
+    { id: 'astronomy', name: 'Astronomy' },
+    { id: 'environmental', name: 'Environmental Science' },
+    { id: 'climate', name: 'Climate Science' }
+  ]
+};
+
+// Question bank (expanded with more sample questions)
+// In a real app, this would come from a database
+const questionBank = {
+  biology: {
+    'cell-biology': [
+      {
+        question: "Which organelle is known as the 'powerhouse of the cell'?",
+        options: ["Nucleus", "Mitochondria", "Golgi apparatus", "Endoplasmic reticulum"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the primary function of the cell membrane?",
+        options: ["To produce energy", "To control what enters and exits the cell", "To store genetic information", "To break down waste"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which of the following is NOT a component of the endomembrane system?",
+        options: ["Endoplasmic reticulum", "Golgi apparatus", "Mitochondria", "Lysosomes"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "What cellular structure is responsible for protein synthesis?",
+        options: ["Ribosomes", "Nucleolus", "Peroxisomes", "Centrioles"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "During which phase of mitosis do sister chromatids separate and move to opposite poles?",
+        options: ["Prophase", "Metaphase", "Anaphase", "Telophase"],
+        answer: 2,
+        difficulty: "hard"
+      }
+    ],
+    'genetics': [
+      {
+        question: "What are the nitrogenous bases found in DNA?",
+        options: ["Adenine, thymine, uracil, cytosine", "Adenine, thymine, guanine, cytosine", "Adenine, uracil, guanine, cytosine", "Uracil, thymine, guanine, cytosine"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "In a dihybrid cross between two heterozygous parents (AaBb × AaBb), what proportion of offspring would be expected to have the dominant phenotype for both traits?",
+        options: ["9/16", "3/16", "1/16", "12/16"],
+        answer: 0,
+        difficulty: "hard"
+      }
+    ],
+    // More biology categories and questions would go here
+  },
+  chemistry: {
+    'atomic-structure': [
+      {
+        question: "What is the charge of an electron?",
+        options: ["Positive", "Negative", "Neutral", "It varies"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which subatomic particle is found in the nucleus of an atom and has no charge?",
+        options: ["Proton", "Electron", "Neutron", "Positron"],
+        answer: 2,
+        difficulty: "easy"
+      }
+    ],
+    'chemical-bonding': [
+      {
+        question: "Which type of bond involves the sharing of electron pairs between atoms?",
+        options: ["Ionic bond", "Covalent bond", "Hydrogen bond", "Metallic bond"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the hybridization of carbon in methane (CH₄)?",
+        options: ["sp", "sp²", "sp³", "sp³d"],
+        answer: 2,
+        difficulty: "medium"
+      }
+    ],
+    // More chemistry categories and questions would go here
+  },
+  physics: {
+    'mechanics': [
+      {
+        question: "What is Newton's Second Law of Motion?",
+        options: ["An object at rest stays at rest unless acted upon by an external force", "Force equals mass times acceleration", "For every action, there is an equal and opposite reaction", "Energy can neither be created nor destroyed"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "A ball is thrown vertically upward with an initial velocity of 20 m/s. Neglecting air resistance, what is its velocity after 1 second? (g = 10 m/s²)",
+        options: ["10 m/s upward", "10 m/s downward", "30 m/s upward", "30 m/s downward"],
+        answer: 0,
+        difficulty: "medium"
+      }
+    ],
+    // More physics categories and questions would go here
+  },
+  'earth-science': {
+    'geology': [
+      {
+        question: "Which type of rock forms from the cooling of magma or lava?",
+        options: ["Sedimentary", "Metamorphic", "Igneous", "Composite"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the most abundant mineral in Earth's crust?",
+        options: ["Quartz", "Feldspar", "Mica", "Olivine"],
+        answer: 1,
+        difficulty: "medium"
+      }
+    ],
+    // More earth science categories and questions would go here
+  }
+};
+
+// Initialize test configuration
+function initTestConfig() {
+  // Add modal HTML to the document if it doesn't exist
+  if (!document.getElementById('testConfigModal')) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = testConfigModalHTML;
+    document.body.appendChild(tempDiv.firstElementChild);
+    
+    // Initialize form
+    document.getElementById('testConfigForm').addEventListener('submit', handleTestConfigSubmit);
+  }
+  
+  // Add CSS for checkbox group
+  const style = document.createElement('style');
+  style.textContent = `
+    .checkbox-group {
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      padding: 10px;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .checkbox-item input {
+      margin-right: 8px;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Update topic options for the initial subject
+  updateTopicOptions();
+  
+  // Open the modal
+  openModal('testConfigModal');
+}
+
+// Update topic checkboxes based on selected subject
+function updateTopicOptions() {
+  const subject = document.getElementById('configSubject').value;
+  const topicsList = topicsBySubject[subject] || [];
+  const topicCheckboxes = document.getElementById('topicCheckboxes');
+  
+  topicCheckboxes.innerHTML = '';
+  
+  topicsList.forEach(topic => {
+    const checkboxItem = document.createElement('div');
+    checkboxItem.className = 'checkbox-item';
+    checkboxItem.innerHTML = `
+      <input type="checkbox" id="topic-${topic.id}" name="topics" value="${topic.id}" checked>
+      <label for="topic-${topic.id}">${topic.name}</label>
+    `;
+    topicCheckboxes.appendChild(checkboxItem);
+  });
+}
+
+// Handle test configuration form submission
+function handleTestConfigSubmit(e) {
+  e.preventDefault();
+  
+  // Get form values
+  const subject = document.getElementById('configSubject').value;
+  const selectedTopics = Array.from(document.querySelectorAll('input[name="topics"]:checked'))
+                             .map(checkbox => checkbox.value);
+  const difficulty = document.getElementById('configDifficulty').value;
+  const questionCount = parseInt(document.getElementById('configQuestionCount').value);
+  const timeLimit = parseInt(document.getElementById('configTimeLimit').value);
+  
+  // Validate inputs
+  if (selectedTopics.length === 0) {
+    alert("Please select at least one topic.");
+    return;
+  }
+  
+  if (isNaN(questionCount) || questionCount < 5 || questionCount > 50) {
+    alert("Number of questions must be between 5 and 50.");
+    return;
+  }
+  
+  if (isNaN(timeLimit) || timeLimit < 5 || timeLimit > 120) {
+    alert("Time limit must be between 5 and 120 minutes.");
+    return;
+  }
+  
+  // Generate custom test
+  const customTest = generateCustomTest(subject, selectedTopics, difficulty, questionCount, timeLimit);
+  
+  if (customTest.questions.length < questionCount) {
+    alert(`Only ${customTest.questions.length} questions available with your criteria. The test will be generated with the available questions.`);
+  }
+  
+  // Close the configuration modal
+  closeModal('testConfigModal');
+  
+  // Start the custom test
+  startCustomTest(customTest);
+}
+
+// Generate a custom test based on configuration
+function generateCustomTest(subject, topics, difficulty, questionCount, timeLimit) {
+  const subjectName = getSubjectDisplayName(subject);
+  const testId = `custom-${subject}-${Date.now()}`;
+  const testTitle = `Custom ${subjectName} Test`;
+  
+  // Collect questions from selected topics
+  let availableQuestions = [];
+  
+  topics.forEach(topic => {
+    if (questionBank[subject] && questionBank[subject][topic]) {
+      // Filter by difficulty if not 'mixed'
+      if (difficulty === 'mixed') {
+        availableQuestions = availableQuestions.concat(questionBank[subject][topic]);
+      } else {
+        const filteredQuestions = questionBank[subject][topic].filter(q => q.difficulty === difficulty);
+        availableQuestions = availableQuestions.concat(filteredQuestions);
+      }
+    }
+  });
+  
+  // Shuffle questions
+  shuffleArray(availableQuestions);
+  
+  // Take only the requested number of questions (or all available if less)
+  const finalQuestions = availableQuestions.slice(0, questionCount);
+  
+  // Format questions to match the expected structure in the rest of the app
+  const formattedQuestions = finalQuestions.map((q, index) => ({
+    id: index + 1,
+    question: q.question,
+    options: q.options,
+    answer: q.answer
+  }));
+  
+  return {
+    id: testId,
+    title: testTitle,
+    subject: subject,
+    questions: formattedQuestions,
+    timeLimit: timeLimit * 60 // Convert minutes to seconds
+  };
+}
+
+// Get display name for a subject
+function getSubjectDisplayName(subject) {
+  const names = {
+    'biology': 'Biology',
+    'chemistry': 'Chemistry',
+    'physics': 'Physics',
+    'earth-science': 'Earth Science'
+  };
+  return names[subject] || subject;
+}
+
+// Start a custom test
+function startCustomTest(test) {
+  document.getElementById('testTitle').textContent = test.title;
+  
+  const testContainer = document.getElementById('testContainer');
+  testContainer.innerHTML = '';
+  
+  // Set up current test object
+  currentTest = {
+    id: test.id,
+    title: test.title,
+    questions: test.questions,
+    startTime: new Date(),
+    timeLimit: test.timeLimit
+  };
+  
+  // Set up timer with time limit
+  startTimerWithLimit(test.timeLimit);
+  
+  // Create question elements
+  test.questions.forEach((q, index) => {
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'question';
+    questionDiv.innerHTML = `
+      <h3>Question ${index + 1}: ${q.question}</h3>
+      <div class="options">
+        ${q.options.map((option, i) => `
+          <div class="option" data-question="${q.id}" data-option="${i}" onclick="selectOption(this)">
+            <input type="radio" id="q${q.id}o${i}" name="q${q.id}">
+            <label for="q${q.id}o${i}">${option}</label>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    testContainer.appendChild(questionDiv);
+  });
+  
+  showSection('taking');
+}
+
+// Timer with time limit functionality
+function startTimerWithLimit(timeLimit) {
+  seconds = 0;
+  clearInterval(timer);
+  
+  const timerElement = document.getElementById('timer');
+  
+  timer = setInterval(() => {
+    seconds++;
+    
+    // Format time display
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    timerElement.textContent = `Time: ${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    
+    // Check if time limit is reached
+    if (timeLimit && seconds >= timeLimit) {
+      clearInterval(timer);
+      alert("Time's up! Your test will be submitted automatically.");
+      submitTest();
+    }
+  }, 1000);
+}
+
+// Add a "Create Custom Test" button to the subjects grid
+function addCustomTestButton() {
+  // Find the subjects grid on the home page
+  const subjectsGrid = document.querySelector('.home-section .subjects-grid');
+  
+  if (subjectsGrid) {
+    const customTestCard = document.createElement('div');
+    customTestCard.className = 'card';
+    customTestCard.innerHTML = `
+      <h3>🔧 Custom Test</h3>
+      <p>Create your own personalized test by selecting topics, difficulty, and number of questions.</p>
+      <button class="btn btn-primary" onclick="initTestConfig()">Create Custom Test</button>
+    `;
+    
+    subjectsGrid.appendChild(customTestCard);
+  }
+}
+
+// Helper function to shuffle an array (Fisher-Yates algorithm)
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Add test configuration button to the tests section
+function addConfigButtonToTestsSection() {
+  const testsSection = document.querySelector('.tests-section .dashboard-header');
+  
+  if (testsSection) {
+    const configButton = document.createElement('button');
+    configButton.className = 'btn btn-primary';
+    configButton.textContent = 'Create Custom Test';
+    configButton.onclick = initTestConfig;
+    
+    testsSection.appendChild(configButton);
+  }
+}
+
+// Initialize custom test functionality when document is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Add the custom test card to the home page
+  addCustomTestButton();
+  
+  // Add config button to tests section
+  addConfigButtonToTestsSection();
+});

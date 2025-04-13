@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sciolytics</title>
+    <title>Practice - Sciolytics</title>
     <link rel="stylesheet" href="style.css">
     <script src="main.js" defer></script>
     <link rel="icon" type="image/x-icon" href="../assets/image.png">
@@ -18,7 +18,7 @@
             <a href="index.html" class="logo">Sciolytics</a>
             <nav class="nav-links">
                 <a href="index.html" class="active">Home</a>
-                <a href="practice.html">Practice</a>
+                <a href="pages/tests.html">Tests</a>
                 <a href="pages/resources.html">Resources</a>
                 <a href="pages/about.html">About</a>
             </nav>
@@ -35,14 +35,29 @@
 
     <main class="container">
         <section class="home-section">
-            <div class="hero">
-                <h1>Prepare for Science Olympiad</h1>
-                <p>Practice with our comprehensive test platform designed specifically for Science Olympiad events. Track your progress and improve your scores.</p>
-                <button  onclick="showTestsSection()">Start Practicing</button>
-                <a href="practice.html">Practice</a>
+            <h2>Popular Subjects</h2>
+            <div class="subjects-grid">
+                <div class="card">
+                    <h3>🧬 Biology</h3>
+                    <p>Test your knowledge in cell biology, genetics, evolution, and ecology.</p>
+                    <button class="btn btn-outline" onclick="showTestList('biology')">View Tests</button>
+                </div>
+                <div class="card">
+                    <h3>🧪 Chemistry</h3>
+                    <p>Practice with tests covering atomic structure, chemical reactions, and equilibrium.</p>
+                    <button class="btn btn-outline" onclick="showTestList('chemistry')">View Tests</button>
+                </div>
+                <div class="card">
+                    <h3>🚀 Physics</h3>
+                    <p>Challenge yourself with mechanics, electricity, magnetism, and thermodynamics.</p>
+                    <button class="btn btn-outline" onclick="showTestList('physics')">View Tests</button>
+                </div>
+                <div class="card">
+                    <h3>🌳 Earth Science</h3>
+                    <p>Explore geology, meteorology, oceanography, and astronomy concepts.</p>
+                    <button class="btn btn-outline" onclick="showTestList('earth-science')">View Tests</button>
+                </div>
             </div>
-
-            
         </section>
 
         <section class="tests-section" style="display: none;">
