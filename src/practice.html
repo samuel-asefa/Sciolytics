@@ -7,18 +7,17 @@
     <link rel="stylesheet" href="style.css">
     <script src="main.js" defer></script>
     <link rel="icon" type="image/x-icon" href="../assets/image.png">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Noto+Sans:wght@300;400;500;600;700;800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <div class="container header-content">
             <a href="index.html" class="logo">Sciolytics</a>
             <nav class="nav-links">
-                <a href="index.html" class="active">Home</a>
-                <a href="pages/tests.html">Tests</a>
+                <a href="index.html">Home</a>
+                <a href="practice.html" class="active">Practice</a>
                 <a href="pages/resources.html">Resources</a>
                 <a href="pages/about.html">About</a>
             </nav>
@@ -34,47 +33,57 @@
     </header>
 
     <main class="container">
+        <!-- Popular Subjects Section -->
         <section class="home-section">
             <h2>Popular Subjects</h2>
             <div class="subjects-grid">
                 <div class="card">
                     <h3>🧬 Biology</h3>
                     <p>Test your knowledge in cell biology, genetics, evolution, and ecology.</p>
-                    <button class="btn btn-outline" onclick="showTestList('biology')">View Tests</button>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" onclick="showTestList('biology')">View Tests</button>
+                    </div>
                 </div>
                 <div class="card">
                     <h3>🧪 Chemistry</h3>
                     <p>Practice with tests covering atomic structure, chemical reactions, and equilibrium.</p>
-                    <button class="btn btn-outline" onclick="showTestList('chemistry')">View Tests</button>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" onclick="showTestList('chemistry')">View Tests</button>
+                    </div>
                 </div>
                 <div class="card">
                     <h3>🚀 Physics</h3>
                     <p>Challenge yourself with mechanics, electricity, magnetism, and thermodynamics.</p>
-                    <button class="btn btn-outline" onclick="showTestList('physics')">View Tests</button>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" onclick="showTestList('physics')">View Tests</button>
+                    </div>
                 </div>
                 <div class="card">
                     <h3>🌳 Earth Science</h3>
                     <p>Explore geology, meteorology, oceanography, and astronomy concepts.</p>
-                    <button class="btn btn-outline" onclick="showTestList('earth-science')">View Tests</button>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" onclick="showTestList('earth-science')">View Tests</button>
+                    </div>
                 </div>
             </div>
         </section>
 
+        <!-- Tests Section -->
         <section class="tests-section" style="display: none;">
             <div class="dashboard-header">
                 <h2>Available Tests</h2>
                 <button class="btn btn-outline" onclick="goBack()">Back</button>
             </div>
-            <div id="testsList" class="subjects-grid">
-            </div>
+            <div id="testsList" class="subjects-grid"></div>
         </section>
 
+        <!-- Test Taking Section -->
         <section class="test-taking-section" style="display: none;">
             <div class="dashboard-header">
                 <h2 id="testTitle">Test Title</h2>
-                <div>
-                    <span id="timer">Time: 00:00</span>
-                    <button class="btn btn-outline" onclick="submitTest()">Submit Test</button>
+                <div class="test-controls">
+                    <span id="timer" class="test-timer">Time: 00:00</span>
+                    <button class="btn btn-primary" onclick="submitTest()">Submit Test</button>
                 </div>
             </div>
             <div class="test-container" id="testContainer">
@@ -82,6 +91,7 @@
             </div>
         </section>
 
+        <!-- Test Results Section -->
         <section class="test-results-section" style="display: none;">
             <div class="dashboard-header">
                 <h2>Test Results</h2>
@@ -89,10 +99,28 @@
             </div>
             <div class="test-container">
                 <h3 id="resultTitle">Test Name</h3>
-                <div id="resultSummary">
-                    <p>Score: <span id="scoreValue">0/0</span></p>
-                    <p>Percentage: <span id="percentageValue">0%</span></p>
-                    <p>Time taken: <span id="timeTaken">00:00</span></p>
+                <div id="resultSummary" class="result-summary">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="scoreValue">0/0</span>
+                            <span class="stat-label">Score</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="percentageValue">0%</span>
+                            <span class="stat-label">Percentage</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="timeTaken">00:00</span>
+                            <span class="stat-label">Time Taken</span>
+                        </div>
+                    </div>
                 </div>
                 <div id="resultDetails">
                     <!-- Result details will be loaded here -->
@@ -100,195 +128,182 @@
             </div>
         </section>
 
+        <!-- Dashboard Section -->
         <section class="dashboard" id="dashboardSection">
             <div class="dashboard-header">
                 <h2>Your Dashboard</h2>
-                <button class="btn btn-outline" onclick="showTestsSection()">Take a Test</button>
+                <div class="dashboard-actions">
+                    <button class="btn btn-outline" onclick="filterResults('all')">All Tests</button>
+                    <button class="btn btn-outline" onclick="filterResults('biology')">Biology</button>
+                    <button class="btn btn-outline" onclick="filterResults('chemistry')">Chemistry</button>
+                    <button class="btn btn-outline" onclick="filterResults('physics')">Physics</button>
+                    <button class="btn btn-outline" onclick="filterResults('earth-science')">Earth Science</button>
+                    <button class="btn btn-primary" onclick="showTestsSection()">Take a New Test</button>
+                </div>
             </div>
-            <div class="card">
-                <h3>Your Progress</h3>
-                <p>Tests completed: <span id="testsCompleted">0</span></p>
-                <p>Average score: <span id="averageScore">0%</span></p>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="testsCompleted">0</span>
+                        <span class="stat-label">Tests Completed</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="averageScore">0%</span>
+                        <span class="stat-label">Average Score</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="highestScore">0%</span>
+                        <span class="stat-label">Highest Score</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="averageTime">0:00</span>
+                        <span class="stat-label">Avg. Time per Test</span>
+                    </div>
+                </div>
             </div>
-            <div class="card">
-                <h3>Recent Test Results</h3>
-                <table class="results-table">
-                    <thead>
-                        <tr>
-                            <th>Test Name</th>
-                            <th>Subject</th>
-                            <th>Score</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultsTableBody">
-                        <!-- Results will be loaded here -->
-                    </tbody>
-                </table>
+            
+            <div class="dashboard-charts">
+                <div class="chart-container">
+                    <h3>Performance by Subject</h3>
+                    <canvas id="subjectChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Progress Over Time</h3>
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="dashboard-table-container">
+                <div class="table-header">
+                    <h3>Test History</h3>
+                    <div class="table-controls">
+                        <input type="text" id="searchInput" placeholder="Search tests..." onkeyup="searchResults()" class="form-control">
+                        <select id="sortDropdown" onchange="sortResults()" class="form-control">
+                            <option value="date-desc">Date (Newest First)</option>
+                            <option value="date-asc">Date (Oldest First)</option>
+                            <option value="score-desc">Score (Highest First)</option>
+                            <option value="score-asc">Score (Lowest First)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="results-wrapper">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Test Name</th>
+                                <th>Subject</th>
+                                <th>Score</th>
+                                <th>Time Taken</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <!-- Results will be loaded here -->
+                        </tbody>
+                    </table>
+                    <div class="pagination" id="resultsPagination">
+                        <!-- Pagination controls will be loaded here -->
+                    </div>
+                </div>
             </div>
         </section>
     </main>
 
+    <!-- Login Modal -->
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Login</h2>
                 <span class="close" onclick="closeModal('loginModal')">&times;</span>
             </div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-            <p style="margin-top: 20px; text-align: center;">
-                Don't have an account? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Sign up</a>
-            </p>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <p style="margin-top: 20px; text-align: center;">
+                    Don't have an account? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Sign up</a>
+                </p>
+            </div>
         </div>
     </div>
 
+    <!-- Register Modal -->
     <div class="modal" id="registerModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Sign Up</h2>
                 <span class="close" onclick="closeModal('registerModal')">&times;</span>
             </div>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="registerName">Full Name</label>
-                    <input type="text" id="registerName" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Password</label>
-                    <input type="password" id="registerPassword" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Sign Up</button>
-            </form>
-            <p style="margin-top: 20px; text-align: center;">
-                Already have an account? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Login</a>
-            </p>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerName">Full Name</label>
+                        <input type="text" id="registerName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+                <p style="margin-top: 20px; text-align: center;">
+                    Already have an account? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Login</a>
+                </p>
+            </div>
         </div>
     </div>
 
-    <section class="dashboard" id="dashboardSection">
-        <div class="dashboard-header">
-        <h2>Your Dashboard</h2>
-        <div class="dashboard-actions">
-            <button class="btn btn-outline" onclick="filterResults('all')">All Tests</button>
-            <button class="btn btn-outline" onclick="filterResults('biology')">Biology</button>
-            <button class="btn btn-outline" onclick="filterResults('chemistry')">Chemistry</button>
-            <button class="btn btn-outline" onclick="filterResults('physics')">Physics</button>
-            <button class="btn btn-outline" onclick="filterResults('earth-science')">Earth Science</button>
-            <button class="btn btn-primary" onclick="showTestsSection()">Take a New Test</button>
-        </div>
-        </div>
-        
-        <div class="dashboard-stats">
-        <div class="stat-card">
-            <div class="stat-icon">📊</div>
-            <div class="stat-content">
-                <span class="stat-value" id="testsCompleted">0</span>
-                <span class="stat-label">Tests Completed</span>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">📈</div>
-            <div class="stat-content">
-                <span class="stat-value" id="averageScore">0%</span>
-                <span class="stat-label">Average Score</span>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">⭐</div>
-            <div class="stat-content">
-                <span class="stat-value" id="highestScore">0%</span>
-                <span class="stat-label">Highest Score</span>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">⏱️</div>
-            <div class="stat-content">
-                <span class="stat-value" id="averageTime">0:00</span>
-                <span class="stat-label">Avg. Time per Test</span>
-            </div>
-        </div>
-        </div>
-        
-        <div class="dashboard-charts">
-        <div class="chart-container">
-            <h3>Performance by Subject</h3>
-            <canvas id="subjectChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <h3>Progress Over Time</h3>
-            <canvas id="progressChart"></canvas>
-        </div>
-        </div>
-        
-        <div class="dashboard-table-container">
-        <div class="table-header">
-            <h3>Test History</h3>
-            <div class="table-controls">
-                <input type="text" id="searchInput" placeholder="Search tests..." onkeyup="searchResults()">
-                <select id="sortDropdown" onchange="sortResults()">
-                    <option value="date-desc">Date (Newest First)</option>
-                    <option value="date-asc">Date (Oldest First)</option>
-                    <option value="score-desc">Score (Highest First)</option>
-                    <option value="score-asc">Score (Lowest First)</option>
-                </select>
-            </div>
-        </div>
-        <div class="results-wrapper">
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th>Test Name</th>
-                        <th>Subject</th>
-                        <th>Score</th>
-                        <th>Time Taken</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="resultsTableBody">
-                    <!-- Results will be loaded here -->
-                </tbody>
-            </table>
-            <div class="pagination" id="resultsPagination">
-                <!-- Pagination controls will be loaded here -->
-            </div>
-        </div>
-        </div>
-        </section>
-        
-        <!-- Modal for detailed test result view -->
-        <div class="modal" id="resultDetailModal">
+    <!-- Result Detail Modal -->
+    <div class="modal" id="resultDetailModal">
         <div class="modal-content modal-large">
-        <div class="modal-header">
-            <h2 id="detailTestTitle">Test Result Details</h2>
-            <span class="close" onclick="closeModal('resultDetailModal')">&times;</span>
+            <div class="modal-header">
+                <h2 id="detailTestTitle">Test Result Details</h2>
+                <span class="close" onclick="closeModal('resultDetailModal')">&times;</span>
+            </div>
+            <div class="modal-body" id="resultDetailContent">
+                <!-- Test details will be loaded here -->
+            </div>
         </div>
-        <div class="modal-body" id="resultDetailContent">
-            <!-- Test details will be loaded here -->
-        </div>
-        </div>
-        </div>
+    </div>
 
     <footer class="footer">
-        <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+        <div class="container">
+            <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="pages/about.html">About</a>
+                <a href="pages/privacy.html">Privacy Policy</a>
+                <a href="pages/terms.html">Terms of Service</a>
+                <a href="pages/contact.html">Contact Us</a>
+            </div>
+        </div>
     </footer>
 </body>
+</html>

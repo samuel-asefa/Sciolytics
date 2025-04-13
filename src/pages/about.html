@@ -8,8 +8,8 @@
     <script src="../main.js" defer></script>
     <link rel="icon" type="image/x-icon" href="../../assets/image.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Noto+Sans:wght@300;400;500;600;700;800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Noto+Sans:wght@300;400;500;600;700;800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -32,26 +32,63 @@
         </div>
     </header>
 
-    <main class="container">
-        <section class="page-content">
-            <h1>About Sciolytics</h1>
-            <p>Welcome to Sciolytics, your dedicated platform for preparing for Science Olympiad competitions!</p>
-
-            <h2>Our Mission</h2>
-            <p>Our mission is to provide students with high-quality practice tests and resources to excel in various Science Olympiad events. We aim to foster a deeper understanding of scientific concepts and develop critical thinking skills necessary for success.</p>
-
-            <h2>What We Offer</h2>
-            <ul>
-                <li>Comprehensive practice tests across multiple Science Olympiad disciplines.</li>
-                <li>Detailed results and performance tracking (for logged-in users).</li>
-                <li>Curated resources to supplement your learning.</li>
-                <li>A user-friendly interface designed for focused studying.</li>
-            </ul>
-
-            <h2>Get Started</h2>
-            <p>Explore our <a href="tests.html">Tests</a> section to start practicing or browse the <a href="resources.html">Resources</a> page for learning materials. Sign up or log in to track your progress and access more features!</p>
-
-        </section>
+    <main>
+        <div class="container">
+            <section class="dashboard">
+                <div class="dashboard-header">
+                    <h1>About Sciolytics</h1>
+                </div>
+                
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Our Mission</div>
+                            <div class="stat-value">Excellence in Science</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔬</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Practice Tests</div>
+                            <div class="stat-value">All Disciplines</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Track Progress</div>
+                            <div class="stat-value">Detailed Analytics</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="resource-category">
+                    <h2>Welcome to Sciolytics</h2>
+                    <p>Your dedicated platform for preparing for Science Olympiad competitions!</p>
+                    
+                    <h3>Our Mission</h3>
+                    <p>Our mission is to provide students with high-quality practice tests and resources to excel in various Science Olympiad events. We aim to foster a deeper understanding of scientific concepts and develop critical thinking skills necessary for success.</p>
+                    
+                    <h3>What We Offer</h3>
+                    <ul class="event-list">
+                        <li>Comprehensive practice tests across multiple Science Olympiad disciplines</li>
+                        <li>Detailed results and performance tracking (for logged-in users)</li>
+                        <li>Curated resources to supplement your learning</li>
+                        <li>A user-friendly interface designed for focused studying</li>
+                    </ul>
+                    
+                    <div class="card-footer">
+                        <h3>Get Started</h3>
+                        <p>Explore our platform and start your journey toward Science Olympiad excellence!</p>
+                        <div class="btn-group">
+                            <a href="../practice.html" class="btn btn-primary">Practice Tests</a>
+                            <a href="resources.html" class="btn btn-outline">Browse Resources</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <div class="modal" id="loginModal">
@@ -108,20 +145,26 @@
         </div>
     </div>
 
-     <div class="modal" id="resultDetailModal">
-         <div class="modal-content modal-large">
-             <div class="modal-header">
-                 <h2 id="detailTestTitle">Test Result Details</h2>
-                 <span class="close" onclick="closeModal('resultDetailModal')">&times;</span>
-             </div>
-             <div class="modal-body" id="resultDetailContent">
-                 </div>
-         </div>
-     </div>
-
+    <div class="modal" id="resultDetailModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="detailTestTitle">Test Result Details</h2>
+                <span class="close" onclick="closeModal('resultDetailModal')">&times;</span>
+            </div>
+            <div class="modal-body" id="resultDetailContent">
+            </div>
+        </div>
+    </div>
 
     <footer class="footer">
-        <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+        <div class="container">
+            <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
     </footer>
 </body>
 </html>

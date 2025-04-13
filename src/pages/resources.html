@@ -8,40 +8,8 @@
     <script src="../main.js" defer></script>
     <link rel="icon" type="image/x-icon" href="../../assets/image.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Noto+Sans:wght@300;400;500;600;700;800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <style>
-        /* Add specific styles for resource page if needed */
-        .resource-category {
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .resource-category h2 {
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-        .event-list {
-            list-style: none;
-            padding: 0;
-        }
-        .event-list li {
-            margin-bottom: 10px;
-        }
-        .event-list a {
-            text-decoration: none;
-            color: var(--dark);
-            transition: color 0.3s ease;
-        }
-        .event-list a:hover {
-            color: var(--primary-hover);
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Noto+Sans:wght@300;400;500;600;700;800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -64,59 +32,80 @@
         </div>
     </header>
 
-    <main class="container">
-        <h1>Event Resources</h1>
-        <p>Explore these event resources for the 2025-26 Science Olympiad season!</p>
+    <main>
+        <div class="container">
+            <section class="dashboard">
+                <div class="dashboard-header">
+                    <h1>Event Resources</h1>
+                    <div class="dashboard-actions">
+                        <button class="btn btn-outline">Filter</button>
+                        <button class="btn btn-primary">Browse All</button>
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="margin-bottom: var(--spacing-xl);">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-content">
+                        <div class="stat-value">2025-26 Science Olympiad Season</div>
+                        <div class="stat-label">Explore these comprehensive resources to prepare for competitions</div>
+                    </div>
+                </div>
 
-        <section class="resource-category">
-            <h2>🧬 Life, Personal & Social Science</h2>
-            <ul class="event-list">
-                <li><a href="resources/anatomy.html">Anatomy and Physiology</a></li>
-                <li><a href="resources/cell-biology.html">Cell Biology</a></li>
-                <li><a href="resources/disease-detectives.html">Disease Detectives</a></li>
-                <li><a href="resources/ecology.html">Ecology</a></li>
-                </ul>
-        </section>
+                <section class="resource-category">
+                    <h2>🧬 Life, Personal & Social Science</h2>
+                    <ul class="event-list">
+                        <li><a href="resources/anatomy.html">Anatomy and Physiology</a></li>
+                        <li><a href="resources/cell-biology.html">Cell Biology</a></li>
+                        <li><a href="resources/disease-detectives.html">Disease Detectives</a></li>
+                        <li><a href="resources/ecology.html">Ecology</a></li>
+                    </ul>
+                </section>
 
-        <section class="resource-category">
-            <h2>🌎 Earth & Space Science</h2>
-            <ul class="event-list">
-                <li><a href="resources/astronomy.html">Astronomy</a></li>
-                <li><a href="resources/dynamic-planet.html">Dynamic Planet</a></li>
-                <li><a href="resources/fossils.html">Fossils</a></li>
-                <li><a href="resources/meteorology.html">Meteorology</a></li>
-                </ul>
-        </section>
+                <section class="resource-category">
+                    <h2>🌎 Earth & Space Science</h2>
+                    <ul class="event-list">
+                        <li><a href="resources/astronomy.html">Astronomy</a></li>
+                        <li><a href="resources/dynamic-planet.html">Dynamic Planet</a></li>
+                        <li><a href="resources/fossils.html">Fossils</a></li>
+                        <li><a href="resources/meteorology.html">Meteorology</a></li>
+                    </ul>
+                </section>
 
-        <section class="resource-category">
-            <h2>🚀 Physical Science & Chemistry</h2>
-            <ul class="event-list">
-                <li><a href="resources/chemistry-lab.html">Chemistry Lab</a></li>
-                <li><a href="resources/forensics.html">Forensics</a></li>
-                <li><a href="resources/optics.html">Optics</a></li>
-                <li><a href="resources/thermodynamics.html">Thermodynamics</a></li>
-                </ul>
-        </section>
+                <section class="resource-category">
+                    <h2>🚀 Physical Science & Chemistry</h2>
+                    <ul class="event-list">
+                        <li><a href="resources/chemistry-lab.html">Chemistry Lab</a></li>
+                        <li><a href="resources/forensics.html">Forensics</a></li>
+                        <li><a href="resources/optics.html">Optics</a></li>
+                        <li><a href="resources/thermodynamics.html">Thermodynamics</a></li>
+                    </ul>
+                </section>
 
-        <section class="resource-category">
-            <h2>⚙️ Technology & Engineering</h2>
-            <ul class="event-list">
-                <li><a href="resources/bridges.html">Bridges</a></li>
-                <li><a href="resources/detector-building.html">Detector Building</a></li>
-                <li><a href="resources/robotics.html">Robot Tour</a></li>
-                <li><a href="resources/scrambler.html">Scrambler</a></li>
-                </ul>
-        </section>
+                <section class="resource-category">
+                    <h2>⚙️ Technology & Engineering</h2>
+                    <ul class="event-list">
+                        <li><a href="resources/bridges.html">Bridges</a></li>
+                        <li><a href="resources/detector-building.html">Detector Building</a></li>
+                        <li><a href="resources/robotics.html">Robot Tour</a></li>
+                        <li><a href="resources/scrambler.html">Scrambler</a></li>
+                    </ul>
+                </section>
 
-        <section class="resource-category">
-            <h2>🔎 Inquiry & Nature of Science</h2>
-            <ul class="event-list">
-                <li><a href="resources/codebusters.html">Codebusters</a></li>
-                <li><a href="resources/experimental-design.html">Experimental Design</a></li>
-                <li><a href="resources/write-it-do-it.html">Write It Do It</a></li>
-                </ul>
-        </section>
-
+                <section class="resource-category">
+                    <h2>🔎 Inquiry & Nature of Science</h2>
+                    <ul class="event-list">
+                        <li><a href="resources/codebusters.html">Codebusters</a></li>
+                        <li><a href="resources/experimental-design.html">Experimental Design</a></li>
+                        <li><a href="resources/write-it-do-it.html">Write It Do It</a></li>
+                    </ul>
+                </section>
+                
+                <div class="dashboard-header" style="margin-top: var(--spacing-xl);">
+                    <h2>Need Help Finding Resources?</h2>
+                    <button class="btn btn-primary">Contact Us</button>
+                </div>
+            </section>
+        </div>
     </main>
 
     <div class="modal" id="loginModal">
@@ -173,19 +162,26 @@
         </div>
     </div>
 
-     <div class="modal" id="resultDetailModal">
-         <div class="modal-content modal-large">
-             <div class="modal-header">
-                 <h2 id="detailTestTitle">Test Result Details</h2>
-                 <span class="close" onclick="closeModal('resultDetailModal')">&times;</span>
-             </div>
-             <div class="modal-body" id="resultDetailContent">
-                 </div>
-         </div>
-     </div>
+    <div class="modal" id="resultDetailModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="detailTestTitle">Test Result Details</h2>
+                <span class="close" onclick="closeModal('resultDetailModal')">&times;</span>
+            </div>
+            <div class="modal-body" id="resultDetailContent">
+            </div>
+        </div>
+    </div>
 
     <footer class="footer">
-        <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+        <div class="container">
+            <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
     </footer>
 </body>
 </html>
