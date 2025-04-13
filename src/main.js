@@ -3,6 +3,34 @@
 
 // ----- DASHBOARD FUNCTIONALITY IMPLEMENTATION -----
 
+
+// Theme Toggle Functionality
+function initThemeToggle() {
+  const themeToggle = document.getElementById('themeToggle');
+  
+  // Check for saved theme preference
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+      document.body.classList.add('dark-theme');
+  }
+  
+  // Toggle theme when button is clicked
+  themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      
+      // Save preference to localStorage
+      const isDarkTheme = document.body.classList.contains('dark-theme');
+      localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+  });
+}
+
+// Add this to your existing window.onload or document.addEventListener('DOMContentLoaded')
+// If you don't have one yet, add this:
+document.addEventListener('DOMContentLoaded', function() {
+  initThemeToggle();
+  // Your other initialization code...
+});
+
 // Global variables for pagination
 let currentPage = 1;
 const resultsPerPage = 10;

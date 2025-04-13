@@ -29,6 +29,12 @@
                 <span id="welcomeUser">Welcome, User!</span>
                 <button class="btn btn-outline" onclick="logout()">Logout</button>
             </div>
+            <div class="theme-toggle">
+                <button id="themeToggle" class="theme-btn" aria-label="Toggle dark mode">
+                    <span class="theme-icon light-icon">☀️</span>
+                    <span class="theme-icon dark-icon">🌙</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -106,97 +112,62 @@
         </section>
 
         <!-- Dashboard Section -->
-        <section class="dashboard" id="dashboardSection">
-            <div class="dashboard-header">
-                <h2>Your Dashboard</h2>
-                <div class="dashboard-actions">
-                    <button class="btn btn-outline" onclick="filterResults('all')">All Tests</button>
-                    <button class="btn btn-outline" onclick="filterResults('biology')">Biology</button>
-                    <button class="btn btn-outline" onclick="filterResults('chemistry')">Chemistry</button>
-                    <button class="btn btn-outline" onclick="filterResults('physics')">Physics</button>
-                    <button class="btn btn-outline" onclick="filterResults('earth-science')">Earth Science</button>
-                    <button class="btn btn-primary" onclick="showTestsSection()">Take a New Test</button>
-                </div>
+        <main>
+            <div class="container">
+                <section class="dashboard">
+        
+                    
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">📚</div>
+                            <div class="stat-content">
+                                <div class="stat-label">Our Mission</div>
+                                <div class="stat-value">Excellence in Science</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🔬</div>
+                            <div class="stat-content">
+                                <div class="stat-label">Practice Tests</div>
+                                <div class="stat-value">All Disciplines</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-content">
+                                <div class="stat-label">Track Progress</div>
+                                <div class="stat-value">Detailed Analytics</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-category">
+                        <h2>Welcome to Sciolytics</h2>
+                        <p>Your dedicated platform for preparing for Science Olympiad competitions!</p>
+                        
+                        <h3>Our Mission</h3>
+                        <p>Our mission is to provide students with high-quality practice tests and resources to excel in various Science Olympiad events. We aim to foster a deeper understanding of scientific concepts and develop critical thinking skills necessary for success.</p>
+                        
+                        <h3>What We Offer</h3>
+                        <ul class="event-list">
+                            <li>Comprehensive practice tests across multiple Science Olympiad disciplines</li>
+                            <li>Detailed results and performance tracking (for logged-in users)</li>
+                            <li>Curated resources to supplement your learning</li>
+                            <li>A user-friendly interface designed for focused studying</li>
+                        </ul>
+                        
+                        <div class="card-footer">
+                            <h3>Get Started</h3>
+                            <p>Explore our platform and start your journey toward Science Olympiad excellence!</p>
+                            <div class="btn-group">
+                                <a href="../practice.html" class="btn btn-primary">Practice Tests</a>
+                                <a href="resources.html" class="btn btn-outline">Browse Resources</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
-            
-            <div class="dashboard-stats">
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-content">
-                        <span class="stat-value" id="testsCompleted">0</span>
-                        <span class="stat-label">Tests Completed</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📈</div>
-                    <div class="stat-content">
-                        <span class="stat-value" id="averageScore">0%</span>
-                        <span class="stat-label">Average Score</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⭐</div>
-                    <div class="stat-content">
-                        <span class="stat-value" id="highestScore">0%</span>
-                        <span class="stat-label">Highest Score</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⏱️</div>
-                    <div class="stat-content">
-                        <span class="stat-value" id="averageTime">0:00</span>
-                        <span class="stat-label">Avg. Time per Test</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="dashboard-charts">
-                <div class="chart-container">
-                    <h3>Performance by Subject</h3>
-                    <canvas id="subjectChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3>Progress Over Time</h3>
-                    <canvas id="progressChart"></canvas>
-                </div>
-            </div>
-            
-            <div class="dashboard-table-container">
-                <div class="table-header">
-                    <h3>Test History</h3>
-                    <div class="table-controls">
-                        <input type="text" id="searchInput" placeholder="Search tests..." onkeyup="searchResults()" class="form-control">
-                        <select id="sortDropdown" onchange="sortResults()" class="form-control">
-                            <option value="date-desc">Date (Newest First)</option>
-                            <option value="date-asc">Date (Oldest First)</option>
-                            <option value="score-desc">Score (Highest First)</option>
-                            <option value="score-asc">Score (Lowest First)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="results-wrapper">
-                    <table class="results-table">
-                        <thead>
-                            <tr>
-                                <th>Test Name</th>
-                                <th>Subject</th>
-                                <th>Score</th>
-                                <th>Time Taken</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultsTableBody">
-                            <!-- Results will be loaded here -->
-                        </tbody>
-                    </table>
-                    <div class="pagination" id="resultsPagination">
-                        <!-- Pagination controls will be loaded here -->
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+        </main>
 
     <!-- Login Modal -->
     <div class="modal" id="loginModal">
@@ -276,9 +247,6 @@
             <p>&copy; 2025 Sciolytics. All rights reserved.</p>
             <div class="footer-links">
                 <a href="pages/about.html">About</a>
-                <a href="pages/privacy.html">Privacy Policy</a>
-                <a href="pages/terms.html">Terms of Service</a>
-                <a href="pages/contact.html">Contact Us</a>
             </div>
         </div>
     </footer>

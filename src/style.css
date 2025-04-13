@@ -53,6 +53,90 @@
     padding: 0;
     box-sizing: border-box;
   }
+
+  /* === THEME TOGGLE === */
+.theme-toggle {
+    margin-right: var(--spacing-md);
+}
+
+.theme-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    position: relative;
+    transition: all var(--transition-fast);
+    background-color: var(--gray-light);
+}
+
+.theme-btn:hover {
+    background-color: var(--primary-light);
+}
+
+.theme-icon {
+    position: absolute;
+    transition: transform var(--transition);
+}
+
+.dark-icon {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.light-icon {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Dark theme styles */
+body.dark-theme {
+    --light: #1a1a2e;
+    --dark: #f8f9fa;
+    --gray-dark: #e9ecef;
+    --gray: #6c757d;
+    --gray-light: #2a2a3c;
+    --primary-light: #252547;
+    background-color: #1a1a2e;
+    color: #f8f9fa;
+}
+
+body.dark-theme header {
+    background-color: #16213e;
+}
+
+body.dark-theme .card,
+body.dark-theme .dashboard,
+body.dark-theme .chart-container,
+body.dark-theme .test-container,
+body.dark-theme .dashboard-table-container,
+body.dark-theme .modal-content {
+    background-color: #16213e;
+}
+
+body.dark-theme .option {
+    border-color: #2a2a3c;
+}
+
+body.dark-theme .option:hover {
+    background-color: #252547;
+    border-color: var(--primary);
+}
+
+body.dark-theme .theme-btn .dark-icon {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body.dark-theme .theme-btn .light-icon {
+    opacity: 0;
+    transform: translateY(-10px);
+}
   
   html {
     font-size: 16px;
@@ -382,6 +466,7 @@
   
   .dashboard-charts {
     display: grid;
+    align-content: center;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: var(--spacing-xl);
     margin-bottom: var(--spacing-xl);
@@ -558,7 +643,7 @@
   
   /* === RESOURCE PAGE SPECIFIC === */
   .resource-category {
-    background-color: white;
+    background-color: var(--primary-light);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     padding: var(--spacing-xl);
@@ -664,8 +749,8 @@
   
   /* === FOOTER === */
   .footer {
-    background-color: var(--dark);
-    color: white;
+    background-color: var(--primary-light);
+    color: var(--primary);
     padding: var(--spacing-xl) 0;
     margin-top: auto;
   }
@@ -684,7 +769,7 @@
   }
   
   .footer-links a {
-    color: white;
+    color: var(--primary);
     opacity: 0.8;
     transition: opacity var(--transition-fast);
   }
