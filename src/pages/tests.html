@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tests - Sciolytics</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="../main.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        .test-config-form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .test-config-form h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="../index.html" class="logo">Sciolytics</a>
+            <nav class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="tests.html" class="active">Tests</a>
+                <a href="resources.html">Resources</a>
+                <a href="about.html">About</a>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-outline" onclick="openModal('loginModal')">Login</button>
+                <button class="btn btn-primary" onclick="openModal('registerModal')">Sign Up</button>
+            </div>
+            <div class="auth-buttons" id="userArea" style="display: none;">
+                <span id="welcomeUser">Welcome, User!</span>
+                <button class="btn btn-outline" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Configure Your Practice Test</h1>
+        <p>Select your desired event, number of questions, and time limit to start practicing.</p>
+
+        <form id="testConfigForm" class="test-config-form">
+            <h2>Test Settings</h2>
+
+            <div class="form-group">
+                <label for="testTopic">Select Event/Topic:</label>
+                <select id="testTopic" name="topic" class="form-control" required>
+                    <option value="" disabled selected>-- Choose an Event --</option>
+                    <optgroup label="Life Sciences">
+                        <option value="anatomy">Anatomy and Physiology</option>
+                        <option value="cell-biology">Cell Biology</option>
+                        <option value="disease-detectives">Disease Detectives</option>
+                         <option value="ecology">Ecology</option>
+                        </optgroup>
+                    <optgroup label="Earth & Space Science">
+                        <option value="astronomy">Astronomy</option>
+                        <option value="dynamic-planet">Dynamic Planet</option>
+                        <option value="fossils">Fossils</option>
+                        <option value="meteorology">Meteorology</option>
+                        </optgroup>
+                    <optgroup label="Physical Science & Chemistry">
+                        <option value="chem-lab">Chemistry Lab</option>
+                        <option value="forensics">Forensics</option>
+                        <option value="optics">Optics</option>
+                        <option value="thermodynamics">Thermodynamics</option>
+                         </optgroup>
+                     <optgroup label="Technology & Engineering">
+                        <option value="bridges">Bridges</option>
+                        <option value="detector-building">Detector Building</option>
+                        <option value="robotics">Robot Tour</option>
+                        <option value="scrambler">Scrambler</option>
+                         </optgroup>
+                    <optgroup label="Inquiry & Nature of Science">
+                        <option value="codebusters">Codebusters</option>
+                        <option value="experimental-design">Experimental Design</option>
+                        <option value="write-it-do-it">Write It Do It</option>
+                         </optgroup>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="numQuestions">Number of Questions:</label>
+                <input type="number" id="numQuestions" name="questions" class="form-control" min="5" max="50" value="20" required>
+                <small>Enter a value between 5 and 50.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="timeLimit">Time Limit (minutes):</label>
+                <input type="number" id="timeLimit" name="time" class="form-control" min="10" max="120" value="30" required>
+                 <small>Enter a value between 10 and 120.</small>
+            </div>
+
+            <button type="button" class="btn btn-primary" style="width: 100%;" onclick="startTestConfiguration()">Start Test</button>
+
+        </form>
+
+        <div id="testDisplayArea" style="margin-top: 20px;"></div>
+
+    </main>
+
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center;">
+                Don't have an account? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign Up</h2>
+                <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center;">
+                Already have an account? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Login</a>
+            </p>
+        </div>
+    </div>
+
+     <div class="modal" id="resultDetailModal">
+         <div class="modal-content modal-large">
+             <div class="modal-header">
+                 <h2 id="detailTestTitle">Test Result Details</h2>
+                 <span class="close" onclick="closeModal('resultDetailModal')">&times;</span>
+             </div>
+             <div class="modal-body" id="resultDetailContent">
+                 </div>
+         </div>
+     </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Basic JS for the test config page (can be moved to main.js)
+        function startTestConfiguration() {
+            const topic = document.getElementById('testTopic').value;
+            const numQuestions = document.getElementById('numQuestions').value;
+            const timeLimit = document.getElementById('timeLimit').value;
+            const displayArea = document.getElementById('testDisplayArea');
+
+            if (!topic) {
+                alert('Please select a test topic.');
+                return;
+            }
+
+            // --- Placeholder for actual test initiation ---
+            // In a real app, you would:
+            // 1. Validate inputs further.
+            // 2. Check if the user is logged in if required.
+            // 3. Call a function (likely in main.js) to:
+            //    - Fetch questions for the selected topic.
+            //    - Set up the test environment (timer, question display area).
+            //    - Potentially navigate the user or dynamically show the test section.
+            // Example: startActualTest(topic, numQuestions, timeLimit);
+
+            displayArea.innerHTML = `<p>Starting test on <strong>${topic}</strong> with ${numQuestions} questions and a ${timeLimit} minute time limit...</p> <p>(Test loading mechanism needs to be implemented in main.js)</p>`;
+             // You might want to call a function from your main.js here
+            // For example: if (typeof startConfiguredTest === 'function') { startConfiguredTest(topic, numQuestions, timeLimit); }
+
+            console.log(`Test Config: Topic=${topic}, Questions=${numQuestions}, Time=${timeLimit}`);
+            alert('Test configuration submitted! (Implement test start logic in JavaScript)');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Sciolytics</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="../main.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="../index.html" class="logo">Sciolytics</a>
+            <nav class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="tests.html">Tests</a>
+                <a href="resources.html">Resources</a>
+                <a href="about.html" class="active">About</a>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-outline" onclick="openModal('loginModal')">Login</button>
+                <button class="btn btn-primary" onclick="openModal('registerModal')">Sign Up</button>
+            </div>
+            <div class="auth-buttons" id="userArea" style="display: none;">
+                <span id="welcomeUser">Welcome, User!</span>
+                <button class="btn btn-outline" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="page-content">
+            <h1>About Sciolytics</h1>
+            <p>Welcome to Sciolytics, your dedicated platform for preparing for Science Olympiad competitions!</p>
+
+            <h2>Our Mission</h2>
+            <p>Our mission is to provide students with high-quality practice tests and resources to excel in various Science Olympiad events. We aim to foster a deeper understanding of scientific concepts and develop critical thinking skills necessary for success.</p>
+
+            <h2>What We Offer</h2>
+            <ul>
+                <li>Comprehensive practice tests across multiple Science Olympiad disciplines.</li>
+                <li>Detailed results and performance tracking (for logged-in users).</li>
+                <li>Curated resources to supplement your learning.</li>
+                <li>A user-friendly interface designed for focused studying.</li>
+            </ul>
+
+            <h2>Get Started</h2>
+            <p>Explore our <a href="tests.html">Tests</a> section to start practicing or browse the <a href="resources.html">Resources</a> page for learning materials. Sign up or log in to track your progress and access more features!</p>
+
+        </section>
+    </main>
+
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center;">
+                Don't have an account? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign Up</h2>
+                <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+            <p style="margin-top: 20px; text-align: center;">
+                Already have an account? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Login</a>
+            </p>
+        </div>
+    </div>
+
+     <div class="modal" id="resultDetailModal">
+         <div class="modal-content modal-large">
+             <div class="modal-header">
+                 <h2 id="detailTestTitle">Test Result Details</h2>
+                 <span class="close" onclick="closeModal('resultDetailModal')">&times;</span>
+             </div>
+             <div class="modal-body" id="resultDetailContent">
+                 </div>
+         </div>
+     </div>
+
+
+    <footer class="footer">
+        <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+    </footer>
+</body>
+</html>

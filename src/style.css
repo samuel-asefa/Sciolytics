@@ -13,7 +13,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Noto Sans';
         }
         
         body {
@@ -267,6 +267,250 @@
         .results-table th {
             background-color: #f8fafc;
         }
+
+        .dashboard {
+            padding: 20px 0;
+            }
+            
+            .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+            }
+            
+            .dashboard-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            }
+            
+            .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            }
+            
+            .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            }
+            
+            .stat-icon {
+            font-size: 24px;
+            opacity: 0.8;
+            }
+            
+            .stat-content {
+            display: flex;
+            flex-direction: column;
+            }
+            
+            .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            }
+            
+            .stat-label {
+            color: var(--secondary);
+            font-size: 14px;
+            }
+            
+            .dashboard-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            }
+            
+            .chart-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            height: 300px;
+            }
+            
+            .chart-container h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+            }
+            
+            .dashboard-table-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 30px;
+            }
+            
+            .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+            }
+            
+            .table-controls {
+            display: flex;
+            gap: 10px;
+            }
+            
+            #searchInput, #sortDropdown {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 14px;
+            }
+            
+            .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            }
+            
+            .results-table th, .results-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            }
+            
+            .results-table th {
+            background-color: #f8fafc;
+            position: sticky;
+            top: 0;
+            }
+            
+            .results-wrapper {
+            max-height: 500px;
+            overflow-y: auto;
+            }
+            
+            .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            }
+            
+            .badge-biology {
+            background-color: #dcfce7;
+            color: #16a34a;
+            }
+            
+            .badge-chemistry {
+            background-color: #dbeafe;
+            color: #2563eb;
+            }
+            
+            .badge-physics {
+            background-color: #fef3c7;
+            color: #d97706;
+            }
+            
+            .badge-earth-science {
+            background-color: #f3e8ff;
+            color: #9333ea;
+            }
+            
+            .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+            }
+            
+            .page-btn {
+            padding: 5px 10px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            }
+            
+            .page-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            }
+            
+            .modal-large {
+            max-width: 800px;
+            width: 90%;
+            }
+            
+            .question-result {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            }
+            
+            .question-result.correct {
+            background-color: #dcfce7;
+            }
+            
+            .question-result.incorrect {
+            background-color: #fee2e2;
+            }
+            
+            .user-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            }
+            
+            .stat-box {
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            }
+            
+            .stat-box h4 {
+            color: var(--secondary);
+            margin-bottom: 5px;
+            font-size: 14px;
+            }
+            
+            .stat-box p {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            }
+            
+            @media (max-width: 768px) {
+            .dashboard-header, .table-header {
+            flex-direction: column;
+            align-items: flex-start;
+            }
+            
+            .table-controls {
+            width: 100%;
+            }
+            
+            .dashboard-charts {
+            grid-template-columns: 1fr;
+            }
+            
+            #searchInput, #sortDropdown {
+            width: 100%;
+            }
+            }
+            
         
         .footer {
             text-align: center;
