@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anatomy and Physiology - Sciolytics</title>
+    <title>Bungee Drop - Sciolytics</title>
     <link rel="stylesheet" href="../../style.css">
     <script src="../../main.js" defer></script>
     <link rel="icon" type="image/x-icon" href="../../../assets/image.png">
@@ -14,7 +14,7 @@
 <body>
     <header>
         <div class="container header-content">
-            <a href="../index.html" class="logo">Sciolytics</a>
+            <a href="../../index.html" class="logo">Sciolytics</a>
             <nav class="nav-links">
                 <a href="../../index.html">Home</a>
                 <a href="../../practice.html">Practice</a>
@@ -38,7 +38,414 @@
         </div>
     </header>
 
-    
+    <main class="container event-page">
+        <div class="event-header">
+            <div class="event-info">
+                <h1>Bungee Drop 🪂</h1>
+                <div class="event-meta">
+                    <span class="event-tag">Physics</span>
+                    <span class="event-tag">Build Event</span>
+                    <span class="event-tag">Division B</span>
+                </div>
+            </div>
+            <div class="event-actions">
+                <button class="btn btn-primary" onclick="showRules()">Rules Manual</button>
+                <button class="btn btn-primary" onclick="showOfficialPage()">Official Page</button>
+            </div>
+        </div>
+
+        <div class="event-nav">
+            <ul class="tab-navigation">
+                <li><a href="#overview" class="active">Overview</a></li>
+                <li><a href="#rules">Rules & Format</a></li>
+                <li><a href="#content">Content Guide</a></li>
+                <li><a href="#theory">Physics Theory</a></li>
+                <li><a href="#materials">Materials & Design</a></li>
+                <li><a href="#testing">Testing & Analysis</a></li>
+                <li><a href="#strategies">Competition Strategies</a></li>
+            </ul>
+        </div>
+
+        <div class="content-wrapper">
+            <section id="overview" class="event-section">
+                <h2>Overview</h2>
+                <p>Bungee Drop is a Division B event where teams design, build, and test a device using elastic materials to drop an egg-shaped object as close as possible to a target without breaking it. This event combines principles of physics, engineering, and experimental design to create a device that utilizes elastic potential energy.</p>
+                
+                <div class="info-card">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Type:</strong> Build Event</li>
+                        <li><strong>Format:</strong> Pre-built device with on-site testing</li>
+                        <li><strong>Team Size:</strong> Up to 2 students</li>
+                        <li><strong>Time Limit:</strong> 8-minute setup and testing period</li>
+                        <li><strong>Materials Allowed:</strong> Elastic materials, device components, and log book</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="rules" class="event-section">
+                <h2>Rules & Format</h2>
+                <h3>Event Format</h3>
+                <p>Bungee Drop consists of the following components:</p>
+                <ol>
+                    <li><strong>Device Construction:</strong> Teams build their bungee device prior to the competition</li>
+                    <li><strong>On-site Testing:</strong> Teams drop their egg-shaped object from a specified height</li>
+                    <li><strong>Documentation:</strong> Teams maintain a log book with design process, data, and analysis</li>
+                </ol>
+
+                <h3>Materials Allowed</h3>
+                <p>Teams are permitted to bring:</p>
+                <ul>
+                    <li>The pre-built bungee drop device</li>
+                    <li>Elastic materials (rubber bands, bungee cords, etc.)</li>
+                    <li>One or more egg-shaped objects (plastic eggs, ping pong balls, etc.)</li>
+                    <li>Tools for adjustments and repairs</li>
+                    <li>Log book with calculations, data, and event documentation</li>
+                    <li>Non-programmable, non-graphing calculator</li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <strong>Note:</strong> Event supervisors will provide the target and measuring equipment. Always check the current year's official rules for any updates or changes.
+                </div>
+            </section>
+
+            <section id="content" class="event-section">
+                <h2>Content Guide</h2>
+                <p>Bungee Drop covers various concepts in physics and engineering. Here's a breakdown of the major content areas:</p>
+
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>Core Physics Concepts</h3>
+                        <ul>
+                            <li>Elastic potential energy</li>
+                            <li>Hooke's Law and spring constants</li>
+                            <li>Gravitational potential energy</li>
+                            <li>Conservation of energy</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>Engineering Design</h3>
+                        <ul>
+                            <li>Material selection and testing</li>
+                            <li>Structural integrity</li>
+                            <li>Load distribution</li>
+                            <li>Iterative design processes</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>Data Collection & Analysis</h3>
+                        <ul>
+                            <li>Experimental design</li>
+                            <li>Statistical analysis</li>
+                            <li>Error analysis</li>
+                            <li>Predictive modeling</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>Competition Skills</h3>
+                        <ul>
+                            <li>Device calibration</li>
+                            <li>Quick adjustments</li>
+                            <li>Time management</li>
+                            <li>Documentation presentation</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="theory" class="event-section">
+                <h2>Physics Theory</h2>
+                
+                <h3>Hooke's Law</h3>
+                <p>The fundamental principle behind elastic materials:</p>
+                <div class="formula">F = -kx</div>
+                <p>Where:</p>
+                <ul>
+                    <li>F = Force exerted by the elastic material (in newtons, N)</li>
+                    <li>k = Spring constant (in N/m)</li>
+                    <li>x = Displacement from equilibrium position (in meters, m)</li>
+                </ul>
+
+                <h3>Elastic Potential Energy</h3>
+                <p>The energy stored in stretched or compressed elastic materials:</p>
+                <div class="formula">E<sub>elastic</sub> = ½kx²</div>
+                <p>Where:</p>
+                <ul>
+                    <li>E<sub>elastic</sub> = Elastic potential energy (in joules, J)</li>
+                    <li>k = Spring constant (in N/m)</li>
+                    <li>x = Displacement from equilibrium position (in meters, m)</li>
+                </ul>
+
+                <h3>Gravitational Potential Energy</h3>
+                <p>The energy associated with an object's height above a reference point:</p>
+                <div class="formula">E<sub>gravitational</sub> = mgh</div>
+                <p>Where:</p>
+                <ul>
+                    <li>E<sub>gravitational</sub> = Gravitational potential energy (in joules, J)</li>
+                    <li>m = Mass of the object (in kilograms, kg)</li>
+                    <li>g = Acceleration due to gravity (9.8 m/s²)</li>
+                    <li>h = Height above the reference point (in meters, m)</li>
+                </ul>
+
+                <h3>Energy Conservation</h3>
+                <p>During the bungee drop, energy is transferred between different forms:</p>
+                <div class="formula">E<sub>initial</sub> = E<sub>final</sub></div>
+                <div class="formula">E<sub>gravitational, initial</sub> + E<sub>elastic, initial</sub> = E<sub>gravitational, final</sub> + E<sub>elastic, final</sub> + E<sub>thermal</sub></div>
+                <p>Note that some energy is lost to friction and heat (E<sub>thermal</sub>).</p>
+
+                <h3>Non-Linear Elasticity</h3>
+                <p>Many elastic materials deviate from Hooke's Law at large extensions:</p>
+                <ul>
+                    <li>The spring constant (k) may change with extension</li>
+                    <li>Experimental data often shows a non-linear force-extension relationship</li>
+                    <li>Multiple rubber bands or bungee cords behave differently than a single one scaled up</li>
+                </ul>
+            </section>
+
+            <section id="materials" class="event-section">
+                <h2>Materials & Design</h2>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <h3>Elastic Materials</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>🧵</span>
+                            </div>
+                        </div>
+                        <p>Different elastic materials have varying properties and performance characteristics.</p>
+                        <h4>Common Options:</h4>
+                        <ul>
+                            <li>Rubber bands (various sizes)</li>
+                            <li>Elastic cords</li>
+                            <li>Surgical tubing</li>
+                            <li>Bungee cords</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Attachment Methods</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>🪝</span>
+                            </div>
+                        </div>
+                        <p>How the elastic material connects to the egg-shaped object and the structure.</p>
+                        <h4>Considerations:</h4>
+                        <ul>
+                            <li>Carabiners and hooks</li>
+                            <li>Knots and ties</li>
+                            <li>Harnesses and cradles</li>
+                            <li>Quick-release mechanisms</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Support Structures</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>🏗️</span>
+                            </div>
+                        </div>
+                        <p>Framework that holds the bungee system in place.</p>
+                        <h4>Design Elements:</h4>
+                        <ul>
+                            <li>Stability and balance</li>
+                            <li>Adjustable components</li>
+                            <li>Lightweight materials</li>
+                            <li>Ease of assembly</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Payload Systems</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>🥚</span>
+                            </div>
+                        </div>
+                        <p>How the egg-shaped object is held and protected.</p>
+                        <h4>Features:</h4>
+                        <ul>
+                            <li>Secure containment</li>
+                            <li>Weight considerations</li>
+                            <li>Aerodynamic properties</li>
+                            <li>Impact protection</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Measuring Tools</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>📏</span>
+                            </div>
+                        </div>
+                        <p>Instruments for calibration and measurement.</p>
+                        <h4>Useful Tools:</h4>
+                        <ul>
+                            <li>Measuring tape/ruler</li>
+                            <li>Force gauges</li>
+                            <li>Digital scales</li>
+                            <li>Levels and plumb lines</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Adjustment Mechanisms</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>🔧</span>
+                            </div>
+                        </div>
+                        <p>Systems for fine-tuning the drop distance.</p>
+                        <h4>Examples:</h4>
+                        <ul>
+                            <li>Length adjusters</li>
+                            <li>Tension control systems</li>
+                            <li>Quick-change components</li>
+                            <li>Modular design elements</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="testing" class="event-section">
+                <h2>Testing & Analysis</h2>
+                
+                <h3>Experimental Design</h3>
+                <ul>
+                    <li><strong>Controlled Variables</strong> - Maintaining consistency between tests</li>
+                    <li><strong>Independent Variables</strong> - What you're adjusting (e.g., cord length, elastic material)</li>
+                    <li><strong>Dependent Variables</strong> - What you're measuring (e.g., drop distance, final position)</li>
+                    <li><strong>Replication</strong> - Performing multiple trials for statistical validity</li>
+                    <li><strong>Systematic Testing</strong> - Methodical approach to exploring the design space</li>
+                </ul>
+
+                <h3>Data Collection</h3>
+                <p>Important measurements and observations to record:</p>
+                <ul>
+                    <li><strong>Drop Height</strong> - Initial position above reference point</li>
+                    <li><strong>Elastic Material Properties</strong> - Length, extension, force characteristics</li>
+                    <li><strong>Payload Mass</strong> - Weight of the egg-shaped object</li>
+                    <li><strong>Final Position</strong> - Distance from target</li>
+                    <li><strong>Oscillation Behavior</strong> - Bounce characteristics and damping</li>
+                </ul>
+
+                <h3>Analytical Methods</h3>
+                <p>Techniques for processing and using collected data:</p>
+                <ul>
+                    <li><strong>Regression Analysis</strong> - Finding mathematical relationships between variables</li>
+                    <li><strong>Error Analysis</strong> - Calculating margins of error and precision</li>
+                    <li><strong>Interpolation/Extrapolation</strong> - Predicting performance under new conditions</li>
+                    <li><strong>Statistical Methods</strong> - Calculating means, standard deviations, confidence intervals</li>
+                </ul>
+
+                <h3>Log Book Documentation</h3>
+                <p>Essential components of a well-organized log book:</p>
+                <ul>
+                    <li><strong>Design Process</strong> - Iterations, sketches, and decisions</li>
+                    <li><strong>Raw Data</strong> - Tables of all measurements and observations</li>
+                    <li><strong>Calculations</strong> - Showing work for all relevant physics formulas</li>
+                    <li><strong>Analysis</strong> - Graphs, trends, and conclusions</li>
+                    <li><strong>Reflection</strong> - What worked, what didn't, and future improvements</li>
+                </ul>
+            </section>
+
+            <section id="strategies" class="event-section">
+                <h2>Competition Strategies</h2>
+                
+                <h3>Pre-Competition Preparation</h3>
+                <div class="lab-skills-grid">
+                    <div class="lab-skill-card">
+                        <h4>Practice Schedule</h4>
+                        <ul>
+                            <li>Regular testing sessions</li>
+                            <li>Time trials to improve setup speed</li>
+                            <li>Simulated competition conditions</li>
+                            <li>Troubleshooting common issues</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Device Optimization</h4>
+                        <ul>
+                            <li>Fine-tuning spring constants</li>
+                            <li>Minimizing friction and energy loss</li>
+                            <li>Ensuring consistent performance</li>
+                            <li>Developing backup configurations</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Log Book Development</h4>
+                        <ul>
+                            <li>Organizing data systematically</li>
+                            <li>Creating clear graphs and visuals</li>
+                            <li>Including theoretical calculations</li>
+                            <li>Documenting the design process</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Team Coordination</h4>
+                        <ul>
+                            <li>Role assignments</li>
+                            <li>Communication protocols</li>
+                            <li>Task distribution</li>
+                            <li>Emergency procedures</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Competition Day Tactics</h3>
+                <div class="lab-skills-grid">
+                    <div class="lab-skill-card">
+                        <h4>Initial Assessment</h4>
+                        <ul>
+                            <li>Evaluating competition conditions</li>
+                            <li>Checking drop heights</li>
+                            <li>Noting target position</li>
+                            <li>Adjusting for environmental factors</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Quick Setup</h4>
+                        <ul>
+                            <li>Efficient assembly process</li>
+                            <li>Pre-planned calibration steps</li>
+                            <li>Time-saving techniques</li>
+                            <li>Clear team communication</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Strategic Drops</h4>
+                        <ul>
+                            <li>Conservative first attempts</li>
+                            <li>Incremental adjustments</li>
+                            <li>Risk assessment</li>
+                            <li>Using data to inform decisions</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Troubleshooting</h4>
+                        <ul>
+                            <li>Quick fixes for common problems</li>
+                            <li>On-the-spot calculations</li>
+                            <li>Backup plans</li>
+                            <li>Adapting to unexpected results</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
 
     <footer class="footer">
         <div class="container">
@@ -163,6 +570,7 @@
         });
         
         // Placeholder functions for buttons
+        // Modify the showRules function to show a popup instead of navigating
         function showRules() {
             // Create a popup modal dynamically
             const modal = document.createElement('div');
