@@ -524,6 +524,703 @@ const testData = {
     ]
 };
 
+// Expanded Question Bank for Science Olympiad Application
+const questionBank = {
+  biology: {
+    'cell-biology': [
+      {
+        question: "Which organelle is known as the 'powerhouse of the cell'?",
+        options: ["Nucleus", "Mitochondria", "Golgi apparatus", "Endoplasmic reticulum"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the primary function of the cell membrane?",
+        options: ["To produce energy", "To control what enters and exits the cell", "To store genetic information", "To break down waste"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which of the following is NOT a component of the endomembrane system?",
+        options: ["Endoplasmic reticulum", "Golgi apparatus", "Mitochondria", "Lysosomes"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "What cellular structure is responsible for protein synthesis?",
+        options: ["Ribosomes", "Nucleolus", "Peroxisomes", "Centrioles"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "During which phase of mitosis do sister chromatids separate and move to opposite poles?",
+        options: ["Prophase", "Metaphase", "Anaphase", "Telophase"],
+        answer: 2,
+        difficulty: "hard"
+      },
+      {
+        question: "Which of the following organelles contains its own DNA?",
+        options: ["Lysosomes", "Mitochondria", "Golgi apparatus", "Endoplasmic reticulum"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the main function of the Golgi apparatus?",
+        options: ["Protein synthesis", "Cellular respiration", "Processing and packaging proteins", "Breaking down cellular waste"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "Which cellular process would be most directly affected if a cell's lysosomes were dysfunctional?",
+        options: ["Photosynthesis", "Protein synthesis", "Cellular waste digestion", "Cell division"],
+        answer: 2,
+        difficulty: "hard"
+      },
+      {
+        question: "Which structure is responsible for organizing the spindle fibers during cell division?",
+        options: ["Centrosome", "Nucleolus", "Ribosome", "Lysosome"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the primary role of the rough endoplasmic reticulum?",
+        options: ["Lipid synthesis", "Protein synthesis and modification", "Detoxification", "Energy production"],
+        answer: 1,
+        difficulty: "medium"
+      }
+    ],
+    'genetics': [
+      {
+        question: "What are the nitrogenous bases found in DNA?",
+        options: ["Adenine, thymine, uracil, cytosine", "Adenine, thymine, guanine, cytosine", "Adenine, uracil, guanine, cytosine", "Uracil, thymine, guanine, cytosine"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "In a dihybrid cross between two heterozygous parents (AaBb × AaBb), what proportion of offspring would be expected to have the dominant phenotype for both traits?",
+        options: ["9/16", "3/16", "1/16", "12/16"],
+        answer: 0,
+        difficulty: "hard"
+      },
+      {
+        question: "Which process ensures that each gamete receives only one copy of each chromosome?",
+        options: ["Crossing over", "Independent assortment", "Fertilization", "Meiosis"],
+        answer: 3,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the term for an organism with two identical alleles for a particular gene?",
+        options: ["Heterozygous", "Homozygous", "Hemizygous", "Polygenic"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which genetic disorder is caused by an extra copy of chromosome 21?",
+        options: ["Klinefelter syndrome", "Turner syndrome", "Down syndrome", "Cystic fibrosis"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the role of RNA polymerase in gene expression?",
+        options: ["It synthesizes proteins from amino acids", "It catalyzes RNA synthesis using DNA as a template", "It breaks down RNA after translation", "It transports mRNA from the nucleus to the cytoplasm"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "What is genetic linkage?",
+        options: ["The inheritance of genes from both parents", "The tendency of alleles on the same chromosome to be inherited together", "The sharing of DNA between different species", "The crossing over of chromosomes during meiosis"],
+        answer: 1,
+        difficulty: "hard"
+      },
+      {
+        question: "In humans, red-green color blindness is an X-linked recessive trait. If a color-blind man marries a woman with normal vision whose father was color-blind, what percentage of their sons will be color-blind?",
+        options: ["0%", "25%", "50%", "100%"],
+        answer: 2,
+        difficulty: "hard"
+      }
+    ],
+    'evolution': [
+      {
+        question: "What is the term for a structure that has the same evolutionary origin but different function in various species?",
+        options: ["Analogous structure", "Homologous structure", "Vestigial structure", "Convergent structure"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of the following is NOT one of Darwin's main principles of natural selection?",
+        options: ["Variation exists among individuals in a population", "More offspring are produced than can survive", "Traits are passed from parent to offspring", "Evolution occurs at the individual level"],
+        answer: 3,
+        difficulty: "medium"
+      },
+      {
+        question: "What type of selection results in a population with more individuals at both extremes of a trait distribution?",
+        options: ["Directional selection", "Stabilizing selection", "Disruptive selection", "Artificial selection"],
+        answer: 2,
+        difficulty: "hard"
+      },
+      {
+        question: "Which concept describes the maintenance of two or more alleles in a population?",
+        options: ["Genetic drift", "Genetic equilibrium", "Genetic polymorphism", "Genetic bottleneck"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "The wings of birds and insects are an example of:",
+        options: ["Homologous structures", "Analogous structures", "Vestigial structures", "Derived structures"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the name for the evolutionary mechanism where certain traits become more or less common based on their impact on reproductive success?",
+        options: ["Genetic drift", "Natural selection", "Mutation", "Gene flow"],
+        answer: 1,
+        difficulty: "easy"
+      }
+    ],
+    'ecology': [
+      {
+        question: "What term describes all the populations of different species living and interacting in a particular area?",
+        options: ["Population", "Ecosystem", "Community", "Biosphere"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "Which trophic level contains organisms that both produce their own food and obtain energy by consuming other organisms?",
+        options: ["Primary producers", "Primary consumers", "Secondary consumers", "Omnivores"],
+        answer: 3,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the relationship between two species called when one benefits and the other is neither helped nor harmed?",
+        options: ["Mutualism", "Commensalism", "Parasitism", "Competition"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of the following is a density-dependent limiting factor for population growth?",
+        options: ["Temperature", "Natural disasters", "Competition for resources", "Seasonal changes"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "In a predator-prey relationship, what typically happens to the predator population when the prey population decreases?",
+        options: ["The predator population increases", "The predator population decreases", "The predator population remains stable", "The predator population becomes extinct"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the process by which materials cycle between the living and nonliving components of an ecosystem?",
+        options: ["Energy flow", "Food web dynamics", "Biogeochemical cycling", "Ecological succession"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "In an ecological pyramid of energy, approximately what percentage of energy is transferred from one trophic level to the next?",
+        options: ["10%", "50%", "75%", "90%"],
+        answer: 0,
+        difficulty: "medium"
+      }
+    ],
+    'physiology': [
+      {
+        question: "Which part of the brain is primarily responsible for maintaining balance and coordinating movement?",
+        options: ["Cerebrum", "Cerebellum", "Medulla oblongata", "Thalamus"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which hormone regulates blood glucose levels by promoting the uptake of glucose by cells?",
+        options: ["Glucagon", "Insulin", "Cortisol", "Thyroxine"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which blood vessels carry blood away from the heart?",
+        options: ["Arteries", "Veins", "Capillaries", "Venules"],
+        answer: 0,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the function of nephrons in the kidneys?",
+        options: ["To produce bile", "To filter blood and form urine", "To regulate hormone levels", "To store waste products"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of the following is NOT a function of the liver?",
+        options: ["Detoxification of blood", "Production of bile", "Storage of glycogen", "Production of insulin"],
+        answer: 3,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the role of alveoli in the respiratory system?",
+        options: ["To warm and humidify incoming air", "To filter out dust and particles", "To exchange gases between air and blood", "To produce mucus"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "Which chamber of the heart pumps oxygenated blood to the body?",
+        options: ["Right atrium", "Left atrium", "Right ventricle", "Left ventricle"],
+        answer: 3,
+        difficulty: "medium"
+      }
+    ],
+    'botany': [
+      {
+        question: "Which plant tissue is responsible for transporting water and minerals from roots to leaves?",
+        options: ["Phloem", "Xylem", "Cambium", "Epidermis"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the main function of stomata in plants?",
+        options: ["Absorb water from soil", "Regulate gas exchange", "Store food", "Support the plant"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which plant hormone promotes cell elongation and stem growth?",
+        options: ["Auxin", "Cytokinin", "Abscisic acid", "Ethylene"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the primary function of chlorophyll in plants?",
+        options: ["To absorb carbon dioxide", "To absorb light energy for photosynthesis", "To regulate water loss", "To store nutrients"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which of these is NOT a part of a flower's reproductive structure?",
+        options: ["Stamen", "Pistil", "Petiole", "Ovary"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the process by which plants lose water vapor through their stomata?",
+        options: ["Photosynthesis", "Respiration", "Transpiration", "Guttation"],
+        answer: 2,
+        difficulty: "easy"
+      }
+    ]
+  },
+  chemistry: {
+    'atomic-structure': [
+      {
+        question: "What is the charge of an electron?",
+        options: ["Positive", "Negative", "Neutral", "It varies"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which subatomic particle is found in the nucleus of an atom and has no charge?",
+        options: ["Proton", "Electron", "Neutron", "Positron"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the approximate mass of a proton relative to an electron?",
+        options: ["Same mass", "100 times greater", "1,000 times greater", "1,840 times greater"],
+        answer: 3,
+        difficulty: "medium"
+      },
+      {
+        question: "Which scientist proposed the planetary model of the atom with electrons orbiting around a nucleus?",
+        options: ["J.J. Thomson", "Ernest Rutherford", "Niels Bohr", "John Dalton"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "What quantum number describes the shape of an orbital?",
+        options: ["Principal quantum number (n)", "Angular momentum quantum number (l)", "Magnetic quantum number (ml)", "Spin quantum number (ms)"],
+        answer: 1,
+        difficulty: "hard"
+      },
+      {
+        question: "What is the maximum number of electrons that can occupy the 3p subshell?",
+        options: ["2", "6", "10", "14"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of the following electronic configurations represents an excited state of carbon?",
+        options: ["1s² 2s² 2p²", "1s² 2s¹ 2p³", "1s² 2s² 2p¹ 3s¹", "1s² 2s² 2p⁴"],
+        answer: 2,
+        difficulty: "hard"
+      }
+    ],
+    'periodic-table': [
+      {
+        question: "Who is credited with developing the modern periodic table?",
+        options: ["John Dalton", "Ernest Rutherford", "Dmitri Mendeleev", "Henry Moseley"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "What property is used to arrange elements in the modern periodic table?",
+        options: ["Atomic mass", "Atomic number", "Number of neutrons", "Number of electron shells"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which element has the highest electronegativity?",
+        options: ["Oxygen", "Chlorine", "Fluorine", "Nitrogen"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "As you move from left to right across a period, what generally happens to atomic radius?",
+        options: ["Increases", "Decreases", "Remains constant", "Fluctuates randomly"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which group of elements is known as the halogens?",
+        options: ["Group 1", "Group 2", "Group 16", "Group 17"],
+        answer: 3,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of these elements would be most likely to form a 2+ ion?",
+        options: ["Sodium", "Magnesium", "Aluminum", "Silicon"],
+        answer: 1,
+        difficulty: "medium"
+      }
+    ],
+    'chemical-bonding': [
+      {
+        question: "Which type of bond involves the sharing of electron pairs between atoms?",
+        options: ["Ionic bond", "Covalent bond", "Hydrogen bond", "Metallic bond"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the hybridization of carbon in methane (CH₄)?",
+        options: ["sp", "sp²", "sp³", "sp³d"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of the following molecules has a polar covalent bond?",
+        options: ["H₂", "Cl₂", "HCl", "O₂"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "What type of bonding would you expect between sodium and chlorine?",
+        options: ["Nonpolar covalent", "Polar covalent", "Ionic", "Metallic"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "Which of the following does NOT form hydrogen bonds?",
+        options: ["H₂O", "NH₃", "HF", "CH₄"],
+        answer: 3,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the bond angle in a water molecule?",
+        options: ["90°", "104.5°", "109.5°", "180°"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which molecular geometry is associated with sp³ hybridization?",
+        options: ["Linear", "Trigonal planar", "Tetrahedral", "Octahedral"],
+        answer: 2,
+        difficulty: "hard"
+      }
+    ],
+    'reactions': [
+      {
+        question: "What type of reaction is represented by: A + B → AB?",
+        options: ["Decomposition", "Single replacement", "Double replacement", "Synthesis"],
+        answer: 3,
+        difficulty: "easy"
+      },
+      {
+        question: "In the reaction 2H₂ + O₂ → 2H₂O, what is being oxidized?",
+        options: ["Hydrogen", "Oxygen", "Water", "None of the above"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "Which factor does NOT affect reaction rate?",
+        options: ["Temperature", "Concentration", "Catalyst", "Molar mass of products"],
+        answer: 3,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the net ionic equation for the reaction between hydrochloric acid and sodium hydroxide?",
+        options: ["Na⁺ + Cl⁻ → NaCl", "H⁺ + OH⁻ → H₂O", "HCl + NaOH → NaCl + H₂O", "No reaction occurs"],
+        answer: 1,
+        difficulty: "hard"
+      },
+      {
+        question: "What is an endothermic reaction?",
+        options: ["A reaction that releases heat to the surroundings", "A reaction that absorbs heat from the surroundings", "A reaction that neither absorbs nor releases heat", "A reaction that changes the temperature of the surroundings"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of the following is a redox reaction?",
+        options: ["NaOH + HCl → NaCl + H₂O", "H₂ + Cl₂ → 2HCl", "CaCO₃ → CaO + CO₂", "2NaCl → 2Na⁺ + 2Cl⁻"],
+        answer: 1,
+        difficulty: "medium"
+      }
+    ],
+    'acids-bases': [
+      {
+        question: "According to the Brønsted-Lowry definition, an acid is:",
+        options: ["A proton acceptor", "A proton donor", "An electron acceptor", "An electron donor"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "What is the pH of a neutral solution at 25°C?",
+        options: ["0", "1", "7", "14"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "Which of these is an amphoteric substance?",
+        options: ["HCl", "NaOH", "H₂O", "NaCl"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the pH of a 0.01 M solution of HCl?",
+        options: ["1", "2", "12", "13"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of the following will form a buffer solution when mixed in appropriate amounts?",
+        options: ["HCl and NaOH", "HCl and NaCl", "CH₃COOH and CH₃COONa", "HCl and KCl"],
+        answer: 2,
+        difficulty: "hard"
+      },
+      {
+        question: "What happens to the pH when a small amount of base is added to a buffer solution?",
+        options: ["It increases dramatically", "It increases slightly", "It decreases slightly", "It decreases dramatically"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which indicator would be most appropriate for a titration between a strong acid and a strong base?",
+        options: ["Methyl red (changes at pH 4.2-6.2)", "Phenolphthalein (changes at pH 8.2-10.0)", "Thymol blue (changes at pH 1.2-2.8)", "Any indicator would work equally well"],
+        answer: 1,
+        difficulty: "hard"
+      }
+    ],
+    'organic-chemistry': [
+      {
+        question: "What is the IUPAC name for the compound CH₃CH₂CH₂OH?",
+        options: ["Ethanol", "Propan-1-ol", "Propan-2-ol", "Methoxymethane"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Which functional group is characteristic of aldehydes?",
+        options: ["-OH", "-COOH", "-CHO", "-CO-"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "What type of reaction is represented by the conversion of an alkene to an alkane through the addition of hydrogen?",
+        options: ["Hydrogenation", "Hydration", "Dehydration", "Oxidation"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of the following compounds can undergo saponification?",
+        options: ["Alkanes", "Alkenes", "Esters", "Alkyl halides"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the product of the reaction between ethanoic acid and ethanol?",
+        options: ["Ethyl ethanoate", "Diethyl ether", "Ethane", "Ethylene"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "Which of the following compounds exhibits optical isomerism?",
+        options: ["2-methylpropane", "2-methylbutane", "2-butanol", "Butane"],
+        answer: 2,
+        difficulty: "hard"
+      },
+      {
+        question: "What is the main product when propene reacts with HBr?",
+        options: ["1-bromopropane", "2-bromopropane", "Propane", "1,2-dibromopropane"],
+        answer: 1,
+        difficulty: "hard"
+      }
+    ]
+  },
+  physics: {
+    'mechanics': [
+      {
+        question: "What is Newton's Second Law of Motion?",
+        options: ["An object at rest stays at rest unless acted upon by an external force", "Force equals mass times acceleration", "For every action, there is an equal and opposite reaction", "Energy can neither be created nor destroyed"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "A ball is thrown vertically upward with an initial velocity of 20 m/s. Neglecting air resistance, what is its velocity after 1 second? (g = 10 m/s²)",
+        options: ["10 m/s upward", "10 m/s downward", "30 m/s upward", "30 m/s downward"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the SI unit of work?",
+        options: ["Newton", "Joule", "Watt", "Pascal"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "According to the law of conservation of momentum, what remains constant in an isolated system?",
+        options: ["Kinetic energy", "Potential energy", "Total momentum", "Force"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "If the distance between two masses is doubled, the gravitational force between them:",
+        options: ["Doubles", "Halves", "Is reduced to one-fourth", "Remains the same"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "A satellite orbits Earth in a circular path. Which of the following statements is true?",
+        options: ["The satellite has no acceleration", "The satellite's speed is constantly increasing", "The satellite experiences a centripetal acceleration", "The satellite will eventually spiral outward"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "A 2 kg mass moving at 3 m/s collides elastically with a stationary 1 kg mass. What is the velocity of the 2 kg mass after the collision?",
+        options: ["1 m/s", "2 m/s", "3 m/s", "4 m/s"],
+        answer: 0,
+        difficulty: "hard"
+      }
+    ],
+    'electricity': [
+      {
+        question: "Ohm's Law relates which of the following quantities?",
+        options: ["Current, resistance, and power", "Voltage, resistance, and current", "Voltage, current, and time", "Power, energy, and time"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "What happens to the current in a circuit if the voltage is doubled and the resistance remains constant?",
+        options: ["It remains the same", "It doubles", "It halves", "It quadruples"],
+        answer: 1,
+        difficulty: "medium"
+      },
+      {
+        question: "Two resistors of 6Ω and 3Ω are connected in parallel. What is their equivalent resistance?",
+        options: ["9Ω", "4.5Ω", "3Ω", "2Ω"],
+        answer: 3,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the unit of electrical capacitance?",
+        options: ["Ohm", "Farad", "Henry", "Tesla"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which material has the lowest electrical resistance?",
+        options: ["Wood", "Glass", "Copper", "Rubber"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "In an RLC circuit at resonance, which statement is true?",
+        options: ["The impedance is at its maximum", "The current is at its minimum", "The inductive reactance equals the capacitive reactance", "The voltage and current are 90° out of phase"],
+        answer: 2,
+        difficulty: "hard"
+      },
+      {
+        question: "What is the power dissipated by a 10Ω resistor when a current of 2A flows through it?",
+        options: ["5W", "20W", "40W", "100W"],
+        answer: 2,
+        difficulty: "medium"
+      }
+    ],
+    'magnetism': [
+      {
+        question: "What is the SI unit of magnetic flux density?",
+        options: ["Weber", "Tesla", "Henry", "Gauss"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "Which of the following materials is ferromagnetic?",
+        options: ["Copper", "Aluminum", "Iron", "Mercury"],
+        answer: 2,
+        difficulty: "easy"
+      },
+      {
+        question: "What phenomenon is responsible for the generation of EMF in a conductor moving through a magnetic field?",
+        options: ["Electromagnetic induction", "Magnetic resonance", "Electrostatic attraction", "Diamagnetism"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "According to Lenz's law, the direction of an induced current is such that it:",
+        options: ["Always flows clockwise", "Always flows counterclockwise", "Opposes the change that produced it", "Amplifies the change that produced it"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "A charged particle moves perpendicular to a uniform magnetic field. What is the path of the particle?",
+        options: ["Straight line", "Parabola", "Circle", "Spiral"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "What happens to the magnetic field inside a solenoid if the current is doubled?",
+        options: ["It remains the same", "It doubles", "It halves", "It becomes zero"],
+        answer: 1,
+        difficulty: "medium"
+      }
+    ],
+    'thermodynamics': [
+      {
+        question: "What is the first law of thermodynamics?",
+        options: ["Heat flows from hot to cold", "Energy can be converted but not created or destroyed", "Entropy of an isolated system tends to increase", "It is impossible to reach absolute zero"],
+        answer: 1,
+        difficulty: "easy"
+      },
+      {
+        question: "What happens to the pressure of a gas if its volume decreases and temperature remains constant?",
+        options: ["Pressure increases", "Pressure decreases", "Pressure stays the same", "Pressure approaches zero"],
+        answer: 0,
+        difficulty: "medium"
+      },
+      {
+        question: "Which process occurs at constant temperature?",
+        options: ["Isobaric", "Isochoric", "Isothermal", "Adiabatic"],
+        answer: 2,
+        difficulty: "medium"
+      },
+      {
+        question: "What is the efficiency of a Carnot engine operating between temperatures of 400K and 300K?",
+        options: ["10%", "25%", "75%", "90%"],
+        answer: 1,
+        difficulty: "hard"
+      },
+      {
+        question: "What is the specific heat capacity of water?",
+        options: ["1 J/kg·K", "4.18 J/kg·K", "4.18 kJ/kg·K", "418 J/kg·K"],
+        answer: 2,
+        difficulty: "medium"
+      },
+    ]
+  }
+};
+        
+
 // Sample questions (just for demo)
 const sampleQuestions = [
     {
@@ -601,6 +1298,114 @@ function saveData() {
         localStorage.removeItem('sciOlyCurrentUser');
     }
 }
+
+// Add this function somewhere in your main.js
+function handleScrollAnimations() {
+  const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+          if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              // Optional: Unobserve after animation starts to save resources
+              // observer.unobserve(entry.target);
+          }
+          // Optional: Remove class if element scrolls out of view
+          // else {
+          //     entry.target.classList.remove('is-visible');
+          // }
+      });
+  }, {
+      threshold: 0.1 // Trigger when 10% of the element is visible
+  });
+
+  const targets = document.querySelectorAll('.animate-on-scroll');
+  targets.forEach(target => {
+      observer.observe(target);
+  });
+}
+
+// Call this function when the DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  // ... (your existing initThemeToggle, loadStoredData, updateAuthUI calls) ...
+  initThemeToggle();
+  loadStoredData();
+  updateAuthUI(); // Make sure this runs
+  handleScrollAnimations(); // Add this call
+
+  // Add config button to tests section only if it exists on the current page
+  const testsSectionHeader = document.querySelector('.tests-section .dashboard-header');
+  if (testsSectionHeader && !testsSectionHeader.querySelector('.btn-primary[onclick="initTestConfig()"]')) {
+       addConfigButtonToTestsSection();
+  }
+  // Add custom test button to home page only if it exists
+  const homeSubjectsGrid = document.querySelector('.home-section .subjects-grid');
+  if (homeSubjectsGrid && !document.querySelector('.btn-primary[onclick="initTestConfig()"]')) {
+      addCustomTestButton();
+  }
+
+  // Initialize dashboard functionality only if the dashboard section exists
+  if (document.getElementById('dashboardSection')) {
+      initializeDashboard(); // If you have a dedicated dashboard init function
+  }
+
+   // Initialize topic options only if the config modal exists
+   if (document.getElementById('testConfigModal')) {
+      updateTopicOptions();
+      const testConfigForm = document.getElementById('testConfigForm');
+      if (testConfigForm) {
+          testConfigForm.addEventListener('submit', handleTestConfigSubmit);
+      }
+  }
+
+  // ... other initializations ...
+});
+
+// Ensure functions like addConfigButtonToTestsSection, addCustomTestButton,
+// updateTopicOptions, handleTestConfigSubmit, initializeDashboard are defined
+// (They seem to be in the provided main.js content)
+
+// Make sure goBack() correctly handles navigating from tests-section
+function goBack() {
+  // Find the main content area specific to the current page (index or practice)
+  const activeHomePageSection = document.querySelector('section.hero') || document.querySelector('section.home-section'); // Adjust selector if needed
+  const testsSection = document.querySelector('.tests-section');
+
+  if (testsSection) testsSection.style.display = 'none';
+  if (activeHomePageSection) activeHomePageSection.style.display = 'block'; // Or 'flex' depending on its style
+
+  // You might need to hide other sections as well
+   const testTakingSection = document.querySelector('.test-taking-section');
+   const resultsSection = document.querySelector('.test-results-section');
+   if(testTakingSection) testTakingSection.style.display = 'none';
+   if(resultsSection) resultsSection.style.display = 'none';
+}
+
+// Adjust showTestsSection to hide the correct initial sections
+function showTestsSection(subject) { // Modified to accept subject, though might not be needed if called from index
+  const homeSection = document.querySelector('.animated-hero'); // Target new hero section
+  const featuresSection = document.querySelector('.features-section');
+  const quickAccessSection = document.querySelector('.quick-access-section');
+  const testsSection = document.querySelector('.tests-section');
+
+  if (homeSection) homeSection.style.display = 'none';
+  if (featuresSection) featuresSection.style.display = 'none';
+  if (quickAccessSection) quickAccessSection.style.display = 'none';
+  if (testsSection) testsSection.style.display = 'block';
+
+  // If called with a subject (like from practice.html), load tests
+  // Otherwise, it might just show the section header and custom button
+  if(subject) {
+      showTestList(subject); // Assuming showTestList populates #testsList
+  } else {
+       // Optionally clear or pre-populate the testsList if needed when coming from index
+       const testsList = document.getElementById('testsList');
+       if(testsList) testsList.innerHTML = '<p>Select a subject or create a custom test.</p>'; // Example placeholder
+  }
+}
+
+// IMPORTANT: Review your existing main.js showSection function if you have one.
+// The updated HTML might need adjustments to how sections are shown/hidden.
+// The goBack and showTestsSection functions above are examples and might need
+// refinement based on your exact structure and desired flow.
 
 // Modal functions
 function openModal(modalId) {
@@ -1084,122 +1889,7 @@ const topicsBySubject = {
 
 // Question bank (expanded with more sample questions)
 // In a real app, this would come from a database
-const questionBank = {
-  biology: {
-    'cell-biology': [
-      {
-        question: "Which organelle is known as the 'powerhouse of the cell'?",
-        options: ["Nucleus", "Mitochondria", "Golgi apparatus", "Endoplasmic reticulum"],
-        answer: 1,
-        difficulty: "easy"
-      },
-      {
-        question: "What is the primary function of the cell membrane?",
-        options: ["To produce energy", "To control what enters and exits the cell", "To store genetic information", "To break down waste"],
-        answer: 1,
-        difficulty: "easy"
-      },
-      {
-        question: "Which of the following is NOT a component of the endomembrane system?",
-        options: ["Endoplasmic reticulum", "Golgi apparatus", "Mitochondria", "Lysosomes"],
-        answer: 2,
-        difficulty: "medium"
-      },
-      {
-        question: "What cellular structure is responsible for protein synthesis?",
-        options: ["Ribosomes", "Nucleolus", "Peroxisomes", "Centrioles"],
-        answer: 0,
-        difficulty: "medium"
-      },
-      {
-        question: "During which phase of mitosis do sister chromatids separate and move to opposite poles?",
-        options: ["Prophase", "Metaphase", "Anaphase", "Telophase"],
-        answer: 2,
-        difficulty: "hard"
-      }
-    ],
-    'genetics': [
-      {
-        question: "What are the nitrogenous bases found in DNA?",
-        options: ["Adenine, thymine, uracil, cytosine", "Adenine, thymine, guanine, cytosine", "Adenine, uracil, guanine, cytosine", "Uracil, thymine, guanine, cytosine"],
-        answer: 1,
-        difficulty: "easy"
-      },
-      {
-        question: "In a dihybrid cross between two heterozygous parents (AaBb × AaBb), what proportion of offspring would be expected to have the dominant phenotype for both traits?",
-        options: ["9/16", "3/16", "1/16", "12/16"],
-        answer: 0,
-        difficulty: "hard"
-      }
-    ],
-    // More biology categories and questions would go here
-  },
-  chemistry: {
-    'atomic-structure': [
-      {
-        question: "What is the charge of an electron?",
-        options: ["Positive", "Negative", "Neutral", "It varies"],
-        answer: 1,
-        difficulty: "easy"
-      },
-      {
-        question: "Which subatomic particle is found in the nucleus of an atom and has no charge?",
-        options: ["Proton", "Electron", "Neutron", "Positron"],
-        answer: 2,
-        difficulty: "easy"
-      }
-    ],
-    'chemical-bonding': [
-      {
-        question: "Which type of bond involves the sharing of electron pairs between atoms?",
-        options: ["Ionic bond", "Covalent bond", "Hydrogen bond", "Metallic bond"],
-        answer: 1,
-        difficulty: "easy"
-      },
-      {
-        question: "What is the hybridization of carbon in methane (CH₄)?",
-        options: ["sp", "sp²", "sp³", "sp³d"],
-        answer: 2,
-        difficulty: "medium"
-      }
-    ],
-    // More chemistry categories and questions would go here
-  },
-  physics: {
-    'mechanics': [
-      {
-        question: "What is Newton's Second Law of Motion?",
-        options: ["An object at rest stays at rest unless acted upon by an external force", "Force equals mass times acceleration", "For every action, there is an equal and opposite reaction", "Energy can neither be created nor destroyed"],
-        answer: 1,
-        difficulty: "easy"
-      },
-      {
-        question: "A ball is thrown vertically upward with an initial velocity of 20 m/s. Neglecting air resistance, what is its velocity after 1 second? (g = 10 m/s²)",
-        options: ["10 m/s upward", "10 m/s downward", "30 m/s upward", "30 m/s downward"],
-        answer: 0,
-        difficulty: "medium"
-      }
-    ],
-    // More physics categories and questions would go here
-  },
-  'earth-science': {
-    'geology': [
-      {
-        question: "Which type of rock forms from the cooling of magma or lava?",
-        options: ["Sedimentary", "Metamorphic", "Igneous", "Composite"],
-        answer: 2,
-        difficulty: "easy"
-      },
-      {
-        question: "What is the most abundant mineral in Earth's crust?",
-        options: ["Quartz", "Feldspar", "Mica", "Olivine"],
-        answer: 1,
-        difficulty: "medium"
-      }
-    ],
-    // More earth science categories and questions would go here
-  }
-};
+
 
 // Initialize test configuration
 function initTestConfig() {

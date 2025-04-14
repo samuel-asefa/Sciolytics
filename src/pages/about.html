@@ -14,6 +14,7 @@
 <body>
     <header>
         <div class="container header-content">
+            <img src="../../assets/blue-logo.png" style="max-height: 2rem;">
             <a href="../index.html" class="logo">Sciolytics</a>
             <nav class="nav-links">
                 <a href="../index.html">Home</a>
@@ -97,6 +98,124 @@
             </section>
         </div>
     </main>
+
+    <section class="main-title-section">
+        <h1>Master Science Olympiad Events</h1>
+        <p class="subtitle">
+            Stop wasting time searching for practice materials. Sciolytics provides a comprehensive,
+            organized platform carefully designed and crafted for Science Olympiad students - available to
+            everyone, for free.
+        </p>
+    </section>
+
+    <section class="features-grid-section">
+        <div class="features-grid-image">
+            <div class="feature-card-image">
+                <div class="card-icon-image"><span class="icon-placeholder">📄</span></div>
+                <h3>Comprehensive Coverage</h3>
+                <p>Over 3000 questions across 24 Division C events, with Division B support coming soon.</p>
+            </div>
+            <div class="feature-card-image">
+                <div class="card-icon-image"><span class="icon-placeholder">🤖</span></div>
+                <h3>AI Explanations</h3>
+                <p>Get instant, detailed explanations for every question using our Gemini 2.0 system.</p>
+            </div>
+            <div class="feature-card-image">
+                <div class="card-icon-image"><span class="icon-placeholder">📊</span></div>
+                <h3>Smart Features</h3>
+                <p>Track progress, share tests, and contest answers - all in one platform.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="categories-grid-section">
+         <div class="categories-grid-image">
+             <div class="category-card-image">
+                 <h4>Life Science</h4>
+                 <ul>
+                     <li><a href="pages/resources/anatomy.html">Anatomy & Physiology</a></li>
+                     <li><a href="pages/resources/disease-detectives.html">Disease Detectives</a></li>
+                     <li>Microbe Mission (Example)</li>
+                 </ul>
+             </div>
+             <div class="category-card-image">
+                 <h4>Earth & Space</h4>
+                 <ul>
+                     <li><a href="pages/resources/astronomy.html">Astronomy</a></li>
+                     <li><a href="pages/resources/dynamic-planet.html">Dynamic Planet</a></li>
+                     <li><a href="pages/resources/rocks-and-minerals.html">Rocks and Minerals</a></li>
+                     <li>Fossils (Example)</li>
+                 </ul>
+             </div>
+             <div class="category-card-image">
+                 <h4>Physical Science</h4>
+                 <ul>
+                     <li><a href="pages/resources/chemistry-lab.html">Chemistry Lab</a></li>
+                      <li><a href="pages/resources/circuit-lab.html">Circuit Lab</a></li>
+                     <li>Wind Power (Example)</li>
+                     <li>Optics (Example)</li>
+                 </ul>
+             </div>
+             <div class="category-card-image">
+                 <h4>New and FRQ-based</h4>
+                 <ul>
+                     <li><a href="pages/resources/codebusters.html">Codebusters</a></li>
+                     <li><a href="pages/resources/entomology.html">Entomology</a></li>
+                     <li>Geologic Mapping (Example)</li>
+                 </ul>
+             </div>
+         </div>
+     </section>
+
+    <section class="announcement-banner-section">
+        <div class="announcement-banner">
+            <div class="banner-text">
+                <h3>Division B Support Coming Soon!</h3>
+                <p>We're expanding our platform to support middle school Science Olympiad events. Stay tuned for updates!</p>
+            </div>
+            <div class="banner-icon">
+                <span class="icon-placeholder rocket">🚀</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="tests-section" style="display: none;">
+        <div class="dashboard-header">
+            <h2>Available Tests</h2>
+            <button class="btn btn-outline" onclick="goBack()">Back</button>
+            <button class="btn btn-primary" onclick="initTestConfig()">Create Custom Test</button>
+        </div>
+        <div id="testsList" class="subjects-grid"></div>
+    </section>
+    <section class="test-taking-section" style="display: none;">
+        <div class="dashboard-header">
+            <h2 id="testTitle">Test Title</h2>
+            <div class="test-controls">
+                <span id="timer" class="test-timer">Time: 00:00</span>
+                <button class="btn btn-primary" onclick="submitTest()">Submit Test</button>
+            </div>
+        </div>
+        <div class="test-container" id="testContainer"></div>
+    </section>
+    <section class="test-results-section" style="display: none;">
+         <div class="dashboard-header">
+             <h2>Test Results</h2>
+             <button class="btn btn-outline" onclick="showTestsSection()">Back to Tests</button>
+         </div>
+         <div class="test-container">
+             <h3 id="resultTitle">Test Name</h3>
+             <div id="resultSummary" class="result-summary">
+                 <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-content"><span class="stat-value" id="scoreValue">0/0</span><span class="stat-label">Score</span></div></div>
+                 <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-content"><span class="stat-value" id="percentageValue">0%</span><span class="stat-label">Percentage</span></div></div>
+                 <div class="stat-card"><div class="stat-icon">⏱️</div><div class="stat-content"><span class="stat-value" id="timeTaken">00:00</span><span class="stat-label">Time Taken</span></div></div>
+             </div>
+             <div id="resultDetails"></div>
+         </div>
+     </section>
+      <section class="dashboard" id="dashboardSection" style="display: none;">
+         <div class="dashboard-header"><h2>Your Dashboard</h2></div>
+         <div id="dashboardContentPlaceholder"></div>
+      </section>
 
     <div class="modal" id="loginModal">
         <div class="modal-content">
