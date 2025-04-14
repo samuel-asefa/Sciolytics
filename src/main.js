@@ -524,6 +524,747 @@ const testData = {
     ]
 };
 
+// Sample questions (just for demo)
+const sampleQuestions = [
+    {
+        id: 1,
+        question: "Which organelle is known as the 'powerhouse of the cell'?",
+        options: ["Nucleus", "Mitochondria", "Golgi apparatus", "Endoplasmic reticulum"],
+        answer: 1
+    },
+    {
+        id: 2,
+        question: "What is the primary function of chloroplasts in plant cells?",
+        options: ["Cell division", "Protein synthesis", "Photosynthesis", "Energy storage"],
+        answer: 2
+    },
+    {
+        id: 3,
+        question: "Which of the following is NOT a component of the cell membrane?",
+        options: ["Phospholipids", "Proteins", "Carbohydrates", "DNA"],
+        answer: 3
+    },
+    {
+        id: 4,
+        question: "What process is responsible for the movement of substances from an area of high concentration to an area of low concentration?",
+        options: ["Active transport", "Facilitated diffusion", "Osmosis", "Diffusion"],
+        answer: 3
+    },
+    {
+        id: 5,
+        question: "Which of the following cell types does NOT contain a nucleus?",
+        options: ["Mature red blood cells", "Nerve cells", "Muscle cells", "Skin cells"],
+        answer: 0
+    }
+];
+
+// User data storage (would be handled by a database in a real app)
+let currentUser = null;
+let users = [];
+let testResults = [];
+let currentTest = null;
+let timer = null;
+let seconds = 0;
+
+// DOM elements
+const homeSection = document.querySelector('.home-section');
+const testsSection = document.querySelector('.tests-section');
+const testTakingSection = document.querySelector('.test-taking-section');
+const resultsSection = document.querySelector('.test-results-section');
+const dashboardSection = document.getElementById('dashboardSection');
+const authButtons = document.getElementById('authButtons');
+const userArea = document.getElementById('userArea');
+const welcomeUser = document.getElementById('welcomeUser');
+
+// Check for local storage data
+function loadStoredData() {
+    const storedUsers = localStorage.getItem('sciOlyUsers');
+    const storedResults = localStorage.getItem('sciOlyResults');
+    const storedCurrentUser = localStorage.getItem('sciOlyCurrentUser');
+    
+    if (storedUsers) users = JSON.parse(storedUsers);
+    if (storedResults) testResults = JSON.parse(storedResults);
+    if (storedCurrentUser) {
+        currentUser = JSON.parse(storedCurrentUser);
+        updateAuthUI();
+        updateDashboard();
+    }
+}
+
+// Save data to local storage
+function saveData() {
+    localStorage.setItem('sciOlyUsers', JSON.stringify(users));
+    localStorage.setItem('sciOlyResults', JSON.stringify(testResults));
+    if (currentUser) {
+        localStorage.setItem('sciOlyCurrentUser', JSON.stringify(currentUser));
+    } else {
+        localStorage.removeItem('sciOlyCurrentUser');
+    }
+}
+
+// Add this function somewhere in your main.js
+function handleScrollAnimations() {
+  const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+          if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              // Optional: Unobserve after animation starts to save resources
+              // observer.unobserve(entry.target);
+          }
+          // Optional: Remove class if element scrolls out of view
+          // else {
+          //     entry.target.classList.remove('is-visible');
+          // }
+      });
+  }, {
+      threshold: 0.1 // Trigger when 10% of the element is visible
+  });
+
+  const targets = document.querySelectorAll('.animate-on-scroll');
+  targets.forEach(target => {
+      observer.observe(target);
+  });
+}
+
+// Call this function when the DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  // ... (your existing initThemeToggle, loadStoredData, updateAuthUI calls) ...
+  initThemeToggle();
+  loadStoredData();
+  updateAuthUI(); // Make sure this runs
+  handleScrollAnimations(); // Add this call
+
+  // Add config button to tests section only if it exists on the current page
+  const testsSectionHeader = document.querySelector('.tests-section .dashboard-header');
+  if (testsSectionHeader && !testsSectionHeader.querySelector('.btn-primary[onclick="initTestConfig()"]')) {
+       addConfigButtonToTestsSection();
+  }
+  // Add custom test button to home page only if it exists
+  const homeSubjectsGrid = document.querySelector('.home-section .subjects-grid');
+  if (homeSubjectsGrid && !document.querySelector('.btn-primary[onclick="initTestConfig()"]')) {
+      addCustomTestButton();
+  }
+
+  // Initialize dashboard functionality only if the dashboard section exists
+  if (document.getElementById('dashboardSection')) {
+      initializeDashboard(); // If you have a dedicated dashboard init function
+  }
+
+   // Initialize topic options only if the config modal exists
+   if (document.getElementById('testConfigModal')) {
+      updateTopicOptions();
+      const testConfigForm = document.getElementById('testConfigForm');
+      if (testConfigForm) {
+          testConfigForm.addEventListener('submit', handleTestConfigSubmit);
+      }
+  }
+
+  // ... other initializations ...
+});
+
+// Ensure functions like addConfigButtonToTestsSection, addCustomTestButton,
+// updateTopicOptions, handleTestConfigSubmit, initializeDashboard are defined
+// (They seem to be in the provided main.js content)
+
+// Make sure goBack() correctly handles navigating from tests-section
+function goBack() {
+  // Find the main content area specific to the current page (index or practice)
+  const activeHomePageSection = document.querySelector('section.hero') || document.querySelector('section.home-section'); // Adjust selector if needed
+  const testsSection = document.querySelector('.tests-section');
+
+  if (testsSection) testsSection.style.display = 'none';
+  if (activeHomePageSection) activeHomePageSection.style.display = 'block'; // Or 'flex' depending on its style
+
+  // You might need to hide other sections as well
+   const testTakingSection = document.querySelector('.test-taking-section');
+   const resultsSection = document.querySelector('.test-results-section');
+   if(testTakingSection) testTakingSection.style.display = 'none';
+   if(resultsSection) resultsSection.style.display = 'none';
+}
+
+// Adjust showTestsSection to hide the correct initial sections
+function showTestsSection(subject) { // Modified to accept subject, though might not be needed if called from index
+  const homeSection = document.querySelector('.animated-hero'); // Target new hero section
+  const featuresSection = document.querySelector('.features-section');
+  const quickAccessSection = document.querySelector('.quick-access-section');
+  const testsSection = document.querySelector('.tests-section');
+
+  if (homeSection) homeSection.style.display = 'none';
+  if (featuresSection) featuresSection.style.display = 'none';
+  if (quickAccessSection) quickAccessSection.style.display = 'none';
+  if (testsSection) testsSection.style.display = 'block';
+
+  // If called with a subject (like from practice.html), load tests
+  // Otherwise, it might just show the section header and custom button
+  if(subject) {
+      showTestList(subject); // Assuming showTestList populates #testsList
+  } else {
+       // Optionally clear or pre-populate the testsList if needed when coming from index
+       const testsList = document.getElementById('testsList');
+       if(testsList) testsList.innerHTML = '<p>Select a subject or create a custom test.</p>'; // Example placeholder
+  }
+}
+
+// IMPORTANT: Review your existing main.js showSection function if you have one.
+// The updated HTML might need adjustments to how sections are shown/hidden.
+// The goBack and showTestsSection functions above are examples and might need
+// refinement based on your exact structure and desired flow.
+
+// Modal functions
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function switchModal(closeId, openId) {
+    closeModal(closeId);
+    openModal(openId);
+}
+
+// Section visibility functions
+function showSection(section) {
+    homeSection.style.display = 'none';
+    testsSection.style.display = 'none';
+    testTakingSection.style.display = 'none';
+    resultsSection.style.display = 'none';
+    dashboardSection.style.display = 'none';
+    
+    if (section === 'home') homeSection.style.display = 'block';
+    else if (section === 'tests') testsSection.style.display = 'block';
+    else if (section === 'taking') testTakingSection.style.display = 'block';
+    else if (section === 'results') resultsSection.style.display = 'block';
+    else if (section === 'dashboard') dashboardSection.style.display = 'block';
+}
+
+function showTestsSection() {
+    showSection('tests');
+}
+
+function goBack() {
+    showSection('home');
+}
+
+// Test list functions
+function showTestList(subject) {
+    const testsList = document.getElementById('testsList');
+    testsList.innerHTML = '';
+    
+    const subjectTests = testData[subject] || [];
+    
+    if (subjectTests.length === 0) {
+        testsList.innerHTML = '<p>No tests available for this subject yet.</p>';
+        return;
+    }
+    
+    subjectTests.forEach(test => {
+        const testCard = document.createElement('div');
+        testCard.className = 'card';
+        testCard.innerHTML = `
+            <h3>${test.title}</h3>
+            <p>${test.questions} questions | ${test.time} minutes</p>
+            <button class="btn btn-outline" onclick="startTest('${test.id}', '${test.title}')">Start Test</button>
+        `;
+        testsList.appendChild(testCard);
+    });
+    
+    showSection('tests');
+}
+
+// Test taking functions
+// Modified startTest function to use questions from the questionBank
+function startTest(testId, testTitle) {
+  // Check if user is logged in
+  if (!currentUser && testId !== 'demo') {
+      alert("Please log in to take this test and save your results.");
+      openModal('loginModal');
+      return;
+  }
+  
+  document.getElementById('testTitle').textContent = testTitle;
+  
+  const testContainer = document.getElementById('testContainer');
+  testContainer.innerHTML = '';
+  
+  // Determine subject from testId
+  let subject = '';
+  if (testId.startsWith('bio')) subject = 'biology';
+  else if (testId.startsWith('chem')) subject = 'chemistry';
+  else if (testId.startsWith('phys')) subject = 'physics';
+  else if (testId.startsWith('earth')) subject = 'earth-science';
+  else subject = 'biology'; // Default to biology if no match
+  
+  // Get appropriate questions based on testId
+  let selectedQuestions = [];
+  
+  // For specific tests, select questions from the appropriate topic
+  if (subject === 'biology') {
+      if (testId === 'bio1') { // Cell Biology Basics
+          selectedQuestions = questionBank.biology['cell-biology'] || [];
+      } else if (testId === 'bio2') { // Genetics and Heredity
+          selectedQuestions = questionBank.biology['genetics'] || [];
+      } else if (testId === 'bio3') { // Ecology and Ecosystems
+          selectedQuestions = questionBank.biology['ecology'] || [];
+      }
+  } else if (subject === 'chemistry') {
+      if (testId === 'chem1') { // Atomic Structure
+          selectedQuestions = questionBank.chemistry['atomic-structure'] || [];
+      } else if (testId === 'chem2') { // Chemical Bonding
+          selectedQuestions = questionBank.chemistry['chemical-bonding'] || [];
+      } else if (testId === 'chem3') { // Acids and Bases
+          selectedQuestions = questionBank.chemistry['acids-bases'] || [];
+      }
+  } else if (subject === 'physics') {
+      if (testId === 'phys1') { // Mechanics
+          selectedQuestions = questionBank.physics['mechanics'] || [];
+      } else if (testId === 'phys2') { // Electricity and Magnetism
+          selectedQuestions = questionBank.physics['electricity'].concat(questionBank.physics['magnetism']) || [];
+      } else if (testId === 'phys3') { // Thermodynamics
+          selectedQuestions = questionBank.physics['thermodynamics'] || [];
+      }
+  }
+  
+  // If no specific questions found or for demo, fall back to sample questions
+  if (selectedQuestions.length === 0 || testId === 'demo') {
+      selectedQuestions = sampleQuestions;
+  }
+  
+  // Limit number of questions if needed
+  // Find the test definition to get question count
+  let questionCount = 20; // Default
+  for (const subj in testData) {
+      const tests = testData[subj];
+      const test = tests.find(t => t.id === testId);
+      if (test) {
+          questionCount = test.questions;
+          break;
+      }
+  }
+  
+  // If we have more questions than needed, select randomly
+  if (selectedQuestions.length > questionCount) {
+      // Shuffle and select first questionCount
+      selectedQuestions = shuffleArray(selectedQuestions).slice(0, questionCount);
+  }
+  
+  // Set current test with selected questions
+  currentTest = {
+      id: testId,
+      title: testTitle,
+      questions: selectedQuestions,
+      startTime: new Date()
+  };
+  
+  // Render questions
+  selectedQuestions.forEach((q, index) => {
+      const questionDiv = document.createElement('div');
+      questionDiv.className = 'question';
+      questionDiv.innerHTML = `
+          <h3>Question ${index + 1}: ${q.question}</h3>
+          <div class="options">
+              ${q.options.map((option, i) => `
+                  <div class="option" data-question="${q.id || index}" data-option="${i}" onclick="selectOption(this)">
+                      <input type="radio" id="q${q.id || index}o${i}" name="q${q.id || index}">
+                      <label for="q${q.id || index}o${i}">${option}</label>
+                  </div>
+              `).join('')}
+          </div>
+      `;
+      testContainer.appendChild(questionDiv);
+  });
+  
+  // Start timer
+  startTimer();
+  
+  showSection('taking');
+}
+
+// Helper function to shuffle array (Fisher-Yates algorithm)
+function shuffleArray(array) {
+  const arr = [...array]; // Create a copy to avoid modifying original
+  for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+  }
+  return arr;
+}
+
+function selectOption(optionElement) {
+    // Clear other selections for this question
+    const questionId = optionElement.dataset.question;
+    const options = document.querySelectorAll(`.option[data-question="${questionId}"]`);
+    options.forEach(opt => {
+        opt.classList.remove('selected');
+        opt.querySelector('input').checked = false;
+    });
+    
+    // Select this option
+    optionElement.classList.add('selected');
+    optionElement.querySelector('input').checked = true;
+}
+
+function startTimer() {
+    seconds = 0;
+    clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+    seconds++;
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    document.getElementById('timer').textContent = `Time: ${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function stopTimer() {
+    clearInterval(timer);
+}
+
+function submitTest() {
+    stopTimer();
+    
+    // Calculate score
+    let score = 0;
+    const results = [];
+    
+    currentTest.questions.forEach(question => {
+        const selectedOption = document.querySelector(`.option.selected[data-question="${question.id}"]`);
+        const userAnswer = selectedOption ? parseInt(selectedOption.dataset.option) : -1;
+        
+        const isCorrect = (userAnswer === question.answer);
+        if (isCorrect) score++;
+        
+        results.push({
+            question: question.question,
+            userAnswer: userAnswer,
+            correctAnswer: question.answer,
+            isCorrect: isCorrect,
+            explanation: "Explanation would go here in a real app."
+        });
+    });
+    
+    // Calculate time taken
+    const endTime = new Date();
+    const timeTaken = Math.floor((endTime - currentTest.startTime) / 1000);
+    
+    // Save result if logged in
+    if (currentUser) {
+        const result = {
+            id: Date.now().toString(),
+            userId: currentUser.id,
+            testId: currentTest.id,
+            testTitle: currentTest.title,
+            score: score,
+            totalQuestions: currentTest.questions.length,
+            percentage: Math.round((score / currentTest.questions.length) * 100),
+            timeTaken: timeTaken,
+            date: new Date().toISOString(),
+            details: results
+        };
+        
+        testResults.push(result);
+        saveData();
+        updateDashboard();
+    }
+    
+    // Show results
+    showResults(score, currentTest.questions.length, timeTaken, results);
+}
+
+function showResults(score, total, timeTaken, details) {
+    document.getElementById('resultTitle').textContent = currentTest.title;
+    document.getElementById('scoreValue').textContent = `${score}/${total}`;
+    document.getElementById('percentageValue').textContent = `${Math.round((score / total) * 100)}%`;
+    
+    const minutes = Math.floor(timeTaken / 60);
+    const seconds = timeTaken % 60;
+    document.getElementById('timeTaken').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    const resultDetails = document.getElementById('resultDetails');
+    resultDetails.innerHTML = '<h3>Question Details</h3>';
+    
+    details.forEach((detail, index) => {
+        const detailDiv = document.createElement('div');
+        detailDiv.className = `question ${detail.isCorrect ? 'correct' : 'incorrect'}`;
+        detailDiv.innerHTML = `
+            <h4>Question ${index + 1}: ${detail.question}</h4>
+            <p>Your answer: ${detail.userAnswer >= 0 ? currentTest.questions[index].options[detail.userAnswer] : 'Not answered'}</p>
+            <p>Correct answer: ${currentTest.questions[index].options[detail.correctAnswer]}</p>
+            <p style="color: ${detail.isCorrect ? 'green' : 'red'}">
+                ${detail.isCorrect ? '✓ Correct' : '✗ Incorrect'}
+            </p>
+        `;
+        resultDetails.appendChild(detailDiv);
+    });
+    
+    showSection('results');
+}
+
+// Authentication functions
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+        currentUser = user;
+        updateAuthUI();
+        saveData();
+        closeModal('loginModal');
+        updateDashboard();
+        alert("Login successful!");
+    } else {
+        alert("Invalid email or password.");
+    }
+});
+
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (password !== confirmPassword) {
+        alert("Passwords don't match!");
+        return;
+    }
+    
+    if (users.some(u => u.email === email)) {
+        alert("Email already in use!");
+        return;
+    }
+    
+    const newUser = {
+        id: Date.now().toString(),
+        name,
+        email,
+        password // In a real app, this would be hashed
+    };
+    
+    users.push(newUser);
+    currentUser = newUser;
+    updateAuthUI();
+    saveData();
+    closeModal('registerModal');
+    alert("Registration successful!");
+});
+
+// Continuing the JavaScript code from before:
+
+function updateAuthUI() {
+if (currentUser) {
+authButtons.style.display = 'none';
+userArea.style.display = 'flex';
+welcomeUser.textContent = `Welcome, ${currentUser.name}!`;
+
+// Show dashboard button in navbar if not already there
+const navLinks = document.querySelector('.nav-links');
+if (!document.getElementById('dashboardLink')) {
+    const dashLink = document.createElement('a');
+    dashLink.id = 'dashboardLink';
+    dashLink.href = '#';
+    dashLink.textContent = 'Dashboard';
+    dashLink.addEventListener('click', function() {
+        showSection('dashboard');
+    });
+    navLinks.appendChild(dashLink);
+}
+} else {
+authButtons.style.display = 'flex';
+userArea.style.display = 'none';
+
+// Remove dashboard link if it exists
+const dashLink = document.getElementById('dashboardLink');
+if (dashLink) dashLink.remove();
+}
+}
+
+function logout() {
+currentUser = null;
+updateAuthUI();
+localStorage.removeItem('sciOlyCurrentUser');
+showSection('home');
+}
+
+// Dashboard functions
+function updateDashboard() {
+if (!currentUser) return;
+
+const userResults = testResults.filter(r => r.userId === currentUser.id);
+document.getElementById('testsCompleted').textContent = userResults.length;
+
+// Calculate average score
+if (userResults.length > 0) {
+const totalPercentage = userResults.reduce((sum, result) => sum + result.percentage, 0);
+const averagePercentage = Math.round(totalPercentage / userResults.length);
+document.getElementById('averageScore').textContent = `${averagePercentage}%`;
+} else {
+document.getElementById('averageScore').textContent = 'N/A';
+}
+
+// Populate results table
+const resultsTableBody = document.getElementById('resultsTableBody');
+resultsTableBody.innerHTML = '';
+
+// Sort by date (newest first)
+userResults.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+// Show only the 5 most recent results
+const recentResults = userResults.slice(0, 5);
+
+if (recentResults.length === 0) {
+const row = document.createElement('tr');
+row.innerHTML = '<td colspan="5">No test results yet. Take a test to see your results here.</td>';
+resultsTableBody.appendChild(row);
+} else {
+recentResults.forEach(result => {
+    const date = new Date(result.date);
+    const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${result.testTitle}</td>
+        <td>${getSubjectFromTestId(result.testId)}</td>
+        <td>${result.score}/${result.totalQuestions} (${result.percentage}%)</td>
+        <td>${formattedDate}</td>
+        <td>
+            <button class="btn btn-outline" onclick="viewResult('${result.id}')">View</button>
+        </td>
+    `;
+    resultsTableBody.appendChild(row);
+});
+}
+}
+
+function getSubjectFromTestId(testId) {
+// Extract subject from test ID (in a real app, this would be more robust)
+if (testId.startsWith('bio')) return 'Biology';
+if (testId.startsWith('chem')) return 'Chemistry';
+if (testId.startsWith('phys')) return 'Physics';
+if (testId.startsWith('earth')) return 'Earth Science';
+return 'General';
+}
+
+function viewResult(resultId) {
+const result = testResults.find(r => r.id === resultId);
+if (!result) return;
+
+// Set up the results display similar to submitTest()
+currentTest = {
+id: result.testId,
+title: result.testTitle,
+questions: sampleQuestions // In a real app, these would be stored with the result
+};
+
+showResults(result.score, result.totalQuestions, result.timeTaken, result.details);
+}
+
+// Helper function for demo
+function startDemoTest() {
+startTest('demo', 'Demo Test: Cell Biology');
+}
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+loadStoredData();
+updateAuthUI();
+});
+
+// Test Configuration System
+// Add this code to your main.js file
+
+// ----- TEST CONFIGURATION FUNCTIONALITY -----
+
+// Define the test configuration modal HTML
+const testConfigModalHTML = `
+<div class="modal" id="testConfigModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Configure Your Test</h2>
+      <span class="close" onclick="closeModal('testConfigModal')">&times;</span>
+    </div>
+    <form id="testConfigForm">
+      <div class="form-group">
+        <label for="configSubject">Subject</label>
+        <select id="configSubject" class="form-control" onchange="updateTopicOptions()">
+          <option value="biology">Biology</option>
+          <option value="chemistry">Chemistry</option>
+          <option value="physics">Physics</option>
+          <option value="earth-science">Earth Science</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="configTopics">Topics</label>
+        <div id="topicCheckboxes" class="checkbox-group">
+          <!-- Topics will be loaded dynamically -->
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="configDifficulty">Difficulty</label>
+        <select id="configDifficulty" class="form-control">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+          <option value="mixed">Mixed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="configQuestionCount">Number of Questions</label>
+        <input type="number" id="configQuestionCount" class="form-control" min="5" max="50" value="10">
+      </div>
+      <div class="form-group">
+        <label for="configTimeLimit">Time Limit (minutes)</label>
+        <input type="number" id="configTimeLimit" class="form-control" min="5" max="120" value="20">
+      </div>
+      <button type="submit" class="btn btn-primary">Generate Test</button>
+    </form>
+  </div>
+</div>
+`;
+
+// Topic data for each subject
+const topicsBySubject = {
+  biology: [
+    { id: 'cell-biology', name: 'Cell Biology' },
+    { id: 'genetics', name: 'Genetics' },
+    { id: 'evolution', name: 'Evolution' },
+    { id: 'ecology', name: 'Ecology' },
+    { id: 'physiology', name: 'Human Physiology' },
+    { id: 'botany', name: 'Botany' }
+  ],
+  chemistry: [
+    { id: 'atomic-structure', name: 'Atomic Structure' },
+    { id: 'periodic-table', name: 'Periodic Table' },
+    { id: 'chemical-bonding', name: 'Chemical Bonding' },
+    { id: 'reactions', name: 'Chemical Reactions' },
+    { id: 'acids-bases', name: 'Acids and Bases' },
+    { id: 'organic-chemistry', name: 'Organic Chemistry' }
+  ],
+  physics: [
+    { id: 'mechanics', name: 'Mechanics' },
+    { id: 'electricity', name: 'Electricity' },
+    { id: 'magnetism', name: 'Magnetism' },
+    { id: 'thermodynamics', name: 'Thermodynamics' },
+    { id: 'waves', name: 'Waves and Optics' },
+    { id: 'modern-physics', name: 'Modern Physics' }
+  ],
+  'earth-science': [
+    { id: 'geology', name: 'Geology' },
+    { id: 'meteorology', name: 'Meteorology' },
+    { id: 'oceanography', name: 'Oceanography' },
+    { id: 'astronomy', name: 'Astronomy' },
+    { id: 'environmental', name: 'Environmental Science' },
+    { id: 'climate', name: 'Climate Science' }
+  ]
+};
+
+// Question bank (expanded with more sample questions)
+// In a real app, this would come from a database
 // Expanded Question Bank for Science Olympiad Application
 const questionBank = {
   biology: {
@@ -1219,677 +1960,6 @@ const questionBank = {
     ]
   }
 };
-        
-
-// Sample questions (just for demo)
-const sampleQuestions = [
-    {
-        id: 1,
-        question: "Which organelle is known as the 'powerhouse of the cell'?",
-        options: ["Nucleus", "Mitochondria", "Golgi apparatus", "Endoplasmic reticulum"],
-        answer: 1
-    },
-    {
-        id: 2,
-        question: "What is the primary function of chloroplasts in plant cells?",
-        options: ["Cell division", "Protein synthesis", "Photosynthesis", "Energy storage"],
-        answer: 2
-    },
-    {
-        id: 3,
-        question: "Which of the following is NOT a component of the cell membrane?",
-        options: ["Phospholipids", "Proteins", "Carbohydrates", "DNA"],
-        answer: 3
-    },
-    {
-        id: 4,
-        question: "What process is responsible for the movement of substances from an area of high concentration to an area of low concentration?",
-        options: ["Active transport", "Facilitated diffusion", "Osmosis", "Diffusion"],
-        answer: 3
-    },
-    {
-        id: 5,
-        question: "Which of the following cell types does NOT contain a nucleus?",
-        options: ["Mature red blood cells", "Nerve cells", "Muscle cells", "Skin cells"],
-        answer: 0
-    }
-];
-
-// User data storage (would be handled by a database in a real app)
-let currentUser = null;
-let users = [];
-let testResults = [];
-let currentTest = null;
-let timer = null;
-let seconds = 0;
-
-// DOM elements
-const homeSection = document.querySelector('.home-section');
-const testsSection = document.querySelector('.tests-section');
-const testTakingSection = document.querySelector('.test-taking-section');
-const resultsSection = document.querySelector('.test-results-section');
-const dashboardSection = document.getElementById('dashboardSection');
-const authButtons = document.getElementById('authButtons');
-const userArea = document.getElementById('userArea');
-const welcomeUser = document.getElementById('welcomeUser');
-
-// Check for local storage data
-function loadStoredData() {
-    const storedUsers = localStorage.getItem('sciOlyUsers');
-    const storedResults = localStorage.getItem('sciOlyResults');
-    const storedCurrentUser = localStorage.getItem('sciOlyCurrentUser');
-    
-    if (storedUsers) users = JSON.parse(storedUsers);
-    if (storedResults) testResults = JSON.parse(storedResults);
-    if (storedCurrentUser) {
-        currentUser = JSON.parse(storedCurrentUser);
-        updateAuthUI();
-        updateDashboard();
-    }
-}
-
-// Save data to local storage
-function saveData() {
-    localStorage.setItem('sciOlyUsers', JSON.stringify(users));
-    localStorage.setItem('sciOlyResults', JSON.stringify(testResults));
-    if (currentUser) {
-        localStorage.setItem('sciOlyCurrentUser', JSON.stringify(currentUser));
-    } else {
-        localStorage.removeItem('sciOlyCurrentUser');
-    }
-}
-
-// Add this function somewhere in your main.js
-function handleScrollAnimations() {
-  const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-          if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-              // Optional: Unobserve after animation starts to save resources
-              // observer.unobserve(entry.target);
-          }
-          // Optional: Remove class if element scrolls out of view
-          // else {
-          //     entry.target.classList.remove('is-visible');
-          // }
-      });
-  }, {
-      threshold: 0.1 // Trigger when 10% of the element is visible
-  });
-
-  const targets = document.querySelectorAll('.animate-on-scroll');
-  targets.forEach(target => {
-      observer.observe(target);
-  });
-}
-
-// Call this function when the DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-  // ... (your existing initThemeToggle, loadStoredData, updateAuthUI calls) ...
-  initThemeToggle();
-  loadStoredData();
-  updateAuthUI(); // Make sure this runs
-  handleScrollAnimations(); // Add this call
-
-  // Add config button to tests section only if it exists on the current page
-  const testsSectionHeader = document.querySelector('.tests-section .dashboard-header');
-  if (testsSectionHeader && !testsSectionHeader.querySelector('.btn-primary[onclick="initTestConfig()"]')) {
-       addConfigButtonToTestsSection();
-  }
-  // Add custom test button to home page only if it exists
-  const homeSubjectsGrid = document.querySelector('.home-section .subjects-grid');
-  if (homeSubjectsGrid && !document.querySelector('.btn-primary[onclick="initTestConfig()"]')) {
-      addCustomTestButton();
-  }
-
-  // Initialize dashboard functionality only if the dashboard section exists
-  if (document.getElementById('dashboardSection')) {
-      initializeDashboard(); // If you have a dedicated dashboard init function
-  }
-
-   // Initialize topic options only if the config modal exists
-   if (document.getElementById('testConfigModal')) {
-      updateTopicOptions();
-      const testConfigForm = document.getElementById('testConfigForm');
-      if (testConfigForm) {
-          testConfigForm.addEventListener('submit', handleTestConfigSubmit);
-      }
-  }
-
-  // ... other initializations ...
-});
-
-// Ensure functions like addConfigButtonToTestsSection, addCustomTestButton,
-// updateTopicOptions, handleTestConfigSubmit, initializeDashboard are defined
-// (They seem to be in the provided main.js content)
-
-// Make sure goBack() correctly handles navigating from tests-section
-function goBack() {
-  // Find the main content area specific to the current page (index or practice)
-  const activeHomePageSection = document.querySelector('section.hero') || document.querySelector('section.home-section'); // Adjust selector if needed
-  const testsSection = document.querySelector('.tests-section');
-
-  if (testsSection) testsSection.style.display = 'none';
-  if (activeHomePageSection) activeHomePageSection.style.display = 'block'; // Or 'flex' depending on its style
-
-  // You might need to hide other sections as well
-   const testTakingSection = document.querySelector('.test-taking-section');
-   const resultsSection = document.querySelector('.test-results-section');
-   if(testTakingSection) testTakingSection.style.display = 'none';
-   if(resultsSection) resultsSection.style.display = 'none';
-}
-
-// Adjust showTestsSection to hide the correct initial sections
-function showTestsSection(subject) { // Modified to accept subject, though might not be needed if called from index
-  const homeSection = document.querySelector('.animated-hero'); // Target new hero section
-  const featuresSection = document.querySelector('.features-section');
-  const quickAccessSection = document.querySelector('.quick-access-section');
-  const testsSection = document.querySelector('.tests-section');
-
-  if (homeSection) homeSection.style.display = 'none';
-  if (featuresSection) featuresSection.style.display = 'none';
-  if (quickAccessSection) quickAccessSection.style.display = 'none';
-  if (testsSection) testsSection.style.display = 'block';
-
-  // If called with a subject (like from practice.html), load tests
-  // Otherwise, it might just show the section header and custom button
-  if(subject) {
-      showTestList(subject); // Assuming showTestList populates #testsList
-  } else {
-       // Optionally clear or pre-populate the testsList if needed when coming from index
-       const testsList = document.getElementById('testsList');
-       if(testsList) testsList.innerHTML = '<p>Select a subject or create a custom test.</p>'; // Example placeholder
-  }
-}
-
-// IMPORTANT: Review your existing main.js showSection function if you have one.
-// The updated HTML might need adjustments to how sections are shown/hidden.
-// The goBack and showTestsSection functions above are examples and might need
-// refinement based on your exact structure and desired flow.
-
-// Modal functions
-function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'flex';
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
-function switchModal(closeId, openId) {
-    closeModal(closeId);
-    openModal(openId);
-}
-
-// Section visibility functions
-function showSection(section) {
-    homeSection.style.display = 'none';
-    testsSection.style.display = 'none';
-    testTakingSection.style.display = 'none';
-    resultsSection.style.display = 'none';
-    dashboardSection.style.display = 'none';
-    
-    if (section === 'home') homeSection.style.display = 'block';
-    else if (section === 'tests') testsSection.style.display = 'block';
-    else if (section === 'taking') testTakingSection.style.display = 'block';
-    else if (section === 'results') resultsSection.style.display = 'block';
-    else if (section === 'dashboard') dashboardSection.style.display = 'block';
-}
-
-function showTestsSection() {
-    showSection('tests');
-}
-
-function goBack() {
-    showSection('home');
-}
-
-// Test list functions
-function showTestList(subject) {
-    const testsList = document.getElementById('testsList');
-    testsList.innerHTML = '';
-    
-    const subjectTests = testData[subject] || [];
-    
-    if (subjectTests.length === 0) {
-        testsList.innerHTML = '<p>No tests available for this subject yet.</p>';
-        return;
-    }
-    
-    subjectTests.forEach(test => {
-        const testCard = document.createElement('div');
-        testCard.className = 'card';
-        testCard.innerHTML = `
-            <h3>${test.title}</h3>
-            <p>${test.questions} questions | ${test.time} minutes</p>
-            <button class="btn btn-outline" onclick="startTest('${test.id}', '${test.title}')">Start Test</button>
-        `;
-        testsList.appendChild(testCard);
-    });
-    
-    showSection('tests');
-}
-
-// Test taking functions
-function startTest(testId, testTitle) {
-    // Check if user is logged in
-    if (!currentUser && testId !== 'demo') {
-        alert("Please log in to take this test and save your results.");
-        openModal('loginModal');
-        return;
-    }
-    
-    document.getElementById('testTitle').textContent = testTitle;
-    
-    const testContainer = document.getElementById('testContainer');
-    testContainer.innerHTML = '';
-    
-    // Load questions (in a real app, these would come from a server)
-    currentTest = {
-        id: testId,
-        title: testTitle,
-        questions: sampleQuestions,
-        startTime: new Date()
-    };
-    
-    sampleQuestions.forEach((q, index) => {
-        const questionDiv = document.createElement('div');
-        questionDiv.className = 'question';
-        questionDiv.innerHTML = `
-            <h3>Question ${index + 1}: ${q.question}</h3>
-            <div class="options">
-                ${q.options.map((option, i) => `
-                    <div class="option" data-question="${q.id}" data-option="${i}" onclick="selectOption(this)">
-                        <input type="radio" id="q${q.id}o${i}" name="q${q.id}">
-                        <label for="q${q.id}o${i}">${option}</label>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-        testContainer.appendChild(questionDiv);
-    });
-    
-    // Start timer
-    startTimer();
-    
-    showSection('taking');
-}
-
-function selectOption(optionElement) {
-    // Clear other selections for this question
-    const questionId = optionElement.dataset.question;
-    const options = document.querySelectorAll(`.option[data-question="${questionId}"]`);
-    options.forEach(opt => {
-        opt.classList.remove('selected');
-        opt.querySelector('input').checked = false;
-    });
-    
-    // Select this option
-    optionElement.classList.add('selected');
-    optionElement.querySelector('input').checked = true;
-}
-
-function startTimer() {
-    seconds = 0;
-    clearInterval(timer);
-    timer = setInterval(updateTimer, 1000);
-}
-
-function updateTimer() {
-    seconds++;
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    document.getElementById('timer').textContent = `Time: ${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
-
-function stopTimer() {
-    clearInterval(timer);
-}
-
-function submitTest() {
-    stopTimer();
-    
-    // Calculate score
-    let score = 0;
-    const results = [];
-    
-    currentTest.questions.forEach(question => {
-        const selectedOption = document.querySelector(`.option.selected[data-question="${question.id}"]`);
-        const userAnswer = selectedOption ? parseInt(selectedOption.dataset.option) : -1;
-        
-        const isCorrect = (userAnswer === question.answer);
-        if (isCorrect) score++;
-        
-        results.push({
-            question: question.question,
-            userAnswer: userAnswer,
-            correctAnswer: question.answer,
-            isCorrect: isCorrect,
-            explanation: "Explanation would go here in a real app."
-        });
-    });
-    
-    // Calculate time taken
-    const endTime = new Date();
-    const timeTaken = Math.floor((endTime - currentTest.startTime) / 1000);
-    
-    // Save result if logged in
-    if (currentUser) {
-        const result = {
-            id: Date.now().toString(),
-            userId: currentUser.id,
-            testId: currentTest.id,
-            testTitle: currentTest.title,
-            score: score,
-            totalQuestions: currentTest.questions.length,
-            percentage: Math.round((score / currentTest.questions.length) * 100),
-            timeTaken: timeTaken,
-            date: new Date().toISOString(),
-            details: results
-        };
-        
-        testResults.push(result);
-        saveData();
-        updateDashboard();
-    }
-    
-    // Show results
-    showResults(score, currentTest.questions.length, timeTaken, results);
-}
-
-function showResults(score, total, timeTaken, details) {
-    document.getElementById('resultTitle').textContent = currentTest.title;
-    document.getElementById('scoreValue').textContent = `${score}/${total}`;
-    document.getElementById('percentageValue').textContent = `${Math.round((score / total) * 100)}%`;
-    
-    const minutes = Math.floor(timeTaken / 60);
-    const seconds = timeTaken % 60;
-    document.getElementById('timeTaken').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    
-    const resultDetails = document.getElementById('resultDetails');
-    resultDetails.innerHTML = '<h3>Question Details</h3>';
-    
-    details.forEach((detail, index) => {
-        const detailDiv = document.createElement('div');
-        detailDiv.className = `question ${detail.isCorrect ? 'correct' : 'incorrect'}`;
-        detailDiv.innerHTML = `
-            <h4>Question ${index + 1}: ${detail.question}</h4>
-            <p>Your answer: ${detail.userAnswer >= 0 ? currentTest.questions[index].options[detail.userAnswer] : 'Not answered'}</p>
-            <p>Correct answer: ${currentTest.questions[index].options[detail.correctAnswer]}</p>
-            <p style="color: ${detail.isCorrect ? 'green' : 'red'}">
-                ${detail.isCorrect ? '✓ Correct' : '✗ Incorrect'}
-            </p>
-        `;
-        resultDetails.appendChild(detailDiv);
-    });
-    
-    showSection('results');
-}
-
-// Authentication functions
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    const user = users.find(u => u.email === email && u.password === password);
-    
-    if (user) {
-        currentUser = user;
-        updateAuthUI();
-        saveData();
-        closeModal('loginModal');
-        updateDashboard();
-        alert("Login successful!");
-    } else {
-        alert("Invalid email or password.");
-    }
-});
-
-document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    
-    if (password !== confirmPassword) {
-        alert("Passwords don't match!");
-        return;
-    }
-    
-    if (users.some(u => u.email === email)) {
-        alert("Email already in use!");
-        return;
-    }
-    
-    const newUser = {
-        id: Date.now().toString(),
-        name,
-        email,
-        password // In a real app, this would be hashed
-    };
-    
-    users.push(newUser);
-    currentUser = newUser;
-    updateAuthUI();
-    saveData();
-    closeModal('registerModal');
-    alert("Registration successful!");
-});
-
-// Continuing the JavaScript code from before:
-
-function updateAuthUI() {
-if (currentUser) {
-authButtons.style.display = 'none';
-userArea.style.display = 'flex';
-welcomeUser.textContent = `Welcome, ${currentUser.name}!`;
-
-// Show dashboard button in navbar if not already there
-const navLinks = document.querySelector('.nav-links');
-if (!document.getElementById('dashboardLink')) {
-    const dashLink = document.createElement('a');
-    dashLink.id = 'dashboardLink';
-    dashLink.href = '#';
-    dashLink.textContent = 'Dashboard';
-    dashLink.addEventListener('click', function() {
-        showSection('dashboard');
-    });
-    navLinks.appendChild(dashLink);
-}
-} else {
-authButtons.style.display = 'flex';
-userArea.style.display = 'none';
-
-// Remove dashboard link if it exists
-const dashLink = document.getElementById('dashboardLink');
-if (dashLink) dashLink.remove();
-}
-}
-
-function logout() {
-currentUser = null;
-updateAuthUI();
-localStorage.removeItem('sciOlyCurrentUser');
-showSection('home');
-}
-
-// Dashboard functions
-function updateDashboard() {
-if (!currentUser) return;
-
-const userResults = testResults.filter(r => r.userId === currentUser.id);
-document.getElementById('testsCompleted').textContent = userResults.length;
-
-// Calculate average score
-if (userResults.length > 0) {
-const totalPercentage = userResults.reduce((sum, result) => sum + result.percentage, 0);
-const averagePercentage = Math.round(totalPercentage / userResults.length);
-document.getElementById('averageScore').textContent = `${averagePercentage}%`;
-} else {
-document.getElementById('averageScore').textContent = 'N/A';
-}
-
-// Populate results table
-const resultsTableBody = document.getElementById('resultsTableBody');
-resultsTableBody.innerHTML = '';
-
-// Sort by date (newest first)
-userResults.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-// Show only the 5 most recent results
-const recentResults = userResults.slice(0, 5);
-
-if (recentResults.length === 0) {
-const row = document.createElement('tr');
-row.innerHTML = '<td colspan="5">No test results yet. Take a test to see your results here.</td>';
-resultsTableBody.appendChild(row);
-} else {
-recentResults.forEach(result => {
-    const date = new Date(result.date);
-    const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-    
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${result.testTitle}</td>
-        <td>${getSubjectFromTestId(result.testId)}</td>
-        <td>${result.score}/${result.totalQuestions} (${result.percentage}%)</td>
-        <td>${formattedDate}</td>
-        <td>
-            <button class="btn btn-outline" onclick="viewResult('${result.id}')">View</button>
-        </td>
-    `;
-    resultsTableBody.appendChild(row);
-});
-}
-}
-
-function getSubjectFromTestId(testId) {
-// Extract subject from test ID (in a real app, this would be more robust)
-if (testId.startsWith('bio')) return 'Biology';
-if (testId.startsWith('chem')) return 'Chemistry';
-if (testId.startsWith('phys')) return 'Physics';
-if (testId.startsWith('earth')) return 'Earth Science';
-return 'General';
-}
-
-function viewResult(resultId) {
-const result = testResults.find(r => r.id === resultId);
-if (!result) return;
-
-// Set up the results display similar to submitTest()
-currentTest = {
-id: result.testId,
-title: result.testTitle,
-questions: sampleQuestions // In a real app, these would be stored with the result
-};
-
-showResults(result.score, result.totalQuestions, result.timeTaken, result.details);
-}
-
-// Helper function for demo
-function startDemoTest() {
-startTest('demo', 'Demo Test: Cell Biology');
-}
-
-// Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
-loadStoredData();
-updateAuthUI();
-});
-
-// Test Configuration System
-// Add this code to your main.js file
-
-// ----- TEST CONFIGURATION FUNCTIONALITY -----
-
-// Define the test configuration modal HTML
-const testConfigModalHTML = `
-<div class="modal" id="testConfigModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>Configure Your Test</h2>
-      <span class="close" onclick="closeModal('testConfigModal')">&times;</span>
-    </div>
-    <form id="testConfigForm">
-      <div class="form-group">
-        <label for="configSubject">Subject</label>
-        <select id="configSubject" class="form-control" onchange="updateTopicOptions()">
-          <option value="biology">Biology</option>
-          <option value="chemistry">Chemistry</option>
-          <option value="physics">Physics</option>
-          <option value="earth-science">Earth Science</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="configTopics">Topics</label>
-        <div id="topicCheckboxes" class="checkbox-group">
-          <!-- Topics will be loaded dynamically -->
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="configDifficulty">Difficulty</label>
-        <select id="configDifficulty" class="form-control">
-          <option value="easy">Easy</option>
-          <option value="medium" selected>Medium</option>
-          <option value="hard">Hard</option>
-          <option value="mixed">Mixed</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="configQuestionCount">Number of Questions</label>
-        <input type="number" id="configQuestionCount" class="form-control" min="5" max="50" value="10">
-      </div>
-      <div class="form-group">
-        <label for="configTimeLimit">Time Limit (minutes)</label>
-        <input type="number" id="configTimeLimit" class="form-control" min="5" max="120" value="20">
-      </div>
-      <button type="submit" class="btn btn-primary">Generate Test</button>
-    </form>
-  </div>
-</div>
-`;
-
-// Topic data for each subject
-const topicsBySubject = {
-  biology: [
-    { id: 'cell-biology', name: 'Cell Biology' },
-    { id: 'genetics', name: 'Genetics' },
-    { id: 'evolution', name: 'Evolution' },
-    { id: 'ecology', name: 'Ecology' },
-    { id: 'physiology', name: 'Human Physiology' },
-    { id: 'botany', name: 'Botany' }
-  ],
-  chemistry: [
-    { id: 'atomic-structure', name: 'Atomic Structure' },
-    { id: 'periodic-table', name: 'Periodic Table' },
-    { id: 'chemical-bonding', name: 'Chemical Bonding' },
-    { id: 'reactions', name: 'Chemical Reactions' },
-    { id: 'acids-bases', name: 'Acids and Bases' },
-    { id: 'organic-chemistry', name: 'Organic Chemistry' }
-  ],
-  physics: [
-    { id: 'mechanics', name: 'Mechanics' },
-    { id: 'electricity', name: 'Electricity' },
-    { id: 'magnetism', name: 'Magnetism' },
-    { id: 'thermodynamics', name: 'Thermodynamics' },
-    { id: 'waves', name: 'Waves and Optics' },
-    { id: 'modern-physics', name: 'Modern Physics' }
-  ],
-  'earth-science': [
-    { id: 'geology', name: 'Geology' },
-    { id: 'meteorology', name: 'Meteorology' },
-    { id: 'oceanography', name: 'Oceanography' },
-    { id: 'astronomy', name: 'Astronomy' },
-    { id: 'environmental', name: 'Environmental Science' },
-    { id: 'climate', name: 'Climate Science' }
-  ]
-};
-
-// Question bank (expanded with more sample questions)
-// In a real app, this would come from a database
-
 
 // Initialize test configuration
 function initTestConfig() {

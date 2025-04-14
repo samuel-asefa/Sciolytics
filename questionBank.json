@@ -1,0 +1,112 @@
+{
+    "biology": {
+      "cell-biology": [
+        {
+          "question": "Which organelle is known as the 'powerhouse of the cell'?",
+          "options": ["Nucleus", "Mitochondria", "Golgi apparatus", "Endoplasmic reticulum"],
+          "answer": 1,
+          "difficulty": "easy"
+        },
+        {
+          "question": "What is the primary function of the cell membrane?",
+          "options": ["To produce energy", "To control what enters and exits the cell", "To store genetic information", "To break down waste"],
+          "answer": 1,
+          "difficulty": "easy"
+        },
+        {
+          "question": "Which of the following is NOT a component of the endomembrane system?",
+          "options": ["Endoplasmic reticulum", "Golgi apparatus", "Mitochondria", "Lysosomes"],
+          "answer": 2,
+          "difficulty": "medium"
+        },
+        {
+          "question": "What cellular structure is responsible for protein synthesis?",
+          "options": ["Ribosomes", "Nucleolus", "Peroxisomes", "Centrioles"],
+          "answer": 0,
+          "difficulty": "medium"
+        },
+        {
+          "question": "During which phase of mitosis do sister chromatids separate and move to opposite poles?",
+          "options": ["Prophase", "Metaphase", "Anaphase", "Telophase"],
+          "answer": 2,
+          "difficulty": "hard"
+        }
+      ],
+      "genetics": [
+        {
+          "question": "What are the nitrogenous bases found in DNA?",
+          "options": ["Adenine, thymine, uracil, cytosine", "Adenine, thymine, guanine, cytosine", "Adenine, uracil, guanine, cytosine", "Uracil, thymine, guanine, cytosine"],
+          "answer": 1,
+          "difficulty": "easy"
+        },
+        {
+          "question": "In a dihybrid cross between two heterozygous parents (AaBb × AaBb), what proportion of offspring would be expected to have the dominant phenotype for both traits?",
+          "options": ["9/16", "3/16", "1/16", "12/16"],
+          "answer": 0,
+          "difficulty": "hard"
+        }
+      ]
+    },
+    "chemistry": {
+      "atomic-structure": [
+        {
+          "question": "What is the charge of an electron?",
+          "options": ["Positive", "Negative", "Neutral", "It varies"],
+          "answer": 1,
+          "difficulty": "easy"
+        },
+        {
+          "question": "Which subatomic particle is found in the nucleus of an atom and has no charge?",
+          "options": ["Proton", "Electron", "Neutron", "Positron"],
+          "answer": 2,
+          "difficulty": "easy"
+        }
+      ],
+      "chemical-bonding": [
+        {
+          "question": "Which type of bond involves the sharing of electron pairs between atoms?",
+          "options": ["Ionic bond", "Covalent bond", "Hydrogen bond", "Metallic bond"],
+          "answer": 1,
+          "difficulty": "easy"
+        },
+        {
+          "question": "What is the hybridization of carbon in methane (CH₄)?",
+          "options": ["sp", "sp²", "sp³", "sp³d"],
+          "answer": 2,
+          "difficulty": "medium"
+        }
+      ]
+    },
+    "physics": {
+      "mechanics": [
+        {
+          "question": "What is Newton's Second Law of Motion?",
+          "options": ["An object at rest stays at rest unless acted upon by an external force", "Force equals mass times acceleration", "For every action, there is an equal and opposite reaction", "Energy can neither be created nor destroyed"],
+          "answer": 1,
+          "difficulty": "easy"
+        },
+        {
+          "question": "A ball is thrown vertically upward with an initial velocity of 20 m/s. Neglecting air resistance, what is its velocity after 1 second? (g = 10 m/s²)",
+          "options": ["10 m/s upward", "10 m/s downward", "30 m/s upward", "30 m/s downward"],
+          "answer": 0,
+          "difficulty": "medium"
+        }
+      ]
+    },
+    "earth-science": {
+      "geology": [
+        {
+          "question": "Which type of rock forms from the cooling of magma or lava?",
+          "options": ["Sedimentary", "Metamorphic", "Igneous", "Composite"],
+          "answer": 2,
+          "difficulty": "easy"
+        },
+        {
+          "question": "What is the most abundant mineral in Earth's crust?",
+          "options": ["Quartz", "Feldspar", "Mica", "Olivine"],
+          "answer": 1,
+          "difficulty": "medium"
+        }
+      ]
+    }
+  }
