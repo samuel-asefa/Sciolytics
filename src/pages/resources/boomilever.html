@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomy and Physiology - Sciolytics</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../main.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="../../../assets/image.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="../index.html" class="logo">Sciolytics</a>
+            <nav class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../practice.html">Practice</a>
+                <a href="../resources.html" class="active">Resources</a>
+                <a href="../about.html">About</a>
+            </nav>
+            <div class="theme-toggle">
+                <button id="themeToggle" class="theme-btn" aria-label="Toggle dark mode">
+                    <span class="theme-icon light-icon">☀️</span>
+                    <span class="theme-icon dark-icon">🌙</span>
+                </button>
+            </div>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-outline" onclick="openModal('loginModal')">Login</button>
+                <button class="btn btn-primary" onclick="openModal('registerModal')">Sign Up</button>
+            </div>
+            <div class="auth-buttons" id="userArea" style="display: none;">
+                <span id="welcomeUser">Welcome, User!</span>
+                <button class="btn btn-outline" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <p style="margin-top: 20px; text-align: center;">
+                    Don't have an account? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign Up</h2>
+                <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerName">Full Name</label>
+                        <input type="text" id="registerName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+                <p style="margin-top: 20px; text-align: center;">
+                    Already have an account? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add event-specific functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for tab navigation
+            const tabLinks = document.querySelectorAll('.tab-navigation a');
+            
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    tabLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to current link
+                    this.classList.add('active');
+                    
+                    // Get the target section
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    // Scroll to target section
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Highlight active section on scroll
+            window.addEventListener('scroll', function() {
+                const sections = document.querySelectorAll('.event-section');
+                let currentSection = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 150;
+                    const sectionHeight = section.offsetHeight;
+                    if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+                
+                tabLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + currentSection) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // Placeholder functions for buttons
+        function showRules() {
+            // Create a popup modal dynamically
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'rulesModal';
+            modal.style.display = 'block';
+            
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+            
+            const modalHeader = document.createElement('div');
+            modalHeader.className = 'modal-header';
+            
+            const title = document.createElement('h2');
+            title.textContent = 'Rules Manual';
+            
+            const closeSpan = document.createElement('span');
+            closeSpan.className = 'close';
+            closeSpan.innerHTML = '&times;';
+            closeSpan.onclick = function() {
+                document.getElementById('rulesModal').remove();
+            };
+            
+            modalHeader.appendChild(title);
+            modalHeader.appendChild(closeSpan);
+            
+            const modalBody = document.createElement('div');
+            modalBody.className = 'modal-body';
+            
+            const message = document.createElement('p');
+            message.textContent = 'Links to the Official Science Olympiad Rule Manual will be added soon! Check back for updates.';
+            message.style.textAlign = 'center';
+            message.style.padding = '20px 0';
+            
+            const icon = document.createElement('div');
+            icon.innerHTML = '📘';
+            icon.style.fontSize = '48px';
+            icon.style.textAlign = 'center';
+            icon.style.marginBottom = '15px';
+            
+            modalBody.appendChild(icon);
+            modalBody.appendChild(message);
+            
+            modalContent.appendChild(modalHeader);
+            modalContent.appendChild(modalBody);
+            modal.appendChild(modalContent);
+            
+            // Add modal to the body
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside of it
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.remove();
+                }
+            };
+        }
+
+        function showOfficialPage() {
+            // Create a popup modal dynamically
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'rulesModal';
+            modal.style.display = 'block';
+            
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+            
+            const modalHeader = document.createElement('div');
+            modalHeader.className = 'modal-header';
+            
+            const title = document.createElement('h2');
+            title.textContent = 'Official Page';
+            
+            const closeSpan = document.createElement('span');
+            closeSpan.className = 'close';
+            closeSpan.innerHTML = '&times;';
+            closeSpan.onclick = function() {
+                document.getElementById('rulesModal').remove();
+            };
+            
+            modalHeader.appendChild(title);
+            modalHeader.appendChild(closeSpan);
+            
+            const modalBody = document.createElement('div');
+            modalBody.className = 'modal-body';
+            
+            const message = document.createElement('p');
+            message.textContent = 'Links to the Official Science Olympiad Event Pages will be added soon! Check back for updates.';
+            message.style.textAlign = 'center';
+            message.style.padding = '20px 0';
+            
+            const icon = document.createElement('div');
+            icon.innerHTML = '🔗';
+            icon.style.fontSize = '48px';
+            icon.style.textAlign = 'center';
+            icon.style.marginBottom = '15px';
+            
+            modalBody.appendChild(icon);
+            modalBody.appendChild(message);
+            
+            modalContent.appendChild(modalHeader);
+            modalContent.appendChild(modalBody);
+            modal.appendChild(modalContent);
+            
+            // Add modal to the body
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside of it
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.remove();
+                }
+            };
+        }
+        
+        function downloadResources() {
+            alert('Resources are being prepared for download. Please check back later.');
+        }
+    </script>
+</body>
+</html>

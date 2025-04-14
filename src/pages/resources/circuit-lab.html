@@ -18,8 +18,8 @@
             <nav class="nav-links">
                 <a href="../../index.html">Home</a>
                 <a href="../../practice.html">Practice</a>
-                <a href="resources.html" class="active">Resources</a>
-                <a href="about.html">About</a>
+                <a href="../resources.html" class="active">Resources</a>
+                <a href="../about.html">About</a>
             </nav>
             <div class="theme-toggle">
                 <button id="themeToggle" class="theme-btn" aria-label="Toggle dark mode">
@@ -573,7 +573,7 @@
                 let currentSection = '';
                 
                 sections.forEach(section => {
-                    const sectionTop = section.offsetTop + 20;
+                    const sectionTop = section.offsetTop - 150;
                     const sectionHeight = section.offsetHeight;
                     if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
                         currentSection = section.getAttribute('id');

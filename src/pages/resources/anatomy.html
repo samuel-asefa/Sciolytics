@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomy and Physiology - Sciolytics</title>
+    <link rel="stylesheet" href="../../style.css">
+    <script src="../../main.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="../../../assets/image.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="../index.html" class="logo">Sciolytics</a>
+            <nav class="nav-links">
+                <a href="../../index.html">Home</a>
+                <a href="../../practice.html">Practice</a>
+                <a href="../resources.html" class="active">Resources</a>
+                <a href="../about.html">About</a>
+            </nav>
+            <div class="theme-toggle">
+                <button id="themeToggle" class="theme-btn" aria-label="Toggle dark mode">
+                    <span class="theme-icon light-icon">☀️</span>
+                    <span class="theme-icon dark-icon">🌙</span>
+                </button>
+            </div>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-outline" onclick="openModal('loginModal')">Login</button>
+                <button class="btn btn-primary" onclick="openModal('registerModal')">Sign Up</button>
+            </div>
+            <div class="auth-buttons" id="userArea" style="display: none;">
+                <span id="welcomeUser">Welcome, User!</span>
+                <button class="btn btn-outline" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container event-page">
+        <div class="event-header">
+            <div class="event-info">
+                <h1>Anatomy and Physiology 🫀</h1>
+                <div class="event-meta">
+                    <span class="event-tag">Biology</span>
+                    <span class="event-tag">Written Event</span>
+                    <span class="event-tag">Division C</span>
+                </div>
+            </div>
+            <div class="event-actions">
+                <button class="btn btn-primary" onclick="showRules()">Rules Manual</button>
+                <button class="btn btn-primary" onclick="showOfficialPage()">Official Page</button>
+            </div>
+        </div>
+
+        <div class="event-nav">
+            <ul class="tab-navigation">
+                <li><a href="#overview" class="active">Overview</a></li>
+                <li><a href="#rules">Rules & Format</a></li>
+                <li><a href="#content">Content Guide</a></li>
+                <li><a href="#systems">Body Systems</a></li>
+                <li><a href="#anatomy">Anatomical Structures</a></li>
+                <li><a href="#physiology">Physiological Processes</a></li>
+                <li><a href="#diseases">Disorders & Diseases</a></li>
+            </ul>
+        </div>
+
+        <div class="content-wrapper">
+            <section id="overview" class="event-section">
+                <h2>Overview</h2>
+                <p>Anatomy and Physiology is a Division C event that focuses on the understanding of human body systems. Participants are tested on their knowledge of the anatomy and physiology of various physiological systems, including the processes and interrelationships among them. Each year, the event focuses on specific body systems, which rotate on a multi-year schedule.</p>
+                
+                <div class="info-card">
+                    <h3>Quick Facts</h3>
+                    <ul>
+                        <li><strong>Type:</strong> Written Test Event</li>
+                        <li><strong>Format:</strong> Multiple-choice, fill-in, diagram labeling, short answer, and analysis questions</li>
+                        <li><strong>Team Size:</strong> 2 students</li>
+                        <li><strong>Duration:</strong> 50 minutes</li>
+                        <li><strong>Materials Allowed:</strong> One two-sided sheet of notes per student and writing implements</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="rules" class="event-section">
+                <h2>Rules & Format</h2>
+                <h3>Event Format</h3>
+                <p>Anatomy and Physiology consists of a written test that may include:</p>
+                <ol>
+                    <li><strong>Multiple-choice questions:</strong> Basic recall and application of knowledge</li>
+                    <li><strong>Diagram labeling:</strong> Identification of anatomical structures</li>
+                    <li><strong>Short answer questions:</strong> Explanation of physiological processes</li>
+                    <li><strong>Analysis questions:</strong> Interpretation of data, symptoms, or case studies</li>
+                    <li><strong>Fill-in questions:</strong> Terminology and definitions</li>
+                </ol>
+
+                <h3>Materials Allowed</h3>
+                <p>According to the Science Olympiad rules, participants may bring:</p>
+                <ul>
+                    <li>One 8.5" x 11" two-sided sheet of notes per student</li>
+                    <li>Writing implements (pencils, pens)</li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <strong>Note:</strong> The specific body systems covered change on a rotating basis every few years. Always check the current year's official rules for the systems in focus and any updates or changes.
+                </div>
+            </section>
+
+            <section id="content" class="event-section">
+                <h2>Content Guide</h2>
+                <p>Anatomy and Physiology covers a wide range of topics related to human body systems. Here's a breakdown of the major content areas:</p>
+
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>Basic Concepts</h3>
+                        <ul>
+                            <li>Cell structure and function</li>
+                            <li>Tissue types and organization</li>
+                            <li>Homeostasis and feedback loops</li>
+                            <li>Anatomical terminology and planes</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>System Structure</h3>
+                        <ul>
+                            <li>Gross anatomy of featured systems</li>
+                            <li>Histology (microscopic anatomy)</li>
+                            <li>Organ relationships and organization</li>
+                            <li>Anatomical variations and development</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>System Function</h3>
+                        <ul>
+                            <li>Physiological processes</li>
+                            <li>Regulatory mechanisms</li>
+                            <li>Biochemical pathways</li>
+                            <li>System integration and coordination</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>Clinical Applications</h3>
+                        <ul>
+                            <li>Common disorders and diseases</li>
+                            <li>Diagnostic techniques</li>
+                            <li>Treatment approaches</li>
+                            <li>Research and medical advances</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="systems" class="event-section">
+                <h2>Body Systems</h2>
+                
+                <h3>Respiratory System</h3>
+                <p>The respiratory system is responsible for gas exchange, bringing oxygen into the body and removing carbon dioxide.</p>
+                <div class="formula">O₂ + Hb ⇌ HbO₂</div>
+                <p>Major structures include:</p>
+                <ul>
+                    <li>Nasal cavity and pharynx</li>
+                    <li>Larynx and trachea</li>
+                    <li>Bronchi, bronchioles, and alveoli</li>
+                    <li>Lungs and pleural membranes</li>
+                    <li>Diaphragm and intercostal muscles</li>
+                </ul>
+
+                <h3>Cardiovascular System</h3>
+                <p>The cardiovascular system transports blood throughout the body, delivering oxygen and nutrients while removing waste products.</p>
+                <p>Major components include:</p>
+                <ul>
+                    <li>Heart (chambers, valves, conducting system)</li>
+                    <li>Blood vessels (arteries, veins, capillaries)</li>
+                    <li>Blood components (plasma, erythrocytes, leukocytes, platelets)</li>
+                    <li>Cardiac cycle and electrical conduction</li>
+                </ul>
+
+                <h3>Nervous System</h3>
+                <p>The nervous system coordinates body activities through electrical signals and neurotransmitters.</p>
+                <p>Major divisions include:</p>
+                <ul>
+                    <li>Central nervous system (brain and spinal cord)</li>
+                    <li>Peripheral nervous system (cranial and spinal nerves)</li>
+                    <li>Autonomic nervous system (sympathetic and parasympathetic)</li>
+                    <li>Sensory systems (vision, hearing, taste, smell, touch)</li>
+                </ul>
+
+                <h3>Digestive System</h3>
+                <p>The digestive system breaks down food into nutrients that can be absorbed and used by the body.</p>
+                <p>Major structures include:</p>
+                <ul>
+                    <li>Oral cavity (teeth, tongue, salivary glands)</li>
+                    <li>Esophagus and stomach</li>
+                    <li>Small intestine (duodenum, jejunum, ileum)</li>
+                    <li>Large intestine (cecum, colon, rectum)</li>
+                    <li>Accessory organs (liver, gallbladder, pancreas)</li>
+                </ul>
+
+                <h3>Endocrine System</h3>
+                <p>The endocrine system regulates body functions through hormones secreted by glands.</p>
+                <p>Major glands include:</p>
+                <ul>
+                    <li>Pituitary gland (anterior and posterior)</li>
+                    <li>Thyroid and parathyroid glands</li>
+                    <li>Adrenal glands (cortex and medulla)</li>
+                    <li>Pancreas (islets of Langerhans)</li>
+                    <li>Gonads (ovaries and testes)</li>
+                    <li>Pineal gland and thymus</li>
+                </ul>
+
+                <h3>Reproductive System</h3>
+                <p>The reproductive system is responsible for the production of offspring.</p>
+                <p>Male structures include:</p>
+                <ul>
+                    <li>Testes and epididymis</li>
+                    <li>Vas deferens and seminal vesicles</li>
+                    <li>Prostate gland and penis</li>
+                </ul>
+                <p>Female structures include:</p>
+                <ul>
+                    <li>Ovaries and fallopian tubes</li>
+                    <li>Uterus and vagina</li>
+                    <li>Mammary glands</li>
+                </ul>
+
+                <h3>Immune System</h3>
+                <p>The immune system protects the body from pathogens and foreign substances.</p>
+                <p>Major components include:</p>
+                <ul>
+                    <li>Leukocytes (neutrophils, eosinophils, basophils, lymphocytes, monocytes)</li>
+                    <li>Lymphoid organs (bone marrow, thymus, lymph nodes, spleen)</li>
+                    <li>Antibodies and complement system</li>
+                    <li>Innate and adaptive immunity</li>
+                </ul>
+            </section>
+
+            <section id="anatomy" class="event-section">
+                <h2>Anatomical Structures</h2>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <h3>Heart</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>[Heart Diagram]</span>
+                            </div>
+                        </div>
+                        <p>The heart is a muscular organ that pumps blood throughout the body.</p>
+                        <h4>Key Structures:</h4>
+                        <ul>
+                            <li>Atria (right and left)</li>
+                            <li>Ventricles (right and left)</li>
+                            <li>Valves (tricuspid, mitral, pulmonary, aortic)</li>
+                            <li>Cardiac muscle tissue (myocardium)</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Brain</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>[Brain Diagram]</span>
+                            </div>
+                        </div>
+                        <p>The brain is the control center of the nervous system and the site of cognitive functions.</p>
+                        <h4>Key Structures:</h4>
+                        <ul>
+                            <li>Cerebrum (frontal, parietal, temporal, occipital lobes)</li>
+                            <li>Cerebellum and brainstem</li>
+                            <li>Diencephalon (thalamus, hypothalamus)</li>
+                            <li>Limbic system</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Lungs</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>[Lung Diagram]</span>
+                            </div>
+                        </div>
+                        <p>The lungs are the primary organs of respiration, facilitating gas exchange.</p>
+                        <h4>Key Structures:</h4>
+                        <ul>
+                            <li>Bronchial tree</li>
+                            <li>Alveoli and respiratory membrane</li>
+                            <li>Pulmonary circulation</li>
+                            <li>Pleural membranes</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Kidney</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>[Kidney Diagram]</span>
+                            </div>
+                        </div>
+                        <p>Kidneys filter blood, maintain fluid balance, and regulate electrolytes.</p>
+                        <h4>Key Structures:</h4>
+                        <ul>
+                            <li>Nephrons (glomerulus, tubules)</li>
+                            <li>Renal cortex and medulla</li>
+                            <li>Collecting ducts and calyx</li>
+                            <li>Ureters and urinary bladder</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Liver</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>[Liver Diagram]</span>
+                            </div>
+                        </div>
+                        <p>The liver performs numerous metabolic, detoxification, and synthetic functions.</p>
+                        <h4>Key Structures:</h4>
+                        <ul>
+                            <li>Hepatic lobules</li>
+                            <li>Hepatocytes and Kupffer cells</li>
+                            <li>Bile ducts and gallbladder</li>
+                            <li>Portal triad</li>
+                        </ul>
+                    </div>
+
+                    <div class="component-card">
+                        <h3>Endocrine Glands</h3>
+                        <div class="component-image">
+                            <div class="circuit-symbol">
+                                <span>[Endocrine Diagram]</span>
+                            </div>
+                        </div>
+                        <p>Endocrine glands secrete hormones directly into the bloodstream.</p>
+                        <h4>Key Glands:</h4>
+                        <ul>
+                            <li>Pituitary (master gland)</li>
+                            <li>Thyroid and parathyroids</li>
+                            <li>Adrenal glands</li>
+                            <li>Pancreatic islets</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="physiology" class="event-section">
+                <h2>Physiological Processes</h2>
+                
+                <h3>Respiratory Physiology</h3>
+                <ul>
+                    <li><strong>Ventilation</strong> - Movement of air into and out of the lungs</li>
+                    <li><strong>External Respiration</strong> - Gas exchange between alveoli and pulmonary capillaries</li>
+                    <li><strong>Internal Respiration</strong> - Gas exchange between systemic capillaries and tissues</li>
+                    <li><strong>Gas Transport</strong> - Oxygen and carbon dioxide transport in blood</li>
+                    <li><strong>Respiratory Control</strong> - Neural and chemical regulation of breathing</li>
+                </ul>
+
+                <h3>Cardiovascular Physiology</h3>
+                <p>The heart and blood vessels work together to transport blood throughout the body:</p>
+                <ul>
+                    <li><strong>Cardiac Cycle</strong> - Systole and diastole phases</li>
+                    <li><strong>Electrical Conduction</strong> - SA node, AV node, Purkinje fibers</li>
+                    <li><strong>Blood Pressure Regulation</strong> - Baroreceptors, renin-angiotensin system</li>
+                    <li><strong>Circulation Pathways</strong> - Pulmonary and systemic circuits</li>
+                </ul>
+
+                <h3>Neurophysiology</h3>
+                <p>Neural communication occurs through electrical and chemical signals:</p>
+                <ul>
+                    <li><strong>Action Potentials</strong> - Depolarization and repolarization</li>
+                    <li><strong>Synaptic Transmission</strong> - Neurotransmitter release and binding</li>
+                    <li><strong>Sensory Processing</strong> - Transduction, transmission, perception</li>
+                    <li><strong>Motor Control</strong> - Upper and lower motor neurons, reflexes</li>
+                </ul>
+
+                <h3>Digestive Physiology</h3>
+                <p>Food processing occurs through mechanical and chemical digestion:</p>
+                <ul>
+                    <li><strong>Mechanical Digestion</strong> - Chewing, peristalsis, segmentation</li>
+                    <li><strong>Chemical Digestion</strong> - Enzymes, bile, acid</li>
+                    <li><strong>Absorption</strong> - Transport across intestinal epithelium</li>
+                    <li><strong>Elimination</strong> - Formation and expulsion of feces</li>
+                </ul>
+            </section>
+
+            <section id="diseases" class="event-section">
+                <h2>Disorders & Diseases</h2>
+                
+                <h3>Respiratory Disorders</h3>
+                <div class="lab-skills-grid">
+                    <div class="lab-skill-card">
+                        <h4>Obstructive Disorders</h4>
+                        <ul>
+                            <li>Asthma - Airway inflammation and constriction</li>
+                            <li>COPD - Chronic bronchitis and emphysema</li>
+                            <li>Cystic fibrosis - Mucus accumulation</li>
+                            <li>Sleep apnea - Intermittent airway obstruction</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Restrictive Disorders</h4>
+                        <ul>
+                            <li>Pulmonary fibrosis - Scarring of lung tissue</li>
+                            <li>Pneumonia - Fluid-filled alveoli</li>
+                            <li>Tuberculosis - Bacterial infection</li>
+                            <li>Pleural effusion - Fluid between pleural layers</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Vascular Disorders</h4>
+                        <ul>
+                            <li>Pulmonary embolism - Blood clot in lung vessels</li>
+                            <li>Pulmonary hypertension - High blood pressure in lungs</li>
+                            <li>Pulmonary edema - Fluid accumulation in lungs</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Lung Cancer</h4>
+                        <ul>
+                            <li>Small cell carcinoma</li>
+                            <li>Non-small cell carcinoma</li>
+                            <li>Metastatic lung cancer</li>
+                            <li>Risk factors and prevention</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Cardiovascular Disorders</h3>
+                <div class="lab-skills-grid">
+                    <div class="lab-skill-card">
+                        <h4>Heart Disorders</h4>
+                        <ul>
+                            <li>Coronary artery disease</li>
+                            <li>Myocardial infarction (heart attack)</li>
+                            <li>Heart failure</li>
+                            <li>Cardiac arrhythmias</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Vascular Disorders</h4>
+                        <ul>
+                            <li>Hypertension</li>
+                            <li>Atherosclerosis</li>
+                            <li>Aneurysm</li>
+                            <li>Peripheral vascular disease</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Blood Disorders</h4>
+                        <ul>
+                            <li>Anemia</li>
+                            <li>Leukemia</li>
+                            <li>Thrombocytopenia</li>
+                            <li>Hemophilia</li>
+                        </ul>
+                    </div>
+
+                    <div class="lab-skill-card">
+                        <h4>Congenital Defects</h4>
+                        <ul>
+                            <li>Septal defects</li>
+                            <li>Tetralogy of Fallot</li>
+                            <li>Patent ductus arteriosus</li>
+                            <li>Coarctation of the aorta</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+                
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Sciolytics. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="about.html">About</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <p style="margin-top: 20px; text-align: center;">
+                    Don't have an account? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign Up</h2>
+                <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerName">Full Name</label>
+                        <input type="text" id="registerName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+                <p style="margin-top: 20px; text-align: center;">
+                    Already have an account? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add event-specific functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for tab navigation
+            const tabLinks = document.querySelectorAll('.tab-navigation a');
+            
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    tabLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to current link
+                    this.classList.add('active');
+                    
+                    // Get the target section
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    // Scroll to target section
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Highlight active section on scroll
+            window.addEventListener('scroll', function() {
+                const sections = document.querySelectorAll('.event-section');
+                let currentSection = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 150;
+                    const sectionHeight = section.offsetHeight;
+                    if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+                
+                tabLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + currentSection) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // Placeholder functions for buttons
+        function showRules() {
+            // Create a popup modal dynamically
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'rulesModal';
+            modal.style.display = 'block';
+            
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+            
+            const modalHeader = document.createElement('div');
+            modalHeader.className = 'modal-header';
+            
+            const title = document.createElement('h2');
+            title.textContent = 'Rules Manual';
+            
+            const closeSpan = document.createElement('span');
+            closeSpan.className = 'close';
+            closeSpan.innerHTML = '&times;';
+            closeSpan.onclick = function() {
+                document.getElementById('rulesModal').remove();
+            };
+            
+            modalHeader.appendChild(title);
+            modalHeader.appendChild(closeSpan);
+            
+            const modalBody = document.createElement('div');
+            modalBody.className = 'modal-body';
+            
+            const message = document.createElement('p');
+            message.textContent = 'Links to the Official Science Olympiad Rule Manual will be added soon! Check back for updates.';
+            message.style.textAlign = 'center';
+            message.style.padding = '20px 0';
+            
+            const icon = document.createElement('div');
+            icon.innerHTML = '📘';
+            icon.style.fontSize = '48px';
+            icon.style.textAlign = 'center';
+            icon.style.marginBottom = '15px';
+            
+            modalBody.appendChild(icon);
+            modalBody.appendChild(message);
+            
+            modalContent.appendChild(modalHeader);
+            modalContent.appendChild(modalBody);
+            modal.appendChild(modalContent);
+            
+            // Add modal to the body
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside of it
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.remove();
+                }
+            };
+        }
+
+        function showOfficialPage() {
+            // Create a popup modal dynamically
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'rulesModal';
+            modal.style.display = 'block';
+            
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+            
+            const modalHeader = document.createElement('div');
+            modalHeader.className = 'modal-header';
+            
+            const title = document.createElement('h2');
+            title.textContent = 'Official Page';
+            
+            const closeSpan = document.createElement('span');
+            closeSpan.className = 'close';
+            closeSpan.innerHTML = '&times;';
+            closeSpan.onclick = function() {
+                document.getElementById('rulesModal').remove();
+            };
+            
+            modalHeader.appendChild(title);
+            modalHeader.appendChild(closeSpan);
+            
+            const modalBody = document.createElement('div');
+            modalBody.className = 'modal-body';
+            
+            const message = document.createElement('p');
+            message.textContent = 'Links to the Official Science Olympiad Event Pages will be added soon! Check back for updates.';
+            message.style.textAlign = 'center';
+            message.style.padding = '20px 0';
+            
+            const icon = document.createElement('div');
+            icon.innerHTML = '🔗';
+            icon.style.fontSize = '48px';
+            icon.style.textAlign = 'center';
+            icon.style.marginBottom = '15px';
+            
+            modalBody.appendChild(icon);
+            modalBody.appendChild(message);
+            
+            modalContent.appendChild(modalHeader);
+            modalContent.appendChild(modalBody);
+            modal.appendChild(modalContent);
+            
+            // Add modal to the body
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside of it
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.remove();
+                }
+            };
+        }
+        
+        function downloadResources() {
+            alert('Resources are being prepared for download. Please check back later.');
+        }
+    </script>
+</body>
+</html>
