@@ -678,6 +678,8 @@ body.dark-theme .theme-btn .light-icon {
     padding: var(--spacing-md);
     background-color: var(--primary-light);
     border-radius: var(--border-radius);
+    border-color: var(--light);
+    border-width: 0.05rem;
     transition: all var(--transition-fast);
   }
   

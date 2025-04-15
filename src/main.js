@@ -1,34 +1,39 @@
-// Dashboard HTML (to be added to your existing HTML file)
-
-
-// ----- DASHBOARD FUNCTIONALITY IMPLEMENTATION -----
-
+// ----- THEME TOGGLE FUNCTIONALITY -----
 
 // Theme Toggle Functionality
 function initThemeToggle() {
   const themeToggle = document.getElementById('themeToggle');
   
+  // Exit if the theme toggle button doesn't exist
+  if (!themeToggle) {
+    console.error('Theme toggle button not found');
+    return;
+  }
+  
   // Check for saved theme preference
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'dark') {
-      document.body.classList.add('dark-theme');
+    document.body.classList.add('dark-theme');
   }
   
   // Toggle theme when button is clicked
   themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-theme');
-      
-      // Save preference to localStorage
-      const isDarkTheme = document.body.classList.contains('dark-theme');
-      localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+    document.body.classList.toggle('dark-theme');
+    
+    // Save preference to localStorage
+    const isDarkTheme = document.body.classList.contains('dark-theme');
+    localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
   });
 }
 
-// Add this to your existing window.onload or document.addEventListener('DOMContentLoaded')
-// If you don't have one yet, add this:
+// Make sure the DOM is fully loaded before initializing
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, initializing theme toggle');
   initThemeToggle();
-  // Your other initialization code...
+  
+  // Your other initialization code can go here
+  // initializeCharts();
+  // initializeDashboard();
 });
 
 // Global variables for pagination

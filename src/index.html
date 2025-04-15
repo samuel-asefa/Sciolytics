@@ -42,7 +42,8 @@
     <main class="container">
         <section class="home-section">
             <div class="hero">
-                <h1>Sciolytics: The Ultimate Science Olympiad Study Experience</h1>
+                <h1>Sciolytics</h1>
+                <h3>The Ultimate Science Olympiad Study Tool</h3></h1>
                 <p>Thousands of Science Olympiad tests compiled into one website, designed for effective studying and practice. Available to everyone.</p>
                 <div class="btn-group">
                     <button class="btn btn-primary" onclick="showTestsSection()">Start Practicing</button>
@@ -108,6 +109,33 @@
         </section>
 
         <section class="dashboard"> 
+            
+            
+            <div class="resource-category"> <h2>Master Science Olympiad Events with Sciolytics</h2>
+                <p>Stop wasting time searching for practice materials. Sciolytics provides a comprehensive, organized platform carefully designed for Science Olympiad students – available to everyone.</p>
+                
+                <h3>Our Mission</h3>
+                <p>Our mission is to provide students with high-quality practice tests and resources sourced from publicly available materials to help them excel in Science Olympiad events. We aim to foster a deeper understanding of scientific concepts and develop critical thinking skills.</p>
+                
+                <h3>What We Offer</h3>
+                <ul class="event-list">
+                    <li>Comprehensive practice tests across multiple Science Olympiad disciplines</li>
+                    <li>Detailed results and performance tracking (for logged-in users)</li>
+                    <li>AI-powered explanations for deeper understanding (Feature Coming Soon!)</li>
+                    <li>Ability to share tests with teammates using unique codes (Feature Coming Soon!)</li>
+                    <li>A user-friendly interface designed for focused studying</li>
+                    <li>Division B Support Coming Soon!</li>
+                </ul>
+                
+                <div class="card-footer"> <h3>Time to get practicing.</h3>
+                    <p>Join hundreds of students improving their scores with our comprehensive platform.</p>
+                    <div class="btn-group">
+                        <a href="../practice.html" class="btn btn-primary">Start Now</a>
+                        <a href="pages/resources.html" class="btn btn-outline">Browse Resources</a>
+                    </div>
+                </div>
+            </div>
+
             <div class="dashboard-stats">
                 <div class="stat-card">
                     <div class="stat-icon">📚</div>
@@ -129,35 +157,9 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="resource-category"> <h2>Master Science Olympiad Events with Sciolytics</h2>
-                <p>Stop wasting time searching for practice materials. Sciolytics provides a comprehensive, organized platform carefully designed for Science Olympiad students – available to everyone.</p>
-                
-                <h3>Our Mission</h3>
-                <p>Our mission is to provide students with high-quality practice tests and resources sourced from publicly available materials to help them excel in Science Olympiad events. We aim to foster a deeper understanding of scientific concepts and develop critical thinking skills.</p>
-                
-                <h3>What We Offer</h3>
-                <ul class="event-list">
-                    <li>Comprehensive practice tests across multiple Science Olympiad disciplines</li>
-                    <li>Detailed results and performance tracking (for logged-in users)</li>
-                    <li>AI-powered explanations for deeper understanding (Feature Coming Soon!)</li>
-                    <li>Ability to share tests with teammates using unique codes (Feature Coming Soon!)</li>
-                    <li>A user-friendly interface designed for focused studying</li>
-                    <li>Support for both Multiple Choice and Free Response questions</li>
-                    <li>Division B Support Coming Soon!</li>
-                </ul>
-                
-                <div class="card-footer"> <h3>Time to get practicing.</h3>
-                    <p>Join hundreds of students improving their scores with our comprehensive platform.</p>
-                    <div class="btn-group">
-                        <a href="../practice.html" class="btn btn-primary">Start Now</a>
-                        <a href="pages/resources.html" class="btn btn-outline">Browse Resources</a>
-                    </div>
-                </div>
-            </div>
         </section>
     </main> <div class="modal" id="loginModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-height: 28rem;">
             <div class="modal-header">
                 <h2>Login</h2>
                 <span class="close" onclick="closeModal('loginModal')">&times;</span>
@@ -182,12 +184,12 @@
     </div>
 
     <div class="modal" id="registerModal">
-        <div class="modal-content">
+        <div class="modal-content" style="min-height: 40rem;">
             <div class="modal-header">
                 <h2>Sign Up</h2>
                 <span class="close" onclick="closeModal('registerModal')">&times;</span>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="margin-bottom: 1rem">
                 <form id="registerForm">
                     <div class="form-group">
                         <label for="registerName">Full Name</label>
