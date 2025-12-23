@@ -1,9 +1,44 @@
-![Sciolytics Banner](/public/SciolyticsBanner.jpg "Sciolytics Banner")
-## 📖 About
-Sciolytics is a revolutionary platform to help you learn, study, and practice for Science Olympiad events. It offers dedicated learning pages for every event and MCQ and FRQ practice questions to test your understanding. Once you've done some practice, you'll be able to review your progress and any weak points.
+# Sciolytics
 
-## ⚙️ Features
+Science Olympiad practice platform built with React, TypeScript, and Vite.
 
-## Set Up
+## Deployment on Vercel
 
-To run project locally, on your device, you need to clone this repo (`git clone https://github.com/samuel-asefa/sciolytics`), move into the appropriate directory (`cd Sciolytics`), install dependencies (`npm i`) and run the app (`npm start`).
+This project uses **Vite**, not Create React App. Make sure Vercel is configured to use Vite:
+
+1. The `vercel.json` file is already configured correctly
+2. Build Command: `npm run build`
+3. Output Directory: `dist`
+4. Framework Preset: Vite
+
+## Environment Variables
+
+Create a `.env` file with your Firebase configuration:
+
+```
+VITE_FIREBASE_API_KEY=your-api-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=your-app-id
+```
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+## Important Notes
+
+- This project uses **Vite**, not Create React App (`react-scripts`)
+- The build output is in the `dist` directory
+- Make sure Vercel is set to use Vite framework, not Create React App
