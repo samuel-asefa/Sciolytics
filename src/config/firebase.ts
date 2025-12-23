@@ -4,12 +4,12 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 // Firebase configuration
 // Replace these with your actual Firebase config values
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "your-api-key",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "your-project.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "your-project-id",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "your-project.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "your-app-id"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyC0hxHXJtwhW599pYWevOerGbTV9B3WGcU",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "sciolytics-fcee6.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "sciolytics-fcee6",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "sciolytics-fcee6.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "9188897701",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:9188897701:web:1f6525d8a3e8a7eacd2e4c"
 };
 
 // Initialize Firebase

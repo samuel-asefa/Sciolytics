@@ -26,7 +26,7 @@ export default function Login() {
       <div className="login-container">
         <div className="login-header">
           <div className="logo-container">
-            <div className="logo-icon">🦉</div>
+            <div className="logo-icon"></div>
             <span className="logo-text">Sciolytics</span>
           </div>
           <h1>Welcome Back</h1>

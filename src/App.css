@@ -6,7 +6,7 @@
 }
 
 .top-banner {
-  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #4b6ba2 0%, #4b6ba2 100%);
   color: white;
   padding: 12px 24px;
   display: flex;
@@ -1004,7 +1004,7 @@
 }
 
 .teams-header {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #4b6ba2 0%, #4b6ba2 100%);
   color: white;
   padding: 32px 48px;
   display: flex;
@@ -1935,7 +1935,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4b6ba2 0%, #4b6ba2 100%);
   padding: 24px;
 }
 
