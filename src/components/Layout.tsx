@@ -71,7 +71,7 @@ export default function Layout({ children }: LayoutProps) {
       <nav className="navbar">
         <div className="nav-left">
           <Link to="/dashboard" className="logo-container">
-            <div className="logo-icon">🦉</div>
+            <div className="logo-icon"></div>
             <span className="logo-text">Sciolytics</span>
           </Link>
         </div>
