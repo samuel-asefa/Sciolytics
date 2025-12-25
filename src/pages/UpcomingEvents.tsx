@@ -39,7 +39,7 @@ export default function UpcomingEvents() {
       <div className="teams-sidebar">
         <div className="sidebar-header">
           <div className="logo-container">
-            <div className="logo-icon">🦉</div>
+            <div className="logo-icon"></div>
             <span className="logo-text">Sciolytics</span>
           </div>
         </div>
