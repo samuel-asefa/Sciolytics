@@ -14,6 +14,8 @@ export default function PracticeResults() {
     answeredCount: 0,
   };
 
+  const accuracy = score.total > 0 ? (score.correct / score.total) * 100 : 0;
+
   const [liveProgress, setLiveProgress] = useState({ questionsAnswered: 0, questionsCorrect: 0, accuracy: 0, favorites: [] as string[] });
 
   useEffect(() => {

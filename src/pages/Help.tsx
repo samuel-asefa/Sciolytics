@@ -1,4 +1,4 @@
-import { HelpCircle, Mail, Book, MessageCircle } from 'lucide-react';
+import { Mail, Book, MessageCircle } from 'lucide-react';
 
 export default function Help() {
   return (

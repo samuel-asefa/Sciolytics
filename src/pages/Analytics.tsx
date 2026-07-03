@@ -211,7 +211,7 @@ export default function Analytics() {
                         <YAxis type="category" dataKey="event" width={160} fontSize={11} stroke="var(--text-secondary)" />
                         <Tooltip formatter={(v: number) => [`${v}%`, 'Accuracy']} />
                         <Bar dataKey="accuracy" radius={[0, 6, 6, 0]}>
-                          {eventStats.map((stat, idx) => (
+                          {eventStats.map((_, idx) => (
                             <Cell key={idx} fill={EVENT_COLORS[idx % EVENT_COLORS.length]} />
                           ))}
                         </Bar>
