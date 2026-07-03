@@ -5,7 +5,7 @@ export default function Help() {
     <div className="resources-page">
       <h1>Help & Support</h1>
       <p>Need assistance? Find answers to common questions or reach out to our team.</p>
-      
+
       <div className="resource-cards" style={{ marginTop: '30px' }}>
         <div className="resource-card">
           <Book size={32} />
@@ -26,18 +26,18 @@ export default function Help() {
 
       <div className="events-panel" style={{ marginTop: '40px', padding: '30px' }}>
         <h2>Frequently Asked Questions</h2>
-        
+
         <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <h4 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-primary)' }}>How do I change my theme?</h4>
             <p style={{ color: 'var(--text-secondary)' }}>You can change your theme by navigating to your Profile page and selecting a new color from the App Theme palette.</p>
           </div>
-          
+
           <div>
             <h4 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-primary)' }}>How are questions scored?</h4>
             <p style={{ color: 'var(--text-secondary)' }}>Multiple Choice questions (MCQ) are automatically graded. Free Response questions (FRQ) are graded based on whether your answer contains the required keywords for the topic.</p>
           </div>
-          
+
           <div>
             <h4 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-primary)' }}>Where do the practice questions come from?</h4>
             <p style={{ color: 'var(--text-secondary)' }}>Our question bank is curated from past Science Olympiad tournaments, official study materials, and community contributions.</p>
