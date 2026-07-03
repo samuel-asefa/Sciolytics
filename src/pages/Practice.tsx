@@ -3,6 +3,8 @@ import { Search, RefreshCw, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getAllEvents, getAllSubtopics } from '../data/questionBank';
 import { questionService } from '../services/questionService';
+import { firestoreService } from '../services/firestoreService';
+import { useAuth } from '../contexts/AuthContext';
 
 const categories: Record<string, string> = {
   'Anatomy & Physiology': 'Life & Social Science',
@@ -35,6 +37,8 @@ const getDivisions = (event: string): string => {
 
 export default function Practice() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const uid = currentUser?.uid ?? '';
   const events = getAllEvents();
   const subtopicsMap = getAllSubtopics();
   
@@ -47,19 +51,31 @@ export default function Practice() {
   const [selectedSubtopic, setSelectedSubtopic] = useState<string>('All Subtopics');
   const [sortBy, setSortBy] = useState('alphabetical');
   const [searchQuery, setSearchQuery] = useState('');
-  const [favorites, setFavorites] = useState<string[]>(questionService.getProgress().favorites);
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  // Load real favorites from Firestore
+  useEffect(() => {
+    if (!uid) return;
+    firestoreService.getProgress(uid).then(prog => {
+      setFavorites(prog.favorites ?? []);
+    }).catch(() => {
+      // fallback to questionService for offline
+      setFavorites(questionService.getProgress().favorites);
+    });
+  }, [uid]);
 
   const availableSubtopics = selectedEvent ? subtopicsMap[selectedEvent] || [] : [];
 
-  useEffect(() => {
-    if (selectedEvent && availableSubtopics.length > 0 && selectedSubtopic === 'All Subtopics') {
-      // Keep current selection or reset
+  const toggleFavorite = async (eventName: string) => {
+    if (uid) {
+      await firestoreService.toggleFavorite(uid, eventName);
+      const prog = await firestoreService.getProgress(uid);
+      setFavorites(prog.favorites ?? []);
+    } else {
+      // Fallback if not logged in
+      questionService.toggleFavorite(eventName);
+      setFavorites(questionService.getProgress().favorites);
     }
-  }, [selectedEvent]);
-
-  const toggleFavorite = (eventName: string) => {
-    questionService.toggleFavorite(eventName);
-    setFavorites(questionService.getProgress().favorites);
   };
 
   const filteredEvents = events

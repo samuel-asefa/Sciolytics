@@ -10,6 +10,9 @@ import Analytics from './pages/Analytics';
 import Teams from './pages/Teams';
 import UpcomingEvents from './pages/UpcomingEvents';
 import Profile from './pages/Profile';
+import Help from './pages/Help';
+import Bookmarks from './pages/Bookmarks';
+import LoadTest from './pages/LoadTest';
 import './App.css';
 
 function App() {
@@ -84,6 +87,30 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/help"
+                  element={
+                    <ProtectedRoute>
+                      <Help />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/bookmarks"
+                  element={
+                    <ProtectedRoute>
+                      <Bookmarks />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/load-test"
+                  element={
+                    <ProtectedRoute>
+                      <LoadTest />
                     </ProtectedRoute>
                   }
                 />

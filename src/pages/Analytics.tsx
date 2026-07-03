@@ -1,451 +1,330 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, Trophy, GitCompare, Info, Medal, TrendingUp } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Legend, Tooltip, BarChart, Bar } from 'recharts';
-import { apiService } from '../services/api';
-import type { School, EloDataPoint, TournamentResult, EventPerformance } from '../services/api';
+import { BarChart3, Target, TrendingUp, Award, BookOpen } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  Cell,
+  Legend,
+} from 'recharts';
+import { useAuth } from '../contexts/AuthContext';
+import { firestoreService, type UserSummary } from '../services/firestoreService';
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4'];
+interface EventStat { event: string; answered: number; correct: number; accuracy: number }
+interface DifficultyStat { difficulty: string; answered: number; correct: number; accuracy: number }
+interface DayAccuracy { date: string; accuracy: number; answered: number }
+
+const DIFF_COLORS: Record<string, string> = {
+  Easy: '#10b981',
+  Medium: '#f59e0b',
+  Hard: '#ef4444',
+};
+
+const EVENT_COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#f97316', '#ec4899', '#6366f1'];
 
 export default function Analytics() {
-  const [activeTab, setActiveTab] = useState('charts');
-  const [activeFilter, setActiveFilter] = useState('overall');
-  const [selectedSchools, setSelectedSchools] = useState<School[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [schools, setSchools] = useState<School[]>([]);
-  const [eloData, setEloData] = useState<EloDataPoint[]>([]);
-  const [leaderboard, setLeaderboard] = useState<School[]>([]);
-  const [tournamentResults, setTournamentResults] = useState<TournamentResult[]>([]);
-  const [eventPerformance, setEventPerformance] = useState<EventPerformance[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [divisionFilter, setDivisionFilter] = useState<'Varsity' | 'JV' | 'All'>('All');
-  const [stateFilter, setStateFilter] = useState<string>('');
+  const { currentUser } = useAuth();
+  const uid = currentUser?.uid ?? '';
+
+  const [activeTab, setActiveTab] = useState<'overview' | 'events' | 'difficulty' | 'history'>('overview');
+  const [summary, setSummary] = useState<UserSummary | null>(null);
+  const [eventStats, setEventStats] = useState<EventStat[]>([]);
+  const [difficultyStats, setDifficultyStats] = useState<DifficultyStat[]>([]);
+  const [historyData, setHistoryData] = useState<DayAccuracy[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadSchools();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
+    if (!uid) return;
+    let cancelled = false;
 
-  useEffect(() => {
-    if (selectedSchools.length > 0) {
-      loadEloData();
-      loadTournamentResults();
-      loadEventPerformance();
+    async function load() {
+      setLoading(true);
+      try {
+        const [prog, events, difficulty, history] = await Promise.all([
+          firestoreService.getProgress(uid),
+          firestoreService.getEventBreakdown(uid),
+          firestoreService.getDifficultyBreakdown(uid),
+          firestoreService.getDailyAccuracyHistory(uid, 30),
+        ]);
+        if (!cancelled) {
+          setSummary(prog);
+          setEventStats(events);
+          setDifficultyStats(difficulty);
+          setHistoryData(history);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error(err);
+        if (!cancelled) setLoading(false);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSchools, activeFilter]);
+    load();
+    return () => { cancelled = true; };
+  }, [uid]);
 
-  useEffect(() => {
-    if (activeTab === 'leaderboard') {
-      loadLeaderboard();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [divisionFilter, stateFilter, activeTab]);
+  const totalAnswered = summary?.questionsAnswered ?? 0;
+  const totalCorrect = summary?.questionsCorrect ?? 0;
+  const overallAccuracy = summary?.accuracy ?? 0;
+  const bestEvent = eventStats.sort((a, b) => b.accuracy - a.accuracy)[0];
+  const worstEvent = eventStats.filter(e => e.answered >= 3).sort((a, b) => a.accuracy - b.accuracy)[0];
 
-  const loadSchools = async () => {
-    setLoading(true);
-    try {
-      const data = await apiService.getSchools(searchQuery);
-      setSchools(data);
-    } catch (error) {
-      console.error('Failed to load schools:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadEloData = async () => {
-    setLoading(true);
-    try {
-      const schoolIds = selectedSchools.map(s => s.id);
-      const data = await apiService.getEloHistory(schoolIds, 6);
-      setEloData(data);
-    } catch (error) {
-      console.error('Failed to load Elo data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadLeaderboard = async () => {
-    setLoading(true);
-    try {
-      const division = divisionFilter === 'All' ? undefined : divisionFilter;
-      const data = await apiService.getLeaderboard(division, stateFilter || undefined, 50);
-      setLeaderboard(data);
-    } catch (error) {
-      console.error('Failed to load leaderboard:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadTournamentResults = async () => {
-    setLoading(true);
-    try {
-      const schoolIds = selectedSchools.map(s => s.id);
-      const data = await apiService.getTournamentResults(schoolIds);
-      setTournamentResults(data);
-    } catch (error) {
-      console.error('Failed to load tournament results:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadEventPerformance = async () => {
-    setLoading(true);
-    try {
-      const schoolIds = selectedSchools.map(s => s.id);
-      const eventName = activeFilter === 'event' ? 'Astronomy' : undefined;
-      const data = await apiService.getEventPerformance(schoolIds, eventName);
-      setEventPerformance(data);
-    } catch (error) {
-      console.error('Failed to load event performance:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const toggleSchool = (school: School) => {
-    if (selectedSchools.find(s => s.id === school.id)) {
-      setSelectedSchools(selectedSchools.filter(s => s.id !== school.id));
-    } else {
-      setSelectedSchools([...selectedSchools, school]);
-    }
-  };
-
-  const getSchoolDisplayName = (school: School) => {
-    return `${school.name} ${school.division} (${school.state})`;
-  };
-
-  const filteredSchools = schools.filter(school =>
-    getSchoolDisplayName(school).toLowerCase().includes(searchQuery.toLowerCase())
+  const EmptyState = ({ message }: { message: string }) => (
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      justifyContent: 'center', padding: '60px 20px', color: 'var(--text-secondary)', gap: '12px'
+    }}>
+      <BarChart3 size={48} style={{ opacity: 0.3 }} />
+      <h3 style={{ margin: 0 }}>{message}</h3>
+      <p style={{ margin: 0, fontSize: '14px' }}>Answer some practice questions to see your stats here.</p>
+    </div>
   );
 
   return (
     <div className="analytics-page">
       <div className="analytics-header">
         <div>
-          <h1>Team Performance Analysis</h1>
-          <p>Track team performance across seasons and events.</p>
+          <h1>My Analytics</h1>
+          <p>Your real performance data, based on questions you've actually answered.</p>
         </div>
       </div>
 
       <div className="analytics-tabs">
-        <button
-          className={activeTab === 'charts' ? 'tab-btn active' : 'tab-btn'}
-          onClick={() => setActiveTab('charts')}
-        >
-          <BarChart3 size={18} />
-          Charts
-        </button>
-        <button
-          className={activeTab === 'leaderboard' ? 'tab-btn active' : 'tab-btn'}
-          onClick={() => setActiveTab('leaderboard')}
-        >
-          <Trophy size={18} />
-          Leaderboard
-        </button>
-        <button
-          className={activeTab === 'compare' ? 'tab-btn active' : 'tab-btn'}
-          onClick={() => setActiveTab('compare')}
-        >
-          <GitCompare size={18} />
-          Compare
-        </button>
+        {[
+          { id: 'overview', label: 'Overview', icon: <Target size={16} /> },
+          { id: 'events', label: 'By Event', icon: <BookOpen size={16} /> },
+          { id: 'difficulty', label: 'By Difficulty', icon: <Award size={16} /> },
+          { id: 'history', label: 'History', icon: <TrendingUp size={16} /> },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            className={activeTab === tab.id ? 'tab-btn active' : 'tab-btn'}
+            onClick={() => setActiveTab(tab.id as typeof activeTab)}
+          >
+            {tab.icon} {tab.label}
+          </button>
+        ))}
       </div>
 
-      {activeTab === 'charts' && (
-        <>
-          <div className="filter-tabs">
-            <button
-              className={activeFilter === 'overall' ? 'filter-btn active' : 'filter-btn'}
-              onClick={() => setActiveFilter('overall')}
-            >
-              Overall
-            </button>
-            <button
-              className={activeFilter === 'event' ? 'filter-btn active' : 'filter-btn'}
-              onClick={() => setActiveFilter('event')}
-            >
-              Event
-            </button>
-            <button
-              className={activeFilter === 'season' ? 'filter-btn active' : 'filter-btn'}
-              onClick={() => setActiveFilter('season')}
-            >
-              By Season
-            </button>
-            <button
-              className={activeFilter === 'tournament' ? 'filter-btn active' : 'filter-btn'}
-              onClick={() => setActiveFilter('tournament')}
-            >
-              By Tournament
-            </button>
-          </div>
-
-          <div className="analytics-content">
-            <div className="school-selector">
-              <h3>Select Schools</h3>
-              <input
-                type="text"
-                placeholder="Search schools..."
-                className="school-search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <div className="schools-list">
-                {loading ? (
-                  <div className="loading">Loading...</div>
-                ) : (
-                  filteredSchools.map((school) => {
-                    const isSelected = selectedSchools.find(s => s.id === school.id);
-                    return (
-                      <div
-                        key={school.id}
-                        className={`school-item ${isSelected ? 'selected' : ''}`}
-                        onClick={() => toggleSchool(school)}
-                      >
-                        {getSchoolDisplayName(school)}
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-              {selectedSchools.length > 0 && (
-                <div className="selected-schools">
-                  {selectedSchools.map((school) => (
-                    <div key={school.id} className="selected-tag">
-                      {getSchoolDisplayName(school)}
-                      <button onClick={() => toggleSchool(school)}>×</button>
-                    </div>
-                  ))}
-                  <button className="clear-all" onClick={() => setSelectedSchools([])}>
-                    Clear All
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="chart-container">
-              <div className="chart-header">
-                <h3>Elo Rating</h3>
-                <Info size={16} className="info-icon" />
-              </div>
-              {loading ? (
-                <div className="loading">Loading chart data...</div>
-              ) : eloData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={400}>
-                  <LineChart data={eloData}>
-                    <XAxis dataKey="date" />
-                    <YAxis domain={[2400, 3200]} />
-                    <Tooltip />
-                    <Legend />
-                    {selectedSchools.map((school, idx) => (
-                      <Line
-                        key={school.id}
-                        type="monotone"
-                        dataKey={getSchoolDisplayName(school)}
-                        stroke={COLORS[idx % COLORS.length]}
-                        strokeWidth={2}
-                        dot={{ r: 4 }}
-                      />
-                    ))}
-                  </LineChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="no-data">Select schools to view Elo rating history</div>
-              )}
-            </div>
-          </div>
-        </>
-      )}
-
-      {activeTab === 'leaderboard' && (
-        <div className="leaderboard-container">
-          <div className="leaderboard-filters">
-            <div className="filter-group">
-              <label>Division:</label>
-              <select
-                value={divisionFilter}
-                onChange={(e) => setDivisionFilter(e.target.value as 'Varsity' | 'JV' | 'All')}
-                className="filter-select"
-              >
-                <option value="All">All Divisions</option>
-                <option value="Varsity">Varsity</option>
-                <option value="JV">JV</option>
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>State:</label>
-              <input
-                type="text"
-                placeholder="Filter by state..."
-                value={stateFilter}
-                onChange={(e) => setStateFilter(e.target.value)}
-                className="filter-input"
-              />
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="loading">Loading leaderboard...</div>
-          ) : (
-            <div className="leaderboard-table">
-              <div className="leaderboard-header">
-                <div className="rank-col">Rank</div>
-                <div className="school-col">School</div>
-                <div className="elo-col">Elo Rating</div>
-                <div className="trend-col">Trend</div>
-              </div>
-              {leaderboard.map((school, idx) => (
-                <div key={school.id} className="leaderboard-row">
-                  <div className="rank-col">
-                    {idx < 3 ? (
-                      <Medal size={20} className={`medal-${idx + 1}`} />
-                    ) : (
-                      <span className="rank-number">{idx + 1}</span>
-                    )}
-                  </div>
-                  <div className="school-col">
-                    <div className="school-name">{school.name}</div>
-                    <div className="school-meta">{school.division} • {school.state}</div>
-                  </div>
-                  <div className="elo-col">
-                    <span className="elo-value">{school.elo}</span>
-                  </div>
-                  <div className="trend-col">
-                    <TrendingUp size={16} className="trend-icon" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+      {loading ? (
+        <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+          Loading your analytics…
         </div>
-      )}
-
-      {activeTab === 'compare' && (
-        <div className="compare-container">
-          <div className="compare-selector">
-            <h3>Select Schools to Compare</h3>
-            <input
-              type="text"
-              placeholder="Search schools..."
-              className="school-search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <div className="schools-list">
-              {loading ? (
-                <div className="loading">Loading...</div>
-              ) : (
-                filteredSchools.map((school) => {
-                  const isSelected = selectedSchools.find(s => s.id === school.id);
-                  return (
-                    <div
-                      key={school.id}
-                      className={`school-item ${isSelected ? 'selected' : ''}`}
-                      onClick={() => toggleSchool(school)}
-                    >
-                      {getSchoolDisplayName(school)}
+      ) : (
+        <>
+          {/* ── OVERVIEW ── */}
+          {activeTab === 'overview' && (
+            <div>
+              {/* Stat summary row */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+                {[
+                  { label: 'Total Answered', value: totalAnswered, color: 'var(--primary-color)' },
+                  { label: 'Total Correct', value: totalCorrect, color: '#10b981' },
+                  { label: 'Overall Accuracy', value: `${overallAccuracy}%`, color: overallAccuracy >= 70 ? '#10b981' : overallAccuracy >= 50 ? '#f59e0b' : '#ef4444' },
+                  { label: 'Events Practiced', value: eventStats.length, color: 'var(--primary-color)' },
+                ].map(stat => (
+                  <div key={stat.label} className="stat-card" style={{ textAlign: 'center' }}>
+                    <h3>{stat.label}</h3>
+                    <div className="stat-value" style={{ color: stat.color, fontSize: '40px' }}>
+                      {stat.value}
                     </div>
-                  );
-                })
-              )}
-            </div>
-            {selectedSchools.length > 0 && (
-              <div className="selected-schools">
-                {selectedSchools.map((school) => (
-                  <div key={school.id} className="selected-tag">
-                    {getSchoolDisplayName(school)}
-                    <button onClick={() => toggleSchool(school)}>×</button>
                   </div>
                 ))}
-                <button className="clear-all" onClick={() => setSelectedSchools([])}>
-                  Clear All
-                </button>
               </div>
-            )}
-          </div>
 
-          {selectedSchools.length > 0 && (
-            <div className="compare-content">
-              <div className="compare-section">
-                <h3>Tournament Results</h3>
-                {loading ? (
-                  <div className="loading">Loading tournament data...</div>
-                ) : tournamentResults.length > 0 ? (
-                  <div className="tournament-results">
-                    {Array.from(new Set(tournamentResults.map(t => t.name))).map(tournamentName => (
-                      <div key={tournamentName} className="tournament-card">
-                        <h4>{tournamentName}</h4>
-                        <div className="tournament-schools">
-                          {tournamentResults
-                            .filter(t => t.name === tournamentName)
-                            .map(result => (
-                              <div key={result.id} className="tournament-result">
-                                <span className="result-school">{result.schoolName}</span>
-                                <span className="result-rank">Rank: {result.rank}</span>
-                                <span className="result-score">Score: {result.score}</span>
-                              </div>
-                            ))}
+              {totalAnswered === 0 ? (
+                <EmptyState message="No data yet" />
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                  {bestEvent && (
+                    <div className="stat-card">
+                      <h3>🏆 Strongest Event</h3>
+                      <p style={{ fontSize: '20px', fontWeight: 700, color: '#10b981', margin: '8px 0 4px' }}>
+                        {bestEvent.event}
+                      </p>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+                        {bestEvent.accuracy}% accuracy ({bestEvent.correct}/{bestEvent.answered})
+                      </p>
+                    </div>
+                  )}
+                  {worstEvent && (
+                    <div className="stat-card">
+                      <h3>📚 Needs Work</h3>
+                      <p style={{ fontSize: '20px', fontWeight: 700, color: '#ef4444', margin: '8px 0 4px' }}>
+                        {worstEvent.event}
+                      </p>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+                        {worstEvent.accuracy}% accuracy ({worstEvent.correct}/{worstEvent.answered})
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── BY EVENT ── */}
+          {activeTab === 'events' && (
+            <div>
+              {eventStats.length === 0 ? (
+                <EmptyState message="No event data yet" />
+              ) : (
+                <>
+                  <div className="leaderboard-container">
+                    <div className="leaderboard-table">
+                      <div className="leaderboard-header">
+                        <div style={{ flex: 2 }}>Event</div>
+                        <div style={{ flex: 1, textAlign: 'center' }}>Answered</div>
+                        <div style={{ flex: 1, textAlign: 'center' }}>Correct</div>
+                        <div style={{ flex: 1, textAlign: 'center' }}>Accuracy</div>
+                      </div>
+                      {eventStats.map(stat => (
+                        <div key={stat.event} className="leaderboard-row">
+                          <div style={{ flex: 2 }}>
+                            <div className="school-name">{stat.event}</div>
+                          </div>
+                          <div style={{ flex: 1, textAlign: 'center' }}>{stat.answered}</div>
+                          <div style={{ flex: 1, textAlign: 'center' }}>{stat.correct}</div>
+                          <div style={{ flex: 1, textAlign: 'center' }}>
+                            <span style={{
+                              color: stat.accuracy >= 70 ? '#10b981' : stat.accuracy >= 50 ? '#f59e0b' : '#ef4444',
+                              fontWeight: 700,
+                            }}>
+                              {stat.accuracy}%
+                            </span>
+                          </div>
                         </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: '24px', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
+                    <h3 style={{ marginBottom: '16px' }}>Accuracy by Event</h3>
+                    <ResponsiveContainer width="100%" height={320}>
+                      <BarChart data={eventStats} layout="vertical" margin={{ left: 20, right: 20 }}>
+                        <XAxis type="number" domain={[0, 100]} tickFormatter={v => `${v}%`} fontSize={12} stroke="var(--text-secondary)" />
+                        <YAxis type="category" dataKey="event" width={160} fontSize={11} stroke="var(--text-secondary)" />
+                        <Tooltip formatter={(v: number) => [`${v}%`, 'Accuracy']} />
+                        <Bar dataKey="accuracy" radius={[0, 6, 6, 0]}>
+                          {eventStats.map((stat, idx) => (
+                            <Cell key={idx} fill={EVENT_COLORS[idx % EVENT_COLORS.length]} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* ── BY DIFFICULTY ── */}
+          {activeTab === 'difficulty' && (
+            <div>
+              {difficultyStats.every(d => d.answered === 0) ? (
+                <EmptyState message="No difficulty data yet" />
+              ) : (
+                <>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '24px' }}>
+                    {difficultyStats.map(stat => (
+                      <div key={stat.difficulty} className="stat-card" style={{ textAlign: 'center' }}>
+                        <h3 style={{ color: DIFF_COLORS[stat.difficulty] }}>{stat.difficulty}</h3>
+                        <div className="stat-value" style={{ color: DIFF_COLORS[stat.difficulty], fontSize: '36px' }}>
+                          {stat.accuracy}%
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '8px' }}>
+                          {stat.correct}/{stat.answered} correct
+                        </p>
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="no-data">No tournament data available</div>
-                )}
-              </div>
 
-              <div className="compare-section">
-                <h3>Event Performance</h3>
-                {loading ? (
-                  <div className="loading">Loading event data...</div>
-                ) : eventPerformance.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={400}>
-                    <BarChart data={(() => {
-                      // Group by event and create data points for each school
-                      const events = Array.from(new Set(eventPerformance.map(e => e.eventName)));
-                      return events.map(eventName => {
-                        const point: Record<string, string | number> = { eventName };
-                        selectedSchools.forEach(school => {
-                          const perf = eventPerformance.find(
-                            e => e.eventName === eventName && e.schoolId === school.id
-                          );
-                          if (perf) {
-                            point[getSchoolDisplayName(school)] = Math.round(perf.averageScore);
-                          }
-                        });
-                        return point;
-                      });
-                    })()}>
-                      <XAxis dataKey="eventName" />
-                      <YAxis />
-                      <Tooltip />
+                  <div style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
+                    <h3 style={{ marginBottom: '16px' }}>Questions by Difficulty</h3>
+                    <ResponsiveContainer width="100%" height={280}>
+                      <BarChart data={difficultyStats}>
+                        <XAxis dataKey="difficulty" fontSize={13} stroke="var(--text-secondary)" />
+                        <YAxis fontSize={12} stroke="var(--text-secondary)" />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="answered" name="Answered" fill="rgba(99,102,241,0.4)" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="correct" name="Correct" radius={[4, 4, 0, 0]}>
+                          {difficultyStats.map((stat, idx) => (
+                            <Cell key={idx} fill={DIFF_COLORS[stat.difficulty]} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* ── HISTORY ── */}
+          {activeTab === 'history' && (
+            <div>
+              {historyData.length === 0 ? (
+                <EmptyState message="No history data yet" />
+              ) : (
+                <div style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
+                  <h3 style={{ marginBottom: '4px' }}>Daily Accuracy — Last 30 Days</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '20px' }}>
+                    Only shows days where you answered at least one question.
+                  </p>
+                  <ResponsiveContainer width="100%" height={360}>
+                    <LineChart data={historyData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+                      <XAxis
+                        dataKey="date"
+                        fontSize={11}
+                        stroke="var(--text-secondary)"
+                        tickFormatter={d => d.slice(5)} // MM-DD
+                      />
+                      <YAxis
+                        domain={[0, 100]}
+                        tickFormatter={v => `${v}%`}
+                        fontSize={12}
+                        stroke="var(--text-secondary)"
+                      />
+                      <Tooltip
+                        formatter={(v: number, name: string) => [
+                          name === 'accuracy' ? `${v}%` : v,
+                          name === 'accuracy' ? 'Accuracy' : 'Questions'
+                        ]}
+                        labelFormatter={l => `Date: ${l}`}
+                      />
                       <Legend />
-                      {selectedSchools.map((school, idx) => (
-                        <Bar
-                          key={school.id}
-                          dataKey={getSchoolDisplayName(school)}
-                          fill={COLORS[idx % COLORS.length]}
-                        />
-                      ))}
-                    </BarChart>
+                      <Line
+                        type="monotone"
+                        dataKey="accuracy"
+                        stroke="var(--primary-color)"
+                        strokeWidth={3}
+                        dot={{ r: 4 }}
+                        activeDot={{ r: 6 }}
+                        name="accuracy"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="answered"
+                        stroke="#10b981"
+                        strokeWidth={2}
+                        dot={{ r: 3 }}
+                        strokeDasharray="4 2"
+                        name="answered"
+                      />
+                    </LineChart>
                   </ResponsiveContainer>
-                ) : (
-                  <div className="no-data">No event performance data available</div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
-
-          {selectedSchools.length === 0 && (
-            <div className="compare-placeholder">
-              <p>Select schools to compare their performance</p>
-            </div>
-          )}
-        </div>
+        </>
       )}
     </div>
   );

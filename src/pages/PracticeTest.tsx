@@ -1,11 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle2, XCircle, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Clock, CheckCircle2, XCircle, ArrowRight, ArrowLeft, Bookmark } from 'lucide-react';
 import { questionService, type QuestionFilter } from '../services/questionService';
+import { firestoreService } from '../services/firestoreService';
+import { useAuth } from '../contexts/AuthContext';
 import type { Question } from '../data/questionBank';
 
 export default function PracticeTest() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -14,6 +17,7 @@ export default function PracticeTest() {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [isUnlimited, setIsUnlimited] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
 
   const handleFinish = useCallback(() => {
     navigate('/practice/results', {
@@ -37,13 +41,13 @@ export default function PracticeTest() {
 
     const config: QuestionFilter = JSON.parse(configStr);
     const loadedQuestions = questionService.getQuestions(config);
-    
+
     if (loadedQuestions.length === 0) {
       alert('No questions found with the selected filters. Please try different settings.');
       navigate('/practice');
       return;
     }
-    
+
     setQuestions(loadedQuestions);
     const unlimited = unlimitedStr === 'true';
     setIsUnlimited(unlimited);
@@ -90,17 +94,33 @@ export default function PracticeTest() {
     setSelectedAnswer(answer);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!currentQuestion) return;
     if (!selectedAnswer && currentQuestion?.type === 'MCQ') return;
 
     try {
-      const isCorrect = currentQuestion?.type === 'MCQ'
-        ? selectedAnswer === currentQuestion.correctAnswer
-        : selectedAnswer.trim().toLowerCase() === currentQuestion.correctAnswer.toLowerCase().slice(0, 20);
+      let isCorrect = false;
+      if (currentQuestion?.type === 'MCQ') {
+        isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+      } else if (currentQuestion?.type === 'FRQ') {
+        const answerLower = selectedAnswer.trim().toLowerCase();
+        if (currentQuestion.keywords && currentQuestion.keywords.length > 0) {
+          let matchCount = 0;
+          currentQuestion.keywords.forEach(keyword => {
+            if (answerLower.includes(keyword.toLowerCase())) {
+              matchCount++;
+            }
+          });
+          isCorrect = (matchCount / currentQuestion.keywords.length) >= 0.5;
+        } else {
+          isCorrect = answerLower.length > 5 && currentQuestion.correctAnswer.toLowerCase().includes(answerLower);
+        }
+      }
 
-      questionService.recordAnswer(currentQuestion, isCorrect);
-      questionService.recordDailyAnswer(isCorrect);
+      // Persist to Firestore (real data) — non-blocking
+      if (currentUser?.uid) {
+        firestoreService.saveAnswer(currentUser.uid, currentQuestion, isCorrect).catch(console.error);
+      }
 
       setScore((prev) => ({
         correct: prev.correct + (isCorrect ? 1 : 0),
@@ -113,6 +133,17 @@ export default function PracticeTest() {
       console.error('Error submitting answer:', error);
       alert('An error occurred. Please try again.');
     }
+  };
+
+  const handleBookmark = async () => {
+    if (!currentQuestion || !currentUser?.uid) return;
+    const isNowBookmarked = await firestoreService.toggleBookmark(currentUser.uid, currentQuestion);
+    setBookmarkedIds(prev => {
+      const next = new Set(prev);
+      if (isNowBookmarked) next.add(currentQuestion.id);
+      else next.delete(currentQuestion.id);
+      return next;
+    });
   };
 
   const handleNext = () => {
@@ -163,6 +194,14 @@ export default function PracticeTest() {
             <span className="question-difficulty">{currentQuestion?.difficulty}</span>
             <span className="question-subtopic">{currentQuestion?.subtopic}</span>
           </div>
+          <button
+            onClick={handleBookmark}
+            className="favorite-button"
+            title={bookmarkedIds.has(currentQuestion?.id ?? '') ? 'Remove bookmark' : 'Bookmark this question'}
+            style={{ marginLeft: 'auto', color: bookmarkedIds.has(currentQuestion?.id ?? '') ? '#f59e0b' : 'var(--text-secondary)' }}
+          >
+            <Bookmark size={20} fill={bookmarkedIds.has(currentQuestion?.id ?? '') ? 'currentColor' : 'none'} />
+          </button>
         </div>
 
         <div className="question-text">

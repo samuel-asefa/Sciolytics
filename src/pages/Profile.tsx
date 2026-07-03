@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { User, Mail, Calendar, MapPin, School, Save, Edit2, X } from 'lucide-react';
+import { User, Mail, Calendar, MapPin, School, Save, Edit2, X, Palette } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { updateProfile } from 'firebase/auth';
+import { firestoreService } from '../services/firestoreService';
 
 interface UserProfile {
   fullName: string;
@@ -13,8 +15,10 @@ interface UserProfile {
 
 export default function Profile() {
   const { currentUser } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<UserProfile>(() => {
+    // ... logic remains same
     const saved = localStorage.getItem('userProfile');
     if (saved) {
       return JSON.parse(saved);
@@ -29,18 +33,31 @@ export default function Profile() {
   });
 
   const [formData, setFormData] = useState<UserProfile>(profile);
+  const [firestoreStats, setFirestoreStats] = useState({ questionsAnswered: 0, accuracy: 0, bookmarks: 0 });
 
   useEffect(() => {
-    if (currentUser?.displayName) {
-      setProfile(prev => ({
-        ...prev,
-        fullName: currentUser.displayName || prev.fullName,
-      }));
-      setFormData(prev => ({
-        ...prev,
-        fullName: currentUser.displayName || prev.fullName,
-      }));
-    }
+    if (!currentUser?.uid) return;
+    // Load profile from Firestore
+    firestoreService.getProfile(currentUser.uid).then(p => {
+      if (Object.keys(p).length > 0) {
+        setProfile(p as unknown as UserProfile);
+        setFormData(p as unknown as UserProfile);
+      } else if (currentUser?.displayName) {
+        setProfile(prev => ({ ...prev, fullName: currentUser.displayName || prev.fullName }));
+        setFormData(prev => ({ ...prev, fullName: currentUser.displayName || prev.fullName }));
+      }
+    }).catch(console.error);
+    // Load real stats
+    firestoreService.getProgress(currentUser.uid).then(prog => {
+      setFirestoreStats({
+        questionsAnswered: prog.questionsAnswered,
+        accuracy: prog.accuracy,
+        bookmarks: 0,
+      });
+    }).catch(console.error);
+    firestoreService.getBookmarks(currentUser.uid).then(bmarks => {
+      setFirestoreStats(prev => ({ ...prev, bookmarks: bmarks.length }));
+    }).catch(console.error);
   }, [currentUser]);
 
   const handleChange = (field: keyof UserProfile, value: string) => {
@@ -49,15 +66,14 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      // Update Firebase profile if display name changed
       if (currentUser && formData.fullName !== currentUser.displayName) {
-        await updateProfile(currentUser, {
-          displayName: formData.fullName,
-        });
+        await updateProfile(currentUser, { displayName: formData.fullName });
       }
-
       setProfile(formData);
-      localStorage.setItem('userProfile', JSON.stringify(formData));
+      // Save to Firestore instead of localStorage
+      if (currentUser?.uid) {
+        await firestoreService.saveProfile(currentUser.uid, formData as unknown as Record<string, string>);
+      }
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -77,8 +93,27 @@ export default function Profile() {
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <h1>Profile Settings</h1>
-        <p>Manage your account information and preferences</p>
+        <div>
+          <h1>Profile Settings</h1>
+          <p>Manage your account information and preferences</p>
+        </div>
+
+        <div className="theme-settings-card">
+          <div className="theme-settings-header">
+            <Palette size={18} />
+            <h3>App Theme</h3>
+          </div>
+          <div className="theme-selector">
+            {(['blue', 'green', 'orange', 'purple', 'red', 'teal', 'pink', 'yellow', 'indigo'] as const).map(t => (
+              <button
+                key={t}
+                className={`theme-circle theme-${t} ${theme === t ? 'active' : ''}`}
+                onClick={() => setTheme(t)}
+                title={`Switch to ${t} theme`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="profile-content">
@@ -231,19 +266,15 @@ export default function Profile() {
           <h2>Statistics</h2>
           <div className="stats-grid">
             <div className="stat-box">
-              <div className="stat-value">0</div>
-              <div className="stat-label">Tests Completed</div>
-            </div>
-            <div className="stat-box">
-              <div className="stat-value">0</div>
+              <div className="stat-value">{firestoreStats.questionsAnswered}</div>
               <div className="stat-label">Questions Answered</div>
             </div>
             <div className="stat-box">
-              <div className="stat-value">0%</div>
-              <div className="stat-label">Average Accuracy</div>
+              <div className="stat-value">{firestoreStats.accuracy}%</div>
+              <div className="stat-label">Overall Accuracy</div>
             </div>
             <div className="stat-box">
-              <div className="stat-value">0</div>
+              <div className="stat-value">{firestoreStats.bookmarks}</div>
               <div className="stat-label">Bookmarks</div>
             </div>
           </div>

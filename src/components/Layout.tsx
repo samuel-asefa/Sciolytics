@@ -1,7 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MoreVertical, User, Moon, Sun, X, Settings, LogOut } from 'lucide-react';
+import { MoreVertical, User, Settings, LogOut } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 
 interface LayoutProps {
@@ -11,9 +10,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
   const { currentUser, logout } = useAuth();
-  const [showBanner, setShowBanner] = useState(true);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -55,19 +52,6 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout">
-      {showBanner && (
-        <div className="top-banner">
-          <span>
-            This website is still in development!
-            {' '}
-            <a href="#" className="banner-link"></a>
-          </span>
-          <button className="banner-close" onClick={() => setShowBanner(false)}>
-            <X size={16} />
-          </button>
-        </div>
-      )}
-      
       <nav className="navbar">
         <div className="nav-left">
           <Link to="/dashboard" className="logo-container">
@@ -75,7 +59,7 @@ export default function Layout({ children }: LayoutProps) {
             <span className="logo-text">Sciolytics</span>
           </Link>
         </div>
-        
+
         <div className="nav-center">
           <Link to="/practice" className={isActive('/practice') ? 'nav-link active' : 'nav-link'}>
             Practice
@@ -101,11 +85,8 @@ export default function Layout({ children }: LayoutProps) {
             )}
           </div>
         </div>
-        
+
         <div className="nav-right">
-          <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
-            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-          </button>
           <div className="user-menu-container" ref={userMenuRef}>
             <div className="user-menu" onClick={() => setShowUserMenu(!showUserMenu)}>
               {currentUser?.photoURL ? (
@@ -138,10 +119,10 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </div>
       </nav>
-      
+
       <main className="main-content">
         {children}
       </main>
-    </div>
+    </div >
   );
 }

@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 // Firebase configuration
-// Replace these with your actual Firebase config values
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyC0hxHXJtwhW599pYWevOerGbTV9B3WGcU",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "sciolytics-fcee6.firebaseapp.com",
@@ -15,16 +15,14 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Authentication and get a reference to the service
+// Auth
 export const auth = getAuth(app);
 
-// OAuth Provider
-export const googleProvider = new GoogleAuthProvider();
+// Firestore
+export const db = getFirestore(app);
 
-// Configure provider
-googleProvider.setCustomParameters({
-  prompt: 'select_account'
-});
+// Google OAuth Provider
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 export default app;
-

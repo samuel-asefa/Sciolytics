@@ -1,18 +1,32 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Trophy, Home, RotateCcw, BarChart3 } from 'lucide-react';
-import { questionService } from '../services/questionService';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { firestoreService } from '../services/firestoreService';
 
 export default function PracticeResults() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser } = useAuth();
   const { score, totalQuestions, answeredCount } = location.state || {
     score: { correct: 0, total: 0 },
     totalQuestions: 0,
     answeredCount: 0,
   };
 
-  const accuracy = score.total > 0 ? (score.correct / score.total) * 100 : 0;
-  const progress = questionService.getProgress();
+  const [liveProgress, setLiveProgress] = useState({ questionsAnswered: 0, questionsCorrect: 0, accuracy: 0, favorites: [] as string[] });
+
+  useEffect(() => {
+    if (!currentUser?.uid) return;
+    firestoreService.getProgress(currentUser.uid)
+      .then(prog => setLiveProgress({
+        questionsAnswered: prog.questionsAnswered,
+        questionsCorrect: prog.questionsCorrect,
+        accuracy: prog.accuracy,
+        favorites: prog.favorites,
+      }))
+      .catch(console.error);
+  }, [currentUser]);
 
   const getGrade = (acc: number): string => {
     if (acc >= 90) return 'A+';
@@ -52,19 +66,19 @@ export default function PracticeResults() {
           <div className="stats-grid">
             <div className="stat-item">
               <span className="stat-label">Total Questions Answered</span>
-              <span className="stat-number">{progress.questionsAnswered}</span>
+              <span className="stat-number">{liveProgress.questionsAnswered}</span>
             </div>
             <div className="stat-item">
               <span className="stat-label">Total Correct</span>
-              <span className="stat-number">{progress.questionsCorrect}</span>
+              <span className="stat-number">{liveProgress.questionsCorrect}</span>
             </div>
             <div className="stat-item">
               <span className="stat-label">Overall Accuracy</span>
-              <span className="stat-number">{progress.accuracy.toFixed(1)}%</span>
+              <span className="stat-number">{liveProgress.accuracy}%</span>
             </div>
             <div className="stat-item">
               <span className="stat-label">Favorited Events</span>
-              <span className="stat-number">{progress.favorites.length}</span>
+              <span className="stat-number">{liveProgress.favorites.length}</span>
             </div>
           </div>
         </div>
