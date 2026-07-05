@@ -162,9 +162,14 @@ export const firestoreService = {
     // 3. Update summary
     const sumRef = summaryRef(uid);
     const sumSnap = await getDoc(sumRef);
-    const current: UserSummary = sumSnap.exists()
-      ? (sumSnap.data() as UserSummary)
-      : { ...defaultSummary };
+    const currentData = sumSnap.exists() ? sumSnap.data() : {};
+    const current: UserSummary = {
+      ...defaultSummary,
+      ...currentData,
+      byEvent: currentData.byEvent || {},
+      byDifficulty: currentData.byDifficulty || {},
+      favorites: currentData.favorites || []
+    };
 
     const newAnswered = current.questionsAnswered + 1;
     const newCorrect = current.questionsCorrect + (isCorrect ? 1 : 0);
@@ -309,7 +314,12 @@ export const firestoreService = {
   async toggleFavorite(uid: string, event: string): Promise<boolean> {
     const sumRef = summaryRef(uid);
     const snap = await getDoc(sumRef);
-    const data: UserSummary = snap.exists() ? (snap.data() as UserSummary) : { ...defaultSummary };
+    const currentData = snap.exists() ? snap.data() : {};
+    const data: UserSummary = {
+      ...defaultSummary,
+      ...currentData,
+      favorites: currentData.favorites || []
+    };
     const idx = data.favorites.indexOf(event);
     let newFavorites: string[];
     if (idx > -1) {

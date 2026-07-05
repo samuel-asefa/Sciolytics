@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { User, Mail, Calendar, MapPin, School, Save, Edit2, X, Palette } from 'lucide-react';
+import { User, Mail, Calendar, MapPin, School, Save, Edit2, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
 import { updateProfile } from 'firebase/auth';
 import { firestoreService } from '../services/firestoreService';
 
@@ -15,7 +14,6 @@ interface UserProfile {
 
 export default function Profile() {
   const { currentUser } = useAuth();
-  const { theme, setTheme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<UserProfile>(() => {
     // ... logic remains same
@@ -66,14 +64,16 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      if (currentUser && formData.fullName !== currentUser.displayName) {
-        await updateProfile(currentUser, { displayName: formData.fullName });
-      }
-      setProfile(formData);
-      // Save to Firestore instead of localStorage
+      // Save to Firestore first
       if (currentUser?.uid) {
         await firestoreService.saveProfile(currentUser.uid, formData as unknown as Record<string, string>);
       }
+      
+      if (currentUser && formData.fullName !== currentUser.displayName) {
+        await updateProfile(currentUser, { displayName: formData.fullName });
+      }
+      
+      setProfile(formData);
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -96,23 +96,6 @@ export default function Profile() {
         <div>
           <h1>Profile Settings</h1>
           <p>Manage your account information and preferences</p>
-        </div>
-
-        <div className="theme-settings-card">
-          <div className="theme-settings-header">
-            <Palette size={18} />
-            <h3>App Theme</h3>
-          </div>
-          <div className="theme-selector">
-            {(['blue', 'green', 'orange', 'purple', 'red', 'teal', 'pink', 'yellow', 'indigo'] as const).map(t => (
-              <button
-                key={t}
-                className={`theme-circle theme-${t} ${theme === t ? 'active' : ''}`}
-                onClick={() => setTheme(t)}
-                title={`Switch to ${t} theme`}
-              />
-            ))}
-          </div>
         </div>
       </div>
 

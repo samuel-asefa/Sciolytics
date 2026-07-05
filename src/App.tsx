@@ -13,6 +13,8 @@ import Profile from './pages/Profile';
 import Help from './pages/Help';
 import Bookmarks from './pages/Bookmarks';
 import LoadTest from './pages/LoadTest';
+import Resources from './pages/Resources';
+import Settings from './pages/Settings';
 import './App.css';
 
 function App() {
@@ -95,6 +97,22 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Help />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/resources"
+                  element={
+                    <ProtectedRoute>
+                      <Resources />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
                     </ProtectedRoute>
                   }
                 />

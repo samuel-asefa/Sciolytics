@@ -105,10 +105,10 @@ export default function Layout({ children }: LayoutProps) {
                   <User size={16} />
                   Profile
                 </button>
-                <button className="dropdown-item">
+                <Link to="/settings" className="dropdown-item" onClick={() => setShowUserMenu(false)}>
                   <Settings size={16} />
                   Settings
-                </button>
+                </Link>
                 <div className="dropdown-divider"></div>
                 <button className="dropdown-item" onClick={handleLogout}>
                   <LogOut size={16} />

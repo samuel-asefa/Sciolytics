@@ -69,6 +69,27 @@ export default function Resources() {
         </div>
 
         <h2 style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
+          Interactive Practice Tools
+        </h2>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+          <div className="action-card" style={{ cursor: 'default' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'var(--primary-color)' }}></div>
+              <h4 style={{ margin: 0, color: 'var(--text-primary)' }}>Flashcard Apps</h4>
+            </div>
+            <p style={{ margin: '10px 0 0 0', fontSize: '14px' }}>Anki and Quizlet are great for memorizing terms and scientific classifications.</p>
+          </div>
+          <div className="action-card" style={{ cursor: 'default' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'var(--primary-color)' }}></div>
+              <h4 style={{ margin: 0, color: 'var(--text-primary)' }}>Online Simulators</h4>
+            </div>
+            <p style={{ margin: '10px 0 0 0', fontSize: '14px' }}>PhET Interactive Simulations are excellent for physics and chemistry concepts.</p>
+          </div>
+        </div>
+
+        <h2 style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
           Video Channels & Online Courses
         </h2>
         

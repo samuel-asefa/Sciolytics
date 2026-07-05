@@ -30,7 +30,7 @@ export default function Help() {
         <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <h4 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-primary)' }}>How do I change my theme?</h4>
-            <p style={{ color: 'var(--text-secondary)' }}>You can change your theme by navigating to your Profile page and selecting a new color from the App Theme palette.</p>
+            <p style={{ color: 'var(--text-secondary)' }}>You can change your theme by navigating to your Settings page and selecting a new color from the App Theme palette.</p>
           </div>
 
           <div>
@@ -41,6 +41,16 @@ export default function Help() {
           <div>
             <h4 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-primary)' }}>Where do the practice questions come from?</h4>
             <p style={{ color: 'var(--text-secondary)' }}>Our question bank is curated from past Science Olympiad tournaments, official study materials, and community contributions.</p>
+          </div>
+
+          <div>
+            <h4 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-primary)' }}>Why don't my favorited events show up on the dashboard?</h4>
+            <p style={{ color: 'var(--text-secondary)' }}>Make sure you star your favorited events in the Practice section. They will automatically sync and appear on your Dashboard.</p>
+          </div>
+
+          <div>
+            <h4 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--text-primary)' }}>How can I update my profile details?</h4>
+            <p style={{ color: 'var(--text-secondary)' }}>Go to your Profile page, click "Edit Profile", make your changes, and click "Save Changes". Your new details will be securely saved to your account.</p>
           </div>
         </div>
       </div>
