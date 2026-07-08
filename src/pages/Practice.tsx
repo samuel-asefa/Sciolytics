@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Search, RefreshCw, Heart } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getAllEvents, getAllSubtopics, questionBank } from '../data/questionBank';
 import { questionService } from '../services/questionService';
 import { firestoreService } from '../services/firestoreService';
@@ -30,12 +30,13 @@ const categories: Record<string, string> = {
 
 export default function Practice() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser } = useAuth();
   const uid = currentUser?.uid ?? '';
   const events = getAllEvents();
   const subtopicsMap = getAllSubtopics();
 
-  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<string | null>(location.state?.selectedEvent || null);
   const [numQuestions, setNumQuestions] = useState('10');
   const [timeLimit, setTimeLimit] = useState('10');
   const [questionType, setQuestionType] = useState<'mcq' | 'mcq-frq' | 'frq'>('mcq');
@@ -60,6 +61,14 @@ export default function Practice() {
       setAnsweredIds(ids);
     }).catch(console.error);
   }, [uid]);
+
+  useEffect(() => {
+    if (location.state && location.state.selectedEvent) {
+      setSelectedEvent(location.state.selectedEvent);
+      // Optional: replace state to avoid re-selecting on page refresh if desired, 
+      // but syncing is generally enough.
+    }
+  }, [location.state]);
 
   const availableSubtopics = selectedEvent ? subtopicsMap[selectedEvent] || [] : [];
 

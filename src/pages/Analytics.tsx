@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { BarChart3, Target, TrendingUp, Award, BookOpen } from 'lucide-react';
 import {
   BarChart,
@@ -30,9 +31,10 @@ const EVENT_COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#0
 
 export default function Analytics() {
   const { currentUser } = useAuth();
+  const location = useLocation();
   const uid = currentUser?.uid ?? '';
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'events' | 'difficulty' | 'history'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'events' | 'difficulty' | 'history'>(location.state?.activeTab || 'overview');
   const [summary, setSummary] = useState<UserSummary | null>(null);
   const [eventStats, setEventStats] = useState<EventStat[]>([]);
   const [difficultyStats, setDifficultyStats] = useState<DifficultyStat[]>([]);

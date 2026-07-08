@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { PenTool, Lock, Bookmark, TrendingUp, Heart, Flame } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { PenTool, Lock, Bookmark, TrendingUp, Heart, Flame, FileText, BarChart2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../contexts/AuthContext';
 import { firestoreService, type UserSummary, type DaySession } from '../services/firestoreService';
@@ -11,6 +11,7 @@ interface WeekDay { name: string; questions: number; correct: number }
 type ChartRange = 7 | 30 | 90;
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
   const uid = currentUser?.uid ?? '';
 
@@ -102,10 +103,32 @@ export default function Dashboard() {
           <div className="config-grid">
             {displayedFavorites.length > 0 ? (
               displayedFavorites.map((event, i) => (
-                <div key={i} className="config-box favorited-event">
-                  <Heart size={16} className="favorite-icon" />
-                  <span className="event-name-small">{event}</span>
-                </div>
+                <Link 
+                  key={i} 
+                  to="/practice"
+                  state={{ selectedEvent: event }}
+                  className="config-box favorited-event" 
+                  style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                    <Heart size={16} className="favorite-icon" />
+                    <span className="event-name-small">{event}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', color: 'var(--text-secondary)' }}>
+                    <FileText 
+                      size={16} 
+                      className="hover-icon"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate('/analytics', { state: { activeTab: 'events', selectedEvent: event } }); }} 
+                      title="View Question History"
+                    />
+                    <BarChart2 
+                      size={16} 
+                      className="hover-icon"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate('/analytics', { state: { activeTab: 'events', selectedEvent: event } }); }} 
+                      title="View Performance"
+                    />
+                  </div>
+                </Link>
               ))
             ) : (
               <div className="config-box" style={{ gridColumn: 'span 2', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px' }}>
