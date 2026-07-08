@@ -189,6 +189,16 @@ export const firestoreService = {
     });
   },
 
+  async getAnsweredQuestionIds(uid: string): Promise<Set<string>> {
+    const snap = await getDocs(collection(db, 'users', uid, 'answers'));
+    const ids = new Set<string>();
+    snap.forEach(doc => {
+      const qid = doc.data().questionId;
+      if (qid) ids.add(qid);
+    });
+    return ids;
+  },
+
   async getEventBreakdown(uid: string): Promise<{ event: string; answered: number; correct: number; accuracy: number }[]> {
     const summary = await this.getProgress(uid);
     return Object.entries(summary.byEvent)

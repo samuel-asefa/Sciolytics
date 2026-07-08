@@ -55,6 +55,10 @@ export default function Practice() {
     }).catch(() => {
       setFavorites(questionService.getProgress().favorites);
     });
+
+    firestoreService.getAnsweredQuestionIds(uid).then(ids => {
+      setAnsweredIds(ids);
+    }).catch(console.error);
   }, [uid]);
 
   const availableSubtopics = selectedEvent ? subtopicsMap[selectedEvent] || [] : [];
