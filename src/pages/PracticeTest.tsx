@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle2, XCircle, ArrowRight, ArrowLeft, Bookmark } from 'lucide-react';
+import { Clock, CheckCircle2, XCircle, ArrowRight, ArrowLeft, Bookmark, Loader2 } from 'lucide-react';
 import { questionService, type QuestionFilter } from '../services/questionService';
 import { firestoreService } from '../services/firestoreService';
+import { aiGradingService } from '../services/aiGradingService';
 import { useAuth } from '../contexts/AuthContext';
 import type { Question } from '../data/questionBank';
 
@@ -18,6 +19,8 @@ export default function PracticeTest() {
   const [isUnlimited, setIsUnlimited] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
+  const [isGrading, setIsGrading] = useState(false);
+  const [aiFeedback, setAiFeedback] = useState<string | null>(null);
 
   const handleFinish = useCallback(() => {
     navigate('/practice/results', {
@@ -43,39 +46,43 @@ export default function PracticeTest() {
     const loadedQuestions = questionService.getQuestions(config);
 
     if (loadedQuestions.length === 0) {
-      alert('No questions found with the selected filters. Please try different settings.');
+      alert('No questions found for the selected criteria.');
       navigate('/practice');
       return;
     }
 
     setQuestions(loadedQuestions);
-    const unlimited = unlimitedStr === 'true';
-    setIsUnlimited(unlimited);
+    setIsUnlimited(unlimitedStr === 'true');
+    setTimeRemaining(parseInt(timeLimitStr || '10') * 60);
 
-    if (timeLimitStr && !unlimited) {
-      setTimeRemaining(parseInt(timeLimitStr) * 60);
+    if (currentUser?.uid) {
+      firestoreService.getProgress(currentUser.uid).then(prog => {
+        setBookmarkedIds(new Set(prog.favorites ?? []));
+      }).catch(console.error);
     }
-  }, [navigate]);
+  }, [navigate, currentUser?.uid]);
 
   useEffect(() => {
-    if (timeRemaining > 0 && !isUnlimited && questions.length > 0) {
-      const timer = setInterval(() => {
-        setTimeRemaining((prev) => {
-          if (prev <= 1) {
-            handleFinish();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [timeRemaining, isUnlimited, questions.length, handleFinish]);
+    if (isUnlimited || timeRemaining <= 0) return;
 
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleFinish();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeRemaining, isUnlimited, handleFinish]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
   if (questions.length === 0 || !questions[currentIndex]) {
@@ -100,22 +107,23 @@ export default function PracticeTest() {
 
     try {
       let isCorrect = false;
+      setAiFeedback(null);
+
       if (currentQuestion?.type === 'MCQ') {
         isCorrect = selectedAnswer === currentQuestion.correctAnswer;
       } else if (currentQuestion?.type === 'FRQ') {
-        const answerLower = selectedAnswer.trim().toLowerCase();
-        if (currentQuestion.keywords && currentQuestion.keywords.length > 0) {
-          let matchCount = 0;
-          currentQuestion.keywords.forEach(keyword => {
-            if (answerLower.includes(keyword.toLowerCase())) {
-              matchCount++;
-            }
-          });
-          isCorrect = (matchCount / currentQuestion.keywords.length) >= 0.5;
-        } else {
-          isCorrect = answerLower.length > 5 && currentQuestion.correctAnswer.toLowerCase().includes(answerLower);
-        }
+        setIsGrading(true);
+        const grade = await aiGradingService.gradeFRQ(
+          currentQuestion.question,
+          currentQuestion.correctAnswer,
+          currentQuestion.explanation || '',
+          selectedAnswer
+        );
+        isCorrect = grade.isCorrect;
+        setAiFeedback(grade.feedback);
+        setIsGrading(false);
       }
+      
       if (currentUser?.uid) {
         firestoreService.saveAnswer(currentUser.uid, currentQuestion, isCorrect).catch(console.error);
       }
@@ -128,6 +136,7 @@ export default function PracticeTest() {
       setAnsweredQuestions((prev) => new Set([...prev, currentIndex]));
       setShowResult(true);
     } catch (error) {
+      setIsGrading(false);
       console.error('Error submitting answer:', error);
       alert('An error occurred. Please try again.');
     }
@@ -237,13 +246,21 @@ export default function PracticeTest() {
               onChange={(e) => setSelectedAnswer(e.target.value)}
               placeholder="Type your answer here..."
               rows={6}
-              disabled={showResult}
+              disabled={showResult || isGrading}
               className="frq-textarea"
             />
             {showResult && (
               <div className="frq-answer">
                 <h4>Correct Answer:</h4>
                 <p>{currentQuestion?.correctAnswer}</p>
+              </div>
+            )}
+            {showResult && aiFeedback && (
+              <div className="frq-feedback" style={{ marginTop: '16px', padding: '16px', backgroundColor: 'color-mix(in srgb, var(--primary-color) 10%, transparent)', borderRadius: '8px', borderLeft: '4px solid var(--primary-color)' }}>
+                <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-color)', marginBottom: '8px' }}>
+                  AI Feedback
+                </h4>
+                <p style={{ color: 'var(--text-primary)', lineHeight: 1.5 }}>{aiFeedback}</p>
               </div>
             )}
           </div>
@@ -260,7 +277,7 @@ export default function PracticeTest() {
           <button
             className="btn-secondary"
             onClick={handlePrevious}
-            disabled={currentIndex === 0}
+            disabled={currentIndex === 0 || isGrading}
           >
             <ArrowLeft size={18} />
             Previous
@@ -270,9 +287,10 @@ export default function PracticeTest() {
             <button
               className="btn-primary"
               onClick={handleSubmit}
-              disabled={!selectedAnswer && currentQuestion?.type === 'MCQ'}
+              disabled={(!selectedAnswer && currentQuestion?.type === 'MCQ') || isGrading}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
-              Submit Answer
+              {isGrading ? <><Loader2 className="spinner" size={18} style={{ animation: 'spin 1s linear infinite' }} /> Grading...</> : 'Submit Answer'}
             </button>
           ) : (
             <button className="btn-primary" onClick={handleNext}>
