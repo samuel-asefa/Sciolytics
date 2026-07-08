@@ -1,4 +1,4 @@
-import { getGenerativeModel, Schema, Type } from 'firebase/ai';
+import { getGenerativeModel, Schema } from 'firebase/ai';
 import { ai } from '../config/firebase';
 
 const gradingSchema = Schema.object({
@@ -13,7 +13,7 @@ const model = getGenerativeModel(ai, {
   model: "gemini-2.5-flash-lite",
   generationConfig: {
     responseMimeType: "application/json",
-    schema: gradingSchema,
+    responseSchema: gradingSchema,
     temperature: 0.1,
   }
 });
