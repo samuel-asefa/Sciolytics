@@ -116,8 +116,6 @@ export default function PracticeTest() {
           isCorrect = answerLower.length > 5 && currentQuestion.correctAnswer.toLowerCase().includes(answerLower);
         }
       }
-
-      // Persist to Firestore (real data) — non-blocking
       if (currentUser?.uid) {
         firestoreService.saveAnswer(currentUser.uid, currentQuestion, isCorrect).catch(console.error);
       }

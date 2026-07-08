@@ -1,5 +1,3 @@
-// API service for fetching team performance data
-// This mimics the scio.ly API structure
 
 export interface School {
   id: string;
@@ -34,13 +32,8 @@ export interface EventPerformance {
   participationCount: number;
 }
 
-// Mock API - In production, replace with actual scio.ly API endpoints
-// const API_BASE_URL = 'https://api.scio.ly/v1'; // Replace with actual API URL
-
 export const apiService = {
-  // Fetch all schools with their current Elo ratings
   async getSchools(searchQuery?: string): Promise<School[]> {
-    // Mock data - replace with actual API call
     const mockSchools: School[] = [
       { id: '1', name: 'A&M Consolidated High School', state: 'TX', division: 'Varsity', elo: 2850, rank: 1 },
       { id: '2', name: 'A.C. Flora High School', state: 'SC', division: 'Varsity', elo: 2800, rank: 2 },
@@ -65,17 +58,12 @@ export const apiService = {
 
     return mockSchools;
   },
-
-  // Fetch Elo rating history for selected schools
   async getEloHistory(schoolIds: string[], months: number = 6): Promise<EloDataPoint[]> {
-    // Mock data - replace with actual API call: GET /api/elo/history?schools=id1,id2&months=6
     const dates = Array.from({ length: months }, (_, i) => {
       const date = new Date();
       date.setMonth(date.getMonth() - (months - i - 1));
       return date.toLocaleDateString('en-US', { month: 'short' });
     });
-
-    // Map to actual school names
     const schools = await this.getSchools();
     return dates.map((date, idx) => {
       const point: EloDataPoint = { date };
@@ -91,10 +79,7 @@ export const apiService = {
       return point;
     });
   },
-
-  // Fetch leaderboard data
   async getLeaderboard(division?: 'Varsity' | 'JV', state?: string, limit: number = 50): Promise<School[]> {
-    // Mock data - replace with actual API call: GET /api/leaderboard?division=Varsity&state=TX&limit=50
     let schools = await this.getSchools();
     
     if (division) {
@@ -107,10 +92,7 @@ export const apiService = {
 
     return schools.sort((a, b) => b.elo - a.elo).slice(0, limit);
   },
-
-  // Fetch tournament results for comparison
   async getTournamentResults(schoolIds: string[]): Promise<TournamentResult[]> {
-    // Mock data - replace with actual API call: GET /api/tournaments/results?schools=id1,id2
     const mockTournaments = [
       { id: 't1', name: 'National Tournament 2025', date: '2025-05-20' },
       { id: 't2', name: 'State Tournament 2025', date: '2025-04-15' },
@@ -139,10 +121,7 @@ export const apiService = {
 
     return results;
   },
-
-  // Fetch event-specific performance
   async getEventPerformance(schoolIds: string[], eventName?: string): Promise<EventPerformance[]> {
-    // Mock data - replace with actual API call: GET /api/events/performance?schools=id1,id2&event=Astronomy
     const events = ['Astronomy', 'Chemistry Lab', 'Circuit Lab', 'Codebusters', 'Disease Detectives'];
     const targetEvents = eventName ? [eventName] : events;
     const schools = await this.getSchools();

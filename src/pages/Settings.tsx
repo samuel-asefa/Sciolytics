@@ -3,8 +3,6 @@ import { useTheme } from '../contexts/ThemeContext';
 
 export default function Settings() {
   const { theme, setTheme } = useTheme();
-
-  // Colors ordered chronologically and based on color similarity (rainbow order)
   const themeColors = [
     'red',
     'pink',

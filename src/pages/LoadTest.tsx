@@ -9,7 +9,6 @@ export default function LoadTest() {
   const handleLoadTest = (e: React.FormEvent) => {
     e.preventDefault();
     if (testCode.trim()) {
-      // In a real app, this would validate the code and load a specific test session
       alert(`Loading test session with code: ${testCode}`);
       navigate('/practice/test'); // Navigate to a practice session
     }

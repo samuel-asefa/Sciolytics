@@ -16,7 +16,6 @@ export default function Profile() {
   const { currentUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<UserProfile>(() => {
-    // ... logic remains same
     const saved = localStorage.getItem('userProfile');
     if (saved) {
       return JSON.parse(saved);
@@ -35,7 +34,6 @@ export default function Profile() {
 
   useEffect(() => {
     if (!currentUser?.uid) return;
-    // Load profile from Firestore
     firestoreService.getProfile(currentUser.uid).then(p => {
       if (Object.keys(p).length > 0) {
         setProfile(p as unknown as UserProfile);
@@ -45,7 +43,6 @@ export default function Profile() {
         setFormData(prev => ({ ...prev, fullName: currentUser.displayName || prev.fullName }));
       }
     }).catch(console.error);
-    // Load real stats
     firestoreService.getProgress(currentUser.uid).then(prog => {
       setFirestoreStats({
         questionsAnswered: prog.questionsAnswered,
@@ -64,7 +61,6 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      // Save to Firestore first
       if (currentUser?.uid) {
         await firestoreService.saveProfile(currentUser.uid, formData as unknown as Record<string, string>);
       }

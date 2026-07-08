@@ -117,10 +117,8 @@ export default function Analytics() {
         </div>
       ) : (
         <>
-          {/* ── OVERVIEW ── */}
           {activeTab === 'overview' && (
             <div>
-              {/* Stat summary row */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '24px' }}>
                 {[
                   { label: 'Total Answered', value: totalAnswered, color: 'var(--primary-color)' },
@@ -167,8 +165,6 @@ export default function Analytics() {
               )}
             </div>
           )}
-
-          {/* ── BY EVENT ── */}
           {activeTab === 'events' && (
             <div>
               {eventStats.length === 0 ? (
@@ -222,8 +218,6 @@ export default function Analytics() {
               )}
             </div>
           )}
-
-          {/* ── BY DIFFICULTY ── */}
           {activeTab === 'difficulty' && (
             <div>
               {difficultyStats.every(d => d.answered === 0) ? (
@@ -265,8 +259,6 @@ export default function Analytics() {
               )}
             </div>
           )}
-
-          {/* ── HISTORY ── */}
           {activeTab === 'history' && (
             <div>
               {historyData.length === 0 ? (

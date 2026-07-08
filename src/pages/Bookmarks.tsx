@@ -15,7 +15,6 @@ export default function Bookmarks() {
     if (!uid) return;
     firestoreService.getBookmarks(uid)
       .then(bmarks => {
-        // Sort by bookmarkedAt descending
         const sorted = bmarks.sort((a, b) => {
           const aTime = (a.bookmarkedAt as any)?.seconds ?? 0;
           const bTime = (b.bookmarkedAt as any)?.seconds ?? 0;

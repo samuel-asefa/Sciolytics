@@ -17,18 +17,12 @@ export default function UpcomingEvents() {
   };
 
   const days = [];
-  
-  // Previous month days
   for (let i = firstDay - 1; i >= 0; i--) {
     days.push({ day: daysInPrevMonth - i, isCurrentMonth: false });
   }
-  
-  // Current month days
   for (let i = 1; i <= daysInMonth; i++) {
     days.push({ day: i, isCurrentMonth: true });
   }
-  
-  // Next month days to fill the grid
   const remainingDays = 42 - days.length;
   for (let i = 1; i <= remainingDays; i++) {
     days.push({ day: i, isCurrentMonth: false });

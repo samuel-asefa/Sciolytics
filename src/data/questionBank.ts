@@ -15,7 +15,6 @@ export interface Question {
 }
 
 const accurateQuestions: Question[] = [
-  // Anatomy & Physiology
   {
     id: 'q_ana_1',
     event: 'Anatomy & Physiology',
@@ -58,8 +57,6 @@ const accurateQuestions: Question[] = [
     year: 2021,
     tournament: 'Regional'
   },
-
-  // Astronomy
   {
     id: 'q_ast_1',
     event: 'Astronomy',
@@ -91,8 +88,6 @@ const accurateQuestions: Question[] = [
     keywords: ['radiation', 'recombination', 'big bang', 'evidence', 'residual', 'temperature', 'remnant', 'glow'],
     explanation: 'Answers should mention it being leftover radiation from the early universe (recombination/decoupling era) and serving as a critical piece of evidence supporting the Big Bang model.',
   },
-
-  // Disease Detectives
   {
     id: 'q_dd_1',
     event: 'Disease Detectives',
@@ -119,8 +114,6 @@ const accurateQuestions: Question[] = [
     keywords: ['incidence', 'new cases', 'prevalence', 'total cases', 'existing', 'time'],
     explanation: 'Incidence measures risk/new occurrences over time as a rate. Prevalence measures the overall burden of the disease in the population at a snapshot or period.',
   },
-
-  // Experimental Design
   {
     id: 'q_ed_1',
     event: 'Experimental Design',
@@ -135,8 +128,6 @@ const accurateQuestions: Question[] = [
     year: 2024,
     tournament: 'State'
   },
-
-  // Dynamic Planet
   {
     id: 'q_dp_1',
     event: 'Dynamic Planet',
@@ -388,8 +379,6 @@ export const getQuestionsByEvent = (event: string): Question[] => {
 export const getQuestionsBySubtopic = (event: string, subtopic: string): Question[] => {
   return questionBank.filter(q => q.event === event && q.subtopic === subtopic);
 };
-
-// Auto extract unique events and subtopics based on actual questions
 export const getAllEvents = (): string[] => {
   const events = new Set(questionBank.map(q => q.event));
   return Array.from(events).sort();

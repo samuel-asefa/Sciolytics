@@ -2,7 +2,6 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyC0hxHXJtwhW599pYWevOerGbTV9B3WGcU",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "sciolytics-fcee6.firebaseapp.com",
@@ -12,16 +11,11 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:9188897701:web:1f6525d8a3e8a7eacd2e4c"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Auth
 export const auth = getAuth(app);
-
-// Firestore
 export const db = getFirestore(app);
 
-// Google OAuth Provider
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 

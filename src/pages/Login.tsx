@@ -36,8 +36,6 @@ export default function Login() {
       transition: { staggerChildren: 0.2 }
     }
   };
-
-  // Mock data for the feature charts
   const mockStats = [
     { name: 'Anatomy', accuracy: 85 },
     { name: 'Astronomy', accuracy: 62 },
@@ -47,7 +45,6 @@ export default function Login() {
 
   return (
     <div className="landing-page">
-      {/* Navigation */}
       <nav className="landing-nav">
         <div className="landing-nav-logo">
           <span>Sciolytics</span>
@@ -59,8 +56,6 @@ export default function Login() {
           </button>
         </div>
       </nav>
-
-      {/* Hero Section */}
       <section className="landing-hero">
         <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
           <motion.h1 variants={fadeInUp}>
@@ -79,23 +74,16 @@ export default function Login() {
           </motion.div>
         </motion.div>
       </section>
-
-      {/* Social Proof */}
       <section className="social-proof">
         <p>Sciolytics helps students win medals at Science Olympiad Invitationals hosted by:</p>
         <div className="social-proof-logos">
-          {/* Replace with actual SVGs or placeholder text if images aren't available */}
           <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>MIT</span>
           <span style={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'serif' }}>Stanford</span>
           <span style={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'serif' }}>Harvard</span>
           <span style={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'serif' }}>Yale</span>
         </div>
       </section>
-
-      {/* Features */}
       <section id="features" className="feature-section">
-        
-        {/* Feature 1 */}
         <motion.div 
           className="feature-row"
           initial="hidden"
@@ -136,8 +124,6 @@ export default function Login() {
             </div>
           </div>
         </motion.div>
-
-        {/* Feature 2 */}
         <motion.div 
           className="feature-row reverse"
           initial="hidden"
@@ -178,8 +164,6 @@ export default function Login() {
             </div>
           </div>
         </motion.div>
-
-        {/* Feature 3 */}
         <motion.div 
           className="feature-row"
           initial="hidden"
@@ -221,8 +205,6 @@ export default function Login() {
         </motion.div>
 
       </section>
-
-      {/* Footer */}
       <footer className="landing-footer">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
           Sciolytics
@@ -234,5 +216,4 @@ export default function Login() {
     </div>
   );
 }
-
 

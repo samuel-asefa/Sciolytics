@@ -52,14 +52,11 @@ export default function Practice() {
   const [sortBy, setSortBy] = useState('alphabetical');
   const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
-
-  // Load real favorites from Firestore
   useEffect(() => {
     if (!uid) return;
     firestoreService.getProgress(uid).then(prog => {
       setFavorites(prog.favorites ?? []);
     }).catch(() => {
-      // fallback to questionService for offline
       setFavorites(questionService.getProgress().favorites);
     });
   }, [uid]);
@@ -72,7 +69,6 @@ export default function Practice() {
       const prog = await firestoreService.getProgress(uid);
       setFavorites(prog.favorites ?? []);
     } else {
-      // Fallback if not logged in
       questionService.toggleFavorite(eventName);
       setFavorites(questionService.getProgress().favorites);
     }
@@ -113,8 +109,6 @@ export default function Practice() {
       difficulty: difficulty !== 'All' ? difficulty : undefined,
       limit: parseInt(numQuestions) || 10,
     };
-
-    // Store test config and navigate to test page
     sessionStorage.setItem('testConfig', JSON.stringify(filter));
     sessionStorage.setItem('timeLimit', timeLimit);
     navigate('/practice/test');

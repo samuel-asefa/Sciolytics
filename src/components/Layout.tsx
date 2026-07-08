@@ -31,7 +31,6 @@ export default function Layout({ children }: LayoutProps) {
     }
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {

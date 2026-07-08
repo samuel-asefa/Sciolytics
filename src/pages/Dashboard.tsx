@@ -50,8 +50,6 @@ export default function Dashboard() {
   const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'there';
   const favorites = summary?.favorites ?? [];
   const displayedFavorites = favorites.slice(0, 4);
-
-  // Max count for heatmap colour scale
   const maxCount = Math.max(1, ...heatmapData.map(d => d.count));
 
   const heatColor = (count: number) => {
@@ -86,7 +84,6 @@ export default function Dashboard() {
       </div>
 
       <div className="dashboard-grid">
-        {/* Daily Correct */}
         <div className="stat-card">
           <h3>Today's Correct</h3>
           <div className="stat-value green">
@@ -98,8 +95,6 @@ export default function Dashboard() {
             </p>
           )}
         </div>
-
-        {/* Favorited Events */}
         <div className="favorited-configs-card">
           <h3>Favorited Events</h3>
           <div className="config-grid">
@@ -120,8 +115,6 @@ export default function Dashboard() {
             <p className="more-favorites">+{favorites.length - 4} more</p>
           )}
         </div>
-
-        {/* Questions Answered Card with real chart */}
         <div className="questions-answered-card">
           <h3>Questions Answered</h3>
           <div className="stats-row">
@@ -206,8 +199,6 @@ export default function Dashboard() {
             )}
           </div>
         </div>
-
-        {/* Daily Accuracy Gauge */}
         <div className="accuracy-card">
           <h3>Daily Accuracy</h3>
           <div className="accuracy-gauge">
@@ -224,8 +215,6 @@ export default function Dashboard() {
             </p>
           )}
         </div>
-
-        {/* Load Test Card */}
         <Link to="/load-test" className="action-card">
           <Lock size={24} className="action-icon" />
           <div>
@@ -233,8 +222,6 @@ export default function Dashboard() {
             <p>Take a test with a friend</p>
           </div>
         </Link>
-
-        {/* Bookmarks Card */}
         <Link to="/bookmarks" className="action-card">
           <Bookmark size={24} className="action-icon green" />
           <div>
@@ -242,8 +229,6 @@ export default function Dashboard() {
             <p>Review your saved questions</p>
           </div>
         </Link>
-
-        {/* Analytics Card */}
         <Link to="/analytics" className="action-card">
           <Flame size={24} className="action-icon" style={{ color: '#f97316' }} />
           <div>
