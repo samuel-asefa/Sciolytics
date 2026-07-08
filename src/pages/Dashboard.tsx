@@ -8,6 +8,8 @@ import { firestoreService, type UserSummary, type DaySession } from '../services
 interface HeatCell { date: string; count: number }
 interface WeekDay { name: string; questions: number; correct: number }
 
+type ChartRange = 7 | 30 | 90;
+
 export default function Dashboard() {
   const { currentUser } = useAuth();
   const uid = currentUser?.uid ?? '';
@@ -15,8 +17,9 @@ export default function Dashboard() {
   const [summary, setSummary] = useState<UserSummary | null>(null);
   const [dailyStats, setDailyStats] = useState<DaySession>({ date: '', answered: 0, correct: 0, accuracy: 0 });
   const [heatmapData, setHeatmapData] = useState<HeatCell[]>([]);
-  const [weeklyData, setWeeklyData] = useState<WeekDay[]>([]);
+  const [chartData, setChartData] = useState<WeekDay[]>([]);
   const [chartType, setChartType] = useState<'line' | 'heatmap'>('heatmap');
+  const [chartRange, setChartRange] = useState<ChartRange>(7);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,17 +28,15 @@ export default function Dashboard() {
 
     async function load() {
       try {
-        const [prog, daily, heat, weekly] = await Promise.all([
+        const [prog, daily, heat] = await Promise.all([
           firestoreService.getProgress(uid),
           firestoreService.getDailyStats(uid),
           firestoreService.getActivityHeatmap(uid, 91),
-          firestoreService.getWeeklyActivity(uid),
         ]);
         if (!cancelled) {
           setSummary(prog);
           setDailyStats(daily);
           setHeatmapData(heat);
-          setWeeklyData(weekly);
           setLoading(false);
         }
       } catch (err) {
@@ -47,6 +48,11 @@ export default function Dashboard() {
     return () => { cancelled = true; };
   }, [uid]);
 
+  useEffect(() => {
+    if (!uid || chartType !== 'line') return;
+    firestoreService.getChartActivity(uid, chartRange).then(setChartData).catch(console.error);
+  }, [uid, chartType, chartRange]);
+
   const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'there';
   const favorites = summary?.favorites ?? [];
   const displayedFavorites = favorites.slice(0, 4);
@@ -55,16 +61,14 @@ export default function Dashboard() {
   const heatColor = (count: number) => {
     if (count === 0) return 'rgba(0,0,0,0.06)';
     const intensity = count / maxCount;
-    return `rgba(59,130,246,${0.15 + intensity * 0.85})`;
+    return `color-mix(in srgb, var(--primary-color) ${Math.round((0.15 + intensity * 0.85) * 100)}%, transparent)`;
   };
 
   if (loading) {
     return (
       <div className="dashboard">
         <div className="dashboard-header">
-          <div className="welcome-card">
-            <h1>Loading your dashboard…</h1>
-          </div>
+          <div className="welcome-card"><h1>Loading your dashboard…</h1></div>
         </div>
       </div>
     );
@@ -78,23 +82,21 @@ export default function Dashboard() {
           <p>Ready to tackle some Science Olympiad questions?</p>
         </div>
         <Link to="/practice" className="practice-button">
-          <PenTool size={20} />
-          Practice
+          <PenTool size={20} />Practice
         </Link>
       </div>
 
       <div className="dashboard-grid">
         <div className="stat-card">
           <h3>Today's Correct</h3>
-          <div className="stat-value green">
-            {dailyStats.correct}/{dailyStats.answered}
-          </div>
+          <div className="stat-value green">{dailyStats.correct}/{dailyStats.answered}</div>
           {dailyStats.answered > 0 && (
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '6px' }}>
               {dailyStats.accuracy}% accuracy today
             </p>
           )}
         </div>
+
         <div className="favorited-configs-card">
           <h3>Favorited Events</h3>
           <div className="config-grid">
@@ -111,10 +113,9 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-          {favorites.length > 4 && (
-            <p className="more-favorites">+{favorites.length - 4} more</p>
-          )}
+          {favorites.length > 4 && <p className="more-favorites">+{favorites.length - 4} more</p>}
         </div>
+
         <div className="questions-answered-card">
           <h3>Questions Answered</h3>
           <div className="stats-row">
@@ -142,19 +143,23 @@ export default function Dashboard() {
           </div>
 
           <div className="chart-toggle">
-            <button
-              className={`toggle-btn ${chartType === 'line' ? 'active' : ''}`}
-              onClick={() => setChartType('line')}
-            >
-              7-Day Line
+            <button className={`toggle-btn ${chartType === 'line' ? 'active' : ''}`} onClick={() => setChartType('line')}>
+              Line Chart
             </button>
-            <button
-              className={`toggle-btn ${chartType === 'heatmap' ? 'active' : ''}`}
-              onClick={() => setChartType('heatmap')}
-            >
+            <button className={`toggle-btn ${chartType === 'heatmap' ? 'active' : ''}`} onClick={() => setChartType('heatmap')}>
               Activity Map
             </button>
           </div>
+
+          {chartType === 'line' && (
+            <div className="chart-range-selector">
+              {([7, 30, 90] as ChartRange[]).map(r => (
+                <button key={r} className={`range-btn ${chartRange === r ? 'active' : ''}`} onClick={() => setChartRange(r)}>
+                  {r}d
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="heatmap-container">
             {chartType === 'heatmap' ? (
@@ -177,21 +182,21 @@ export default function Dashboard() {
               </>
             ) : (
               <div style={{ width: '100%', height: '150px', marginTop: '10px' }}>
-                {weeklyData.every(d => d.questions === 0) ? (
+                {chartData.every(d => d.questions === 0) ? (
                   <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px', paddingTop: '50px' }}>
-                    No activity this week yet — start practicing!
+                    No activity in this period — start practicing!
                   </p>
                 ) : (
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={weeklyData}>
-                      <XAxis dataKey="name" fontSize={12} stroke="var(--text-secondary)" tickLine={false} axisLine={false} />
+                    <LineChart data={chartData}>
+                      <XAxis dataKey="name" fontSize={11} stroke="var(--text-secondary)" tickLine={false} axisLine={false} interval={chartRange === 90 ? 9 : chartRange === 30 ? 4 : 0} />
                       <YAxis fontSize={12} stroke="var(--text-secondary)" tickLine={false} axisLine={false} allowDecimals={false} />
                       <Tooltip
                         contentStyle={{ background: 'var(--bg-white)', border: '1px solid var(--border-color)', borderRadius: '8px' }}
                         formatter={(value: number, name: string) => [value, name === 'questions' ? 'Questions' : 'Correct']}
                       />
-                      <Line type="monotone" dataKey="questions" stroke="var(--primary-color)" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="questions" />
-                      <Line type="monotone" dataKey="correct" stroke="#10b981" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} name="correct" strokeDasharray="4 2" />
+                      <Line type="monotone" dataKey="questions" stroke="var(--primary-color)" strokeWidth={3} dot={chartRange === 7 ? { r: 4 } : false} activeDot={{ r: 5 }} name="questions" />
+                      <Line type="monotone" dataKey="correct" stroke="#10b981" strokeWidth={2} dot={false} activeDot={{ r: 4 }} name="correct" strokeDasharray="4 2" />
                     </LineChart>
                   </ResponsiveContainer>
                 )}
@@ -199,13 +204,11 @@ export default function Dashboard() {
             )}
           </div>
         </div>
+
         <div className="accuracy-card">
           <h3>Daily Accuracy</h3>
           <div className="accuracy-gauge">
-            <div
-              className="gauge-circle"
-              style={{ '--percentage': `${dailyStats.accuracy}%` } as React.CSSProperties}
-            >
+            <div className="gauge-circle" style={{ '--percentage': `${dailyStats.accuracy}%` } as React.CSSProperties}>
               <div className="gauge-text">{dailyStats.accuracy}%</div>
             </div>
           </div>
@@ -215,26 +218,18 @@ export default function Dashboard() {
             </p>
           )}
         </div>
+
         <Link to="/load-test" className="action-card">
           <Lock size={24} className="action-icon" />
-          <div>
-            <h4>Load Test with Code</h4>
-            <p>Take a test with a friend</p>
-          </div>
+          <div><h4>Load Test with Code</h4><p>Take a test with a friend</p></div>
         </Link>
         <Link to="/bookmarks" className="action-card">
           <Bookmark size={24} className="action-icon green" />
-          <div>
-            <h4>Bookmarks</h4>
-            <p>Review your saved questions</p>
-          </div>
+          <div><h4>Bookmarks</h4><p>Review your saved questions</p></div>
         </Link>
         <Link to="/analytics" className="action-card">
           <Flame size={24} className="action-icon" style={{ color: '#f97316' }} />
-          <div>
-            <h4>My Analytics</h4>
-            <p>See your performance by event and difficulty</p>
-          </div>
+          <div><h4>My Analytics</h4><p>See your performance by event and difficulty</p></div>
         </Link>
       </div>
     </div>

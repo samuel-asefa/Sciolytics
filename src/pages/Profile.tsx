@@ -12,75 +12,61 @@ interface UserProfile {
   bio: string;
 }
 
+const defaultProfile: UserProfile = { fullName: '', location: '', school: '', graduationYear: '', bio: '' };
+
 export default function Profile() {
   const { currentUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState<UserProfile>(() => {
-    const saved = localStorage.getItem('userProfile');
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    return {
-      fullName: '',
-      location: '',
-      school: '',
-      graduationYear: '',
-      bio: '',
-    };
-  });
-
-  const [formData, setFormData] = useState<UserProfile>(profile);
+  const [profile, setProfile] = useState<UserProfile>(defaultProfile);
+  const [formData, setFormData] = useState<UserProfile>(defaultProfile);
   const [firestoreStats, setFirestoreStats] = useState({ questionsAnswered: 0, accuracy: 0, bookmarks: 0 });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!currentUser?.uid) return;
+
     firestoreService.getProfile(currentUser.uid).then(p => {
-      if (Object.keys(p).length > 0) {
-        setProfile(p as unknown as UserProfile);
-        setFormData(p as unknown as UserProfile);
-      } else if (currentUser?.displayName) {
-        setProfile(prev => ({ ...prev, fullName: currentUser.displayName || prev.fullName }));
-        setFormData(prev => ({ ...prev, fullName: currentUser.displayName || prev.fullName }));
-      }
+      const loaded: UserProfile = {
+        fullName: (p.fullName as string) || currentUser.displayName || '',
+        location: (p.location as string) || '',
+        school: (p.school as string) || '',
+        graduationYear: (p.graduationYear as string) || '',
+        bio: (p.bio as string) || '',
+      };
+      setProfile(loaded);
+      setFormData(loaded);
     }).catch(console.error);
+
     firestoreService.getProgress(currentUser.uid).then(prog => {
-      setFirestoreStats({
-        questionsAnswered: prog.questionsAnswered,
-        accuracy: prog.accuracy,
-        bookmarks: 0,
-      });
+      setFirestoreStats(prev => ({ ...prev, questionsAnswered: prog.questionsAnswered, accuracy: prog.accuracy }));
     }).catch(console.error);
+
     firestoreService.getBookmarks(currentUser.uid).then(bmarks => {
       setFirestoreStats(prev => ({ ...prev, bookmarks: bmarks.length }));
     }).catch(console.error);
   }, [currentUser]);
 
-  const handleChange = (field: keyof UserProfile, value: string) => {
-    setFormData({ ...formData, [field]: value });
-  };
+  const handleChange = (field: keyof UserProfile, value: string) => setFormData({ ...formData, [field]: value });
 
   const handleSave = async () => {
+    if (!currentUser?.uid) return;
+    setSaving(true);
     try {
-      if (currentUser?.uid) {
-        await firestoreService.saveProfile(currentUser.uid, formData as unknown as Record<string, string>);
-      }
-      
-      if (currentUser && formData.fullName !== currentUser.displayName) {
+      await firestoreService.saveProfile(currentUser.uid, formData as unknown as Record<string, string>);
+      if (formData.fullName && formData.fullName !== currentUser.displayName) {
         await updateProfile(currentUser, { displayName: formData.fullName });
       }
-      
       setProfile(formData);
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to update profile:', error);
       alert('Failed to update profile. Please try again.');
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleCancel = () => {
-    setFormData(profile);
-    setIsEditing(false);
-  };
+  const handleCancel = () => { setFormData(profile); setIsEditing(false); };
 
   const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'User';
   const email = currentUser?.email || '';
@@ -117,88 +103,47 @@ export default function Profile() {
 
           <div className="profile-form">
             <div className="form-section">
-              <label className="form-label">
-                <User size={18} />
-                Username
-              </label>
+              <label className="form-label"><User size={18} />Username</label>
               <div className="form-display">{displayName}</div>
             </div>
 
             <div className="form-section">
-              <label className="form-label">
-                <Mail size={18} />
-                Email
-              </label>
+              <label className="form-label"><Mail size={18} />Email</label>
               <div className="form-display">{email}</div>
               <p className="form-hint">Email is managed by your authentication provider</p>
             </div>
 
             <div className="form-section">
-              <label className="form-label">
-                <User size={18} />
-                Full Name
-              </label>
+              <label className="form-label"><User size={18} />Full Name</label>
               {isEditing ? (
-                <input
-                  type="text"
-                  value={formData.fullName}
-                  onChange={(e) => handleChange('fullName', e.target.value)}
-                  className="form-input"
-                  placeholder={displayName}
-                />
+                <input type="text" value={formData.fullName} onChange={e => handleChange('fullName', e.target.value)} className="form-input" placeholder={displayName} />
               ) : (
                 <div className="form-display">{profile.fullName || displayName}</div>
               )}
             </div>
 
             <div className="form-section">
-              <label className="form-label">
-                <MapPin size={18} />
-                Location
-              </label>
+              <label className="form-label"><MapPin size={18} />Location</label>
               {isEditing ? (
-                <input
-                  type="text"
-                  value={formData.location}
-                  onChange={(e) => handleChange('location', e.target.value)}
-                  className="form-input"
-                  placeholder="City, State, Country"
-                />
+                <input type="text" value={formData.location} onChange={e => handleChange('location', e.target.value)} className="form-input" placeholder="City, State, Country" />
               ) : (
                 <div className="form-display">{profile.location || 'Not set'}</div>
               )}
             </div>
 
             <div className="form-section">
-              <label className="form-label">
-                <School size={18} />
-                School
-              </label>
+              <label className="form-label"><School size={18} />School</label>
               {isEditing ? (
-                <input
-                  type="text"
-                  value={formData.school}
-                  onChange={(e) => handleChange('school', e.target.value)}
-                  className="form-input"
-                />
+                <input type="text" value={formData.school} onChange={e => handleChange('school', e.target.value)} className="form-input" />
               ) : (
                 <div className="form-display">{profile.school || 'Not set'}</div>
               )}
             </div>
 
             <div className="form-section">
-              <label className="form-label">
-                <Calendar size={18} />
-                Graduation Year
-              </label>
+              <label className="form-label"><Calendar size={18} />Graduation Year</label>
               {isEditing ? (
-                <input
-                  type="text"
-                  value={formData.graduationYear}
-                  onChange={(e) => handleChange('graduationYear', e.target.value)}
-                  className="form-input"
-                  placeholder="2026"
-                />
+                <input type="text" value={formData.graduationYear} onChange={e => handleChange('graduationYear', e.target.value)} className="form-input" placeholder="2026" />
               ) : (
                 <div className="form-display">{profile.graduationYear || 'Not set'}</div>
               )}
@@ -207,13 +152,7 @@ export default function Profile() {
             <div className="form-section">
               <label className="form-label">Bio</label>
               {isEditing ? (
-                <textarea
-                  value={formData.bio}
-                  onChange={(e) => handleChange('bio', e.target.value)}
-                  className="form-textarea"
-                  rows={4}
-                  placeholder="Tell us about yourself..."
-                />
+                <textarea value={formData.bio} onChange={e => handleChange('bio', e.target.value)} className="form-textarea" rows={4} placeholder="Tell us about yourself..." />
               ) : (
                 <div className="form-display">{profile.bio || 'No bio set'}</div>
               )}
@@ -222,19 +161,16 @@ export default function Profile() {
             <div className="form-actions">
               {isEditing ? (
                 <>
-                  <button className="btn-secondary" onClick={handleCancel}>
-                    <X size={18} />
-                    Cancel
+                  <button className="btn-secondary" onClick={handleCancel} disabled={saving}>
+                    <X size={18} />Cancel
                   </button>
-                  <button className="btn-primary" onClick={handleSave}>
-                    <Save size={18} />
-                    Save Changes
+                  <button className="btn-primary" onClick={handleSave} disabled={saving}>
+                    <Save size={18} />{saving ? 'Saving…' : 'Save Changes'}
                   </button>
                 </>
               ) : (
                 <button className="btn-primary" onClick={() => setIsEditing(true)}>
-                  <Edit2 size={18} />
-                  Edit Profile
+                  <Edit2 size={18} />Edit Profile
                 </button>
               )}
             </div>

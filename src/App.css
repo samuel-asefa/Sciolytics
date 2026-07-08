@@ -32,10 +32,10 @@
 }
 
 .navbar {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-bottom: 1px solid var(--border-color);
   padding: 0 24px;
   display: flex;
@@ -89,7 +89,7 @@
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   color: var(--text-primary);
 }
 
@@ -119,7 +119,7 @@
 }
 
 .user-menu:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .user-avatar {
@@ -197,10 +197,10 @@
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   padding: 24px;
   border-radius: 16px;
   box-shadow: var(--card-shadow);
@@ -223,10 +223,10 @@
 }
 
 .favorited-configs-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   padding: 24px;
   border-radius: 16px;
   box-shadow: var(--card-shadow);
@@ -247,7 +247,7 @@
 }
 
 .config-box {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   padding: 16px;
   border-radius: 8px;
   text-align: center;
@@ -256,10 +256,10 @@
 }
 
 .questions-answered-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   padding: 24px;
   border-radius: 16px;
   box-shadow: var(--card-shadow);
@@ -312,10 +312,10 @@
 .toggle-btn {
   padding: 6px 12px;
   border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
@@ -345,10 +345,10 @@
 }
 
 .accuracy-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   padding: 24px;
   border-radius: 16px;
   box-shadow: var(--card-shadow);
@@ -387,10 +387,10 @@
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
 }
 
 .gauge-text {
@@ -405,10 +405,10 @@
 }
 
 .action-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   padding: 24px;
   border-radius: 16px;
   box-shadow: var(--card-shadow);
@@ -471,10 +471,10 @@
 }
 
 .events-panel {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 24px;
@@ -506,10 +506,10 @@
   border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
 }
 
 .icon-button {
@@ -525,7 +525,7 @@
 }
 
 .icon-button:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .search-input-wrapper {
@@ -592,7 +592,7 @@
 }
 
 .tag.category {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   color: var(--text-secondary);
 }
 
@@ -602,10 +602,10 @@
 }
 
 .config-panel {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 24px;
@@ -670,10 +670,10 @@
   flex: 1;
   padding: 10px 16px;
   border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
@@ -681,7 +681,7 @@
 }
 
 .btn-option:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .btn-option.active {
@@ -723,10 +723,10 @@
 .btn-secondary {
   flex: 1;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -736,7 +736,7 @@
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 /* Analytics Page Styles */
@@ -797,10 +797,10 @@
 
 .filter-btn {
   padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
@@ -809,7 +809,7 @@
 }
 
 .filter-btn:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .filter-btn.active {
@@ -825,10 +825,10 @@
 }
 
 .school-selector {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 24px;
@@ -867,7 +867,7 @@
 }
 
 .school-item:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .school-item.selected {
@@ -918,10 +918,10 @@
 }
 
 .chart-container {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 24px;
@@ -946,10 +946,10 @@
 
 .leaderboard-placeholder,
 .compare-placeholder {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 48px;
@@ -965,10 +965,10 @@
 
 .teams-sidebar {
   width: 280px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-right: 1px solid var(--border-color);
   padding: 24px;
   display: flex;
@@ -1003,7 +1003,7 @@
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   color: var(--text-primary);
 }
 
@@ -1032,7 +1032,7 @@
 }
 
 .team-card:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .team-card.active {
@@ -1077,7 +1077,7 @@
 }
 
 .icon-btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--border-color);
   border: none;
   color: white;
   padding: 10px;
@@ -1090,14 +1090,14 @@
 }
 
 .icon-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--border-color);
 }
 
 .teams-tabs {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-bottom: 1px solid var(--border-color);
   padding: 0 48px;
   display: flex;
@@ -1148,10 +1148,10 @@
 
 .subteam-btn {
   padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   cursor: pointer;
@@ -1163,7 +1163,7 @@
 }
 
 .subteam-btn:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .add-subteam-btn {
@@ -1193,21 +1193,13 @@
   box-shadow: var(--card-shadow);
 }
 
-.conflict-block.lightblue {
-  background: #e0f2fe;
-}
 
-.conflict-block.lightgreen {
-  background: #dcfce7;
-}
 
-.conflict-block.lightyellow {
-  background: #fef9c3;
-}
 
-.conflict-block.lightpink {
-  background: #fce7f3;
-}
+
+
+
+
 
 .event-assignment {
   margin-bottom: 20px;
@@ -1260,10 +1252,10 @@
   border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
 }
 
 .stream-placeholder,
@@ -1305,10 +1297,10 @@
 }
 
 .nav-arrow {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border: 1px solid var(--border-color);
   padding: 8px;
   border-radius: 6px;
@@ -1320,7 +1312,7 @@
 }
 
 .nav-arrow:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .month-display {
@@ -1340,10 +1332,10 @@
 
 .view-btn {
   padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border: none;
   cursor: pointer;
   font-weight: 500;
@@ -1360,10 +1352,10 @@
 }
 
 .calendar-container {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 24px;
@@ -1401,15 +1393,15 @@
   border-radius: 8px;
   padding: 8px;
   position: relative;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   transition: all 0.2s;
 }
 
 .calendar-day:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .calendar-day.other-month {
@@ -1445,10 +1437,10 @@
 }
 
 .events-list-view {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 48px;
@@ -1465,10 +1457,10 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   min-width: 200px;
@@ -1491,7 +1483,7 @@
 }
 
 .user-dropdown .dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .dropdown-divider {
@@ -1508,10 +1500,10 @@
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   min-width: 150px;
@@ -1528,15 +1520,15 @@
 }
 
 .dropdown-menu .dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 /* Leaderboard Styles */
 .leaderboard-container {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 24px;
@@ -1581,7 +1573,7 @@
   grid-template-columns: 60px 1fr 150px 100px;
   gap: 16px;
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
@@ -1599,7 +1591,7 @@
 }
 
 .leaderboard-row:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
 }
 
 .rank-col {
@@ -1668,10 +1660,10 @@
 }
 
 .compare-selector {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 24px;
@@ -1693,10 +1685,10 @@
 }
 
 .compare-section {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 24px;
@@ -1738,7 +1730,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-radius: 6px;
 }
 
@@ -1795,10 +1787,10 @@
 }
 
 .profile-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 32px;
@@ -1901,7 +1893,7 @@
 
 .form-display {
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-radius: 8px;
   color: var(--text-primary);
   min-height: 44px;
@@ -1917,10 +1909,10 @@
 }
 
 .profile-stats {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 32px;
@@ -1940,7 +1932,7 @@
 
 .stat-box {
   padding: 24px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-radius: 8px;
   text-align: center;
 }
@@ -1958,69 +1950,23 @@
 }
 
 /* Dark Mode Styles */
-[data-theme="dark"] {
-  --bg-white: #1f2937;
-  --bg-gray: #111827;
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --border-color: #374151;
-  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-}
 
-[data-theme="dark"] .navbar {
-  background: #1f2937;
-  border-bottom-color: #374151;
-}
 
-[data-theme="dark"] .stat-card,
-[data-theme="dark"] .favorited-configs-card,
-[data-theme="dark"] .questions-answered-card,
-[data-theme="dark"] .accuracy-card,
-[data-theme="dark"] .action-card,
-[data-theme="dark"] .events-panel,
-[data-theme="dark"] .config-panel,
-[data-theme="dark"] .school-selector,
-[data-theme="dark"] .chart-container,
-[data-theme="dark"] .leaderboard-container,
-[data-theme="dark"] .compare-selector,
-[data-theme="dark"] .compare-section,
-[data-theme="dark"] .profile-card,
-[data-theme="dark"] .profile-stats,
-[data-theme="dark"] .calendar-container,
-[data-theme="dark"] .teams-sidebar,
-[data-theme="dark"] .teams-header {
-  background: #1f2937;
-  color: #f9fafb;
-}
 
-[data-theme="dark"] .form-display,
-[data-theme="dark"] .stat-box,
-[data-theme="dark"] .config-box {
-  background: #111827;
-}
 
-[data-theme="dark"] .user-dropdown,
-[data-theme="dark"] .dropdown-menu {
-  background: #1f2937;
-  border: 1px solid #374151;
-}
 
-[data-theme="dark"] .calendar-day {
-  background: #1f2937;
-  border-color: #374151;
-}
 
-[data-theme="dark"] .calendar-day:hover {
-  background: #111827;
-}
 
-[data-theme="dark"] .gauge-circle::before {
-  background: #1f2937;
-}
 
-[data-theme="dark"] .gauge-text {
-  color: #f9fafb;
-}
+
+
+
+
+
+
+
+
+
 
 /* Login Page Styles */
 .login-page {
@@ -2033,10 +1979,10 @@
 }
 
 .login-container {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   padding: 48px;
@@ -2088,10 +2034,10 @@
   padding: 12px 24px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -2103,7 +2049,7 @@
 }
 
 .oauth-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-color: var(--text-secondary);
 }
 
@@ -2197,26 +2143,13 @@
 }
 
 /* Dark Mode Login */
-[data-theme="dark"] .login-container {
-  background: #1f2937;
-  color: #f9fafb;
-}
 
-[data-theme="dark"] .oauth-button {
-  background: #1f2937;
-  border-color: #374151;
-  color: #f9fafb;
-}
 
-[data-theme="dark"] .oauth-button:hover:not(:disabled) {
-  background: #111827;
-}
 
-[data-theme="dark"] .error-message {
-  background: #7f1d1d;
-  border-color: #991b1b;
-  color: #fecaca;
-}
+
+
+
+
 
 /* Practice Test Styles */
 .practice-test {
@@ -2257,7 +2190,7 @@
 .progress-bar {
   width: 100%;
   height: 8px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 32px;
@@ -2270,10 +2203,10 @@
 }
 
 .question-container {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 32px;
@@ -2291,7 +2224,7 @@
 
 .question-meta span {
   padding: 6px 12px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
@@ -2319,10 +2252,10 @@
   padding: 16px 20px;
   border: 2px solid var(--border-color);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   text-align: left;
   cursor: pointer;
   display: flex;
@@ -2356,7 +2289,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2421,7 +2354,7 @@
 .explanation {
   margin-top: 24px;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-radius: 8px;
 }
 
@@ -2458,10 +2391,10 @@
 .results-container {
   max-width: 800px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 48px;
@@ -2491,7 +2424,7 @@
 
 .results-stats .stat-card {
   padding: 24px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-radius: 8px;
 }
 
@@ -2535,7 +2468,7 @@
 
 .stats-grid .stat-item {
   padding: 16px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -2622,28 +2555,18 @@
 }
 
 /* Dark Mode Practice Test */
-[data-theme="dark"] .question-container,
-[data-theme="dark"] .results-container {
-  background: #1f2937;
-}
 
-[data-theme="dark"] .option-button {
-  background: #1f2937;
-  border-color: #374151;
-}
 
-[data-theme="dark"] .frq-textarea {
-  background: #1f2937;
-  border-color: #374151;
-  color: #f9fafb;
-}
+
+
+
 
 /* Theme Selector Styles */
 .theme-selector {
   display: flex;
   gap: 8px;
   align-items: center;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-gray);
   padding: 6px 12px;
   border-radius: 20px;
   border: 1px solid var(--border-color);
@@ -2687,10 +2610,10 @@
 }
 
 .theme-settings-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-white);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: var(--border-color);
   padding: 16px 24px;
   border-radius: 16px;
   box-shadow: var(--card-shadow);
@@ -2711,3 +2634,9 @@
   font-weight: 600;
   margin: 0;
 }
+
+
+.conflict-block.block-1 { background: color-mix(in srgb, var(--primary-color) 10%, transparent); border-left: 4px solid var(--primary-color); }
+.conflict-block.block-2 { background: color-mix(in srgb, var(--primary-color) 20%, transparent); border-left: 4px solid color-mix(in srgb, var(--primary-color) 80%, black); }
+.conflict-block.block-3 { background: color-mix(in srgb, var(--primary-color) 30%, transparent); border-left: 4px solid color-mix(in srgb, var(--primary-color) 60%, black); }
+.conflict-block.block-4 { background: color-mix(in srgb, var(--primary-color) 40%, transparent); border-left: 4px solid color-mix(in srgb, var(--primary-color) 40%, black); }

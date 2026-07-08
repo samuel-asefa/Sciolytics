@@ -163,18 +163,29 @@ export const firestoreService = {
   },
 
   async getWeeklyActivity(uid: string): Promise<{ name: string; questions: number; correct: number }[]> {
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return this.getChartActivity(uid, 7);
+  },
+
+  async getChartActivity(uid: string, days: 7 | 30 | 90 = 7): Promise<{ name: string; questions: number; correct: number }[]> {
     const today = new Date();
     const sessionsSnap = await getDocs(collection(db, 'users', uid, 'sessions'));
     const sessMap: Record<string, DaySession> = {};
     sessionsSnap.forEach(d => { const s = d.data() as DaySession; sessMap[s.date] = s; });
 
-    return Array.from({ length: 7 }, (_, i) => {
+    return Array.from({ length: days }, (_, i) => {
       const d = new Date(today);
-      d.setDate(today.getDate() - (6 - i));
+      d.setDate(today.getDate() - (days - 1 - i));
       const dateStr = d.toISOString().slice(0, 10);
       const sess = sessMap[dateStr];
-      return { name: dayNames[d.getDay()], questions: sess?.answered ?? 0, correct: sess?.correct ?? 0 };
+      let label: string;
+      if (days === 7) {
+        label = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+      } else if (days === 30) {
+        label = `${d.getMonth() + 1}/${d.getDate()}`;
+      } else {
+        label = i % 10 === 0 ? `${d.getMonth() + 1}/${d.getDate()}` : '';
+      }
+      return { name: label, questions: sess?.answered ?? 0, correct: sess?.correct ?? 0 };
     });
   },
 

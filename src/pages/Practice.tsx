@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Search, RefreshCw, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getAllEvents, getAllSubtopics } from '../data/questionBank';
+import { getAllEvents, getAllSubtopics, questionBank } from '../data/questionBank';
 import { questionService } from '../services/questionService';
 import { firestoreService } from '../services/firestoreService';
 import { useAuth } from '../contexts/AuthContext';
@@ -28,30 +28,26 @@ const categories: Record<string, string> = {
   'Designer Genes': 'Life & Social Science',
 };
 
-const getDivisions = (event: string): string => {
-  if (event === 'Astronomy' || event === 'Chemistry Lab') {
-    return 'Div C';
-  }
-  return 'Div B, C';
-};
-
 export default function Practice() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const uid = currentUser?.uid ?? '';
   const events = getAllEvents();
   const subtopicsMap = getAllSubtopics();
-  
+
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
   const [numQuestions, setNumQuestions] = useState('10');
-  const [timeLimit, setTimeLimit] = useState('15');
+  const [timeLimit, setTimeLimit] = useState('10');
   const [questionType, setQuestionType] = useState<'mcq' | 'mcq-frq' | 'frq'>('mcq');
   const [division, setDivision] = useState<'b' | 'both' | 'c'>('both');
   const [difficulty, setDifficulty] = useState<'All' | 'Easy' | 'Medium' | 'Hard'>('All');
   const [selectedSubtopic, setSelectedSubtopic] = useState<string>('All Subtopics');
+  const [unansweredOnly, setUnansweredOnly] = useState(false);
   const [sortBy, setSortBy] = useState('alphabetical');
   const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [answeredIds, setAnsweredIds] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     if (!uid) return;
     firestoreService.getProgress(uid).then(prog => {
@@ -62,6 +58,32 @@ export default function Practice() {
   }, [uid]);
 
   const availableSubtopics = selectedEvent ? subtopicsMap[selectedEvent] || [] : [];
+
+  const getEventCount = (event: string): number =>
+    questionBank.filter(q => q.event === event).length;
+
+  const getSubtopicCount = (subtopic: string): number =>
+    questionBank.filter(q => q.event === selectedEvent && q.subtopic === subtopic).length;
+
+  const availableCount = useMemo(() => {
+    if (!selectedEvent) return 0;
+    return questionBank.filter(q => {
+      if (q.event !== selectedEvent) return false;
+      if (selectedSubtopic !== 'All Subtopics' && q.subtopic !== selectedSubtopic) return false;
+      if (division !== 'both' && q.division !== division.toUpperCase() && q.division !== 'Both') return false;
+      if (difficulty !== 'All' && q.difficulty !== difficulty) return false;
+      if (questionType === 'mcq' && q.type !== 'MCQ') return false;
+      if (questionType === 'frq' && q.type !== 'FRQ') return false;
+      if (unansweredOnly && answeredIds.has(q.id)) return false;
+      return true;
+    }).length;
+  }, [selectedEvent, selectedSubtopic, division, difficulty, questionType, unansweredOnly, answeredIds]);
+
+  const handleNumChange = (val: string) => {
+    const n = parseInt(val);
+    if (isNaN(n) || n < 1) { setNumQuestions('1'); return; }
+    setNumQuestions(String(Math.min(n, availableCount)));
+  };
 
   const toggleFavorite = async (eventName: string) => {
     if (uid) {
@@ -77,17 +99,14 @@ export default function Practice() {
   const filteredEvents = events
     .filter(event => {
       const matchesSearch = event.toLowerCase().includes(searchQuery.toLowerCase());
-      if (sortBy === 'favorites') {
-        return matchesSearch && favorites.includes(event);
-      }
+      if (sortBy === 'favorites') return matchesSearch && favorites.includes(event);
       return matchesSearch;
     })
     .sort((a, b) => {
       if (sortBy === 'alphabetical') return a.localeCompare(b);
       if (sortBy === 'category') return (categories[a] || '').localeCompare(categories[b] || '');
       if (sortBy === 'favorites') {
-        const aFav = favorites.includes(a);
-        const bFav = favorites.includes(b);
+        const aFav = favorites.includes(a), bFav = favorites.includes(b);
         if (aFav && !bFav) return -1;
         if (!aFav && bFav) return 1;
         return a.localeCompare(b);
@@ -95,41 +114,28 @@ export default function Practice() {
       return 0;
     });
 
-  const handleGenerateTest = () => {
-    if (!selectedEvent) {
-      alert('Please select an event');
-      return;
-    }
+  const buildFilter = (unlimited = false) => ({
+    event: selectedEvent!,
+    subtopic: selectedSubtopic !== 'All Subtopics' ? selectedSubtopic : undefined,
+    division: division === 'both' ? 'Both' : (division.toUpperCase() as 'B' | 'C'),
+    type: questionType === 'mcq' ? 'MCQ' as const : questionType === 'frq' ? 'FRQ' as const : 'All' as const,
+    difficulty: difficulty !== 'All' ? difficulty : undefined,
+    ...(unlimited ? {} : { limit: parseInt(numQuestions) || 10 }),
+  });
 
-    const filter = {
-      event: selectedEvent,
-      subtopic: selectedSubtopic !== 'All Subtopics' ? selectedSubtopic : undefined,
-      division: division === 'both' ? 'Both' : (division.toUpperCase() as 'B' | 'C'),
-      type: questionType === 'mcq' ? 'MCQ' as const : questionType === 'frq' ? 'FRQ' as const : 'All' as const,
-      difficulty: difficulty !== 'All' ? difficulty : undefined,
-      limit: parseInt(numQuestions) || 10,
-    };
-    sessionStorage.setItem('testConfig', JSON.stringify(filter));
+  const handleGenerateTest = () => {
+    if (!selectedEvent) { alert('Please select an event'); return; }
+    sessionStorage.setItem('testConfig', JSON.stringify(buildFilter()));
     sessionStorage.setItem('timeLimit', timeLimit);
+    sessionStorage.setItem('unansweredOnly', String(unansweredOnly));
     navigate('/practice/test');
   };
 
   const handleUnlimited = () => {
-    if (!selectedEvent) {
-      alert('Please select an event');
-      return;
-    }
-
-    const filter = {
-      event: selectedEvent,
-      subtopic: selectedSubtopic !== 'All Subtopics' ? selectedSubtopic : undefined,
-      division: division === 'both' ? 'Both' : (division.toUpperCase() as 'B' | 'C'),
-      type: questionType === 'mcq' ? 'MCQ' as const : questionType === 'frq' ? 'FRQ' as const : 'All' as const,
-      difficulty: difficulty !== 'All' ? difficulty : undefined,
-    };
-
-    sessionStorage.setItem('testConfig', JSON.stringify(filter));
+    if (!selectedEvent) { alert('Please select an event'); return; }
+    sessionStorage.setItem('testConfig', JSON.stringify(buildFilter(true)));
     sessionStorage.setItem('unlimitedMode', 'true');
+    sessionStorage.setItem('unansweredOnly', String(unansweredOnly));
     navigate('/practice/test');
   };
 
@@ -145,55 +151,41 @@ export default function Practice() {
           <div className="events-header">
             <h2>Available Events</h2>
             <div className="events-controls">
-              <select
-                className="sort-select"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
+              <select className="sort-select" value={sortBy} onChange={e => setSortBy(e.target.value)}>
                 <option value="alphabetical">Sort: Alphabetical</option>
                 <option value="category">Sort: Category</option>
                 <option value="favorites">Sort: Favorites</option>
               </select>
               <div className="search-input-wrapper">
                 <Search size={18} className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search events..."
-                  className="search-input"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+                <input type="text" placeholder="Search events..." className="search-input" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
               </div>
-              <button className="icon-button" onClick={() => setSearchQuery('')}>
-                <RefreshCw size={18} />
-              </button>
+              <button className="icon-button" onClick={() => setSearchQuery('')}><RefreshCw size={18} /></button>
             </div>
           </div>
 
           <div className="events-list">
             {filteredEvents.map((eventName, idx) => {
               const isFavorite = favorites.includes(eventName);
+              const count = getEventCount(eventName);
               return (
                 <div
                   key={idx}
                   className={`event-item ${selectedEvent === eventName ? 'selected' : ''} ${isFavorite ? 'favorited' : ''}`}
-                  onClick={() => setSelectedEvent(eventName)}
+                  onClick={() => { setSelectedEvent(eventName); setSelectedSubtopic('All Subtopics'); }}
                 >
                   <div className="event-item-header">
                     <div className="event-name">{eventName}</div>
                     <button
                       className={`favorite-event-btn ${isFavorite ? 'active' : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(eventName);
-                      }}
+                      onClick={e => { e.stopPropagation(); toggleFavorite(eventName); }}
                     >
                       <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
                     </button>
                   </div>
                   <div className="event-tags">
                     <span className="tag category">{categories[eventName] || 'General'}</span>
-                    <span className="tag division">{getDivisions(eventName)}</span>
+                    <span className="tag count">{count} Q</span>
                   </div>
                 </div>
               );
@@ -217,81 +209,45 @@ export default function Practice() {
 
           <div className="config-form">
             <div className="form-group">
-              <label>Number of Questions</label>
+              <label>
+                Number of Questions
+                {selectedEvent && <span className="form-count-hint"> (max {availableCount} available)</span>}
+              </label>
               <input
                 type="number"
                 value={numQuestions}
-                onChange={(e) => setNumQuestions(e.target.value)}
+                onChange={e => handleNumChange(e.target.value)}
                 min="1"
-                max="100"
+                max={availableCount || 100}
               />
             </div>
 
             <div className="form-group">
               <label>Time Limit (minutes)</label>
-              <input
-                type="number"
-                value={timeLimit}
-                onChange={(e) => setTimeLimit(e.target.value)}
-                min="1"
-              />
+              <input type="number" value={timeLimit} onChange={e => setTimeLimit(e.target.value)} min="1" />
             </div>
 
             <div className="form-group">
               <label>Question Types</label>
               <div className="button-group">
-                <button
-                  className={questionType === 'mcq' ? 'btn-option active' : 'btn-option'}
-                  onClick={() => setQuestionType('mcq')}
-                >
-                  MCQ only
-                </button>
-                <button
-                  className={questionType === 'mcq-frq' ? 'btn-option active' : 'btn-option'}
-                  onClick={() => setQuestionType('mcq-frq')}
-                >
-                  MCQ + FRQ
-                </button>
-                <button
-                  className={questionType === 'frq' ? 'btn-option active' : 'btn-option'}
-                  onClick={() => setQuestionType('frq')}
-                >
-                  FRQ only
-                </button>
+                <button className={questionType === 'mcq' ? 'btn-option active' : 'btn-option'} onClick={() => setQuestionType('mcq')}>MCQ only</button>
+                <button className={questionType === 'mcq-frq' ? 'btn-option active' : 'btn-option'} onClick={() => setQuestionType('mcq-frq')}>MCQ + FRQ</button>
+                <button className={questionType === 'frq' ? 'btn-option active' : 'btn-option'} onClick={() => setQuestionType('frq')}>FRQ only</button>
               </div>
             </div>
 
             <div className="form-group">
               <label>Division</label>
               <div className="button-group">
-                <button
-                  className={division === 'b' ? 'btn-option active' : 'btn-option'}
-                  onClick={() => setDivision('b')}
-                >
-                  Division B
-                </button>
-                <button
-                  className={division === 'both' ? 'btn-option active green' : 'btn-option'}
-                  onClick={() => setDivision('both')}
-                >
-                  Both
-                </button>
-                <button
-                  className={division === 'c' ? 'btn-option active' : 'btn-option'}
-                  onClick={() => setDivision('c')}
-                >
-                  Division C
-                </button>
+                <button className={division === 'b' ? 'btn-option active' : 'btn-option'} onClick={() => setDivision(division === 'b' ? 'both' : 'b')}>Division B</button>
+                <button className={division === 'both' ? 'btn-option active green' : 'btn-option'} onClick={() => setDivision('both')}>Both</button>
+                <button className={division === 'c' ? 'btn-option active' : 'btn-option'} onClick={() => setDivision(division === 'c' ? 'both' : 'c')}>Division C</button>
               </div>
             </div>
 
             <div className="form-group">
               <label>Difficulty</label>
-              <select
-                className="form-select"
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value as typeof difficulty)}
-              >
+              <select className="form-select" value={difficulty} onChange={e => setDifficulty(e.target.value as typeof difficulty)}>
                 <option>All Difficulties</option>
                 <option>Easy</option>
                 <option>Medium</option>
@@ -301,31 +257,30 @@ export default function Practice() {
 
             <div className="form-group">
               <label>Subtopics</label>
-              <select
-                className="form-select"
-                value={selectedSubtopic}
-                onChange={(e) => setSelectedSubtopic(e.target.value)}
-                disabled={!selectedEvent}
-              >
+              <select className="form-select" value={selectedSubtopic} onChange={e => setSelectedSubtopic(e.target.value)} disabled={!selectedEvent}>
                 <option>All Subtopics</option>
-                {availableSubtopics.map((subtopic) => (
-                  <option key={subtopic} value={subtopic}>
-                    {subtopic}
-                  </option>
+                {availableSubtopics.map(subtopic => (
+                  <option key={subtopic} value={subtopic}>{subtopic} ({getSubtopicCount(subtopic)} Q)</option>
                 ))}
               </select>
-              {!selectedEvent && (
-                <p className="form-hint">Select an event to see subtopics</p>
-              )}
+              {!selectedEvent && <p className="form-hint">Select an event to see subtopics</p>}
+            </div>
+
+            <div className="form-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={unansweredOnly}
+                  onChange={e => setUnansweredOnly(e.target.checked)}
+                  className="checkbox-input"
+                />
+                Only unanswered questions
+              </label>
             </div>
 
             <div className="config-actions">
-              <button className="btn-primary" onClick={handleGenerateTest}>
-                Generate Test
-              </button>
-              <button className="btn-secondary" onClick={handleUnlimited}>
-                Unlimited
-              </button>
+              <button className="btn-primary" onClick={handleGenerateTest}>Generate Test</button>
+              <button className="btn-secondary" onClick={handleUnlimited}>Unlimited</button>
             </div>
           </div>
         </div>

@@ -30,13 +30,6 @@ export default function PracticeResults() {
       .catch(console.error);
   }, [currentUser]);
 
-  const getGrade = (acc: number): string => {
-    if (acc >= 90) return 'A+';
-    if (acc >= 80) return 'A';
-    if (acc >= 70) return 'B';
-    if (acc >= 60) return 'C';
-    return 'D';
-  };
 
   return (
     <div className="practice-results">
@@ -59,7 +52,6 @@ export default function PracticeResults() {
           <div className="stat-card highlight">
             <div className="stat-value">{accuracy.toFixed(1)}%</div>
             <div className="stat-label">Accuracy</div>
-            <div className="stat-grade">{getGrade(accuracy)}</div>
           </div>
         </div>
 

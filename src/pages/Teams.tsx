@@ -14,7 +14,7 @@ interface ConflictBlock {
 const conflictBlocks: ConflictBlock[] = [
   {
     id: '1',
-    color: 'lightblue',
+    color: 'block-1',
     events: [
       { name: 'Anatomy & Physiology', hasAssign: true },
       { name: 'Engineering CAD', hasAssign: false },
@@ -23,7 +23,7 @@ const conflictBlocks: ConflictBlock[] = [
   },
   {
     id: '2',
-    color: 'lightgreen',
+    color: 'block-2',
     events: [
       { name: 'Codebusters', hasAssign: true },
       { name: 'Disease Detectives', hasAssign: true },
@@ -32,7 +32,7 @@ const conflictBlocks: ConflictBlock[] = [
   },
   {
     id: '3',
-    color: 'lightyellow',
+    color: 'block-3',
     events: [
       { name: 'Astronomy', hasAssign: true },
       { name: 'Entomology', hasAssign: true },
@@ -40,13 +40,14 @@ const conflictBlocks: ConflictBlock[] = [
   },
   {
     id: '4',
-    color: 'lightpink',
+    color: 'block-4',
     events: [
       { name: 'Chemistry Lab', hasAssign: true },
       { name: 'Machines', hasAssign: true },
     ],
   },
 ];
+
 
 export default function Teams() {
   const location = useLocation();
