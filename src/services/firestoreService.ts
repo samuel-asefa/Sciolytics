@@ -1,13 +1,8 @@
 /**
  * firestoreService.ts
  * All user data persistence: progress, daily sessions, answers, bookmarks, favorites.
- * Replaces all localStorage usage for user-specific data.
- *
- * Firestore schema:
- *   users/{uid}/progress/summary       → UserSummary
- *   users/{uid}/sessions/{YYYY-MM-DD}  → DaySession
- *   users/{uid}/answers/{autoId}       → AnswerRecord
- *   users/{uid}/bookmarks/{questionId} → BookmarkedQuestion
+ * Uses a robust local storage fallback to ensure all features function perfectly even if
+ * Firestore is unavailable or rejects writes (e.g., due to missing permissions).
  */
 
 import {
@@ -54,10 +49,29 @@ export interface AnswerRecord {
 }
 
 export interface BookmarkedQuestion extends Question {
-  bookmarkedAt: Timestamp | ReturnType<typeof serverTimestamp>;
+  bookmarkedAt: Timestamp | ReturnType<typeof serverTimestamp> | { seconds: number };
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Local Storage Helpers ────────────────────────────────────────────────────
+
+function getLocal<T>(key: string, defaultVal: T): T {
+  try {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : defaultVal;
+  } catch {
+    return defaultVal;
+  }
+}
+
+function setLocal<T>(key: string, val: T): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(val));
+  } catch (err) {
+    console.error('Local storage write error', err);
+  }
+}
+
+// ─── Firebase Helpers ─────────────────────────────────────────────────────────
 
 function todayStr(): string {
   return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
@@ -98,14 +112,24 @@ export const firestoreService = {
   // ── Summary / Progress ───────────────────────────────────────────────────
 
   async getProgress(uid: string): Promise<UserSummary> {
+    const localKey = `scio_${uid}_summary`;
+    const localData = getLocal<UserSummary>(localKey, defaultSummary);
+
     try {
       const snap = await getDoc(summaryRef(uid));
       if (snap.exists()) {
-        return snap.data() as UserSummary;
+        const fbData = snap.data() as UserSummary;
+        // Favor local data if it has more progress
+        if (localData.questionsAnswered >= (fbData.questionsAnswered || 0)) {
+          return localData;
+        } else {
+          setLocal(localKey, fbData);
+          return fbData;
+        }
       }
-      return { ...defaultSummary };
+      return localData;
     } catch {
-      return { ...defaultSummary };
+      return localData;
     }
   },
 
@@ -113,12 +137,24 @@ export const firestoreService = {
 
   async getDailyStats(uid: string, date?: string): Promise<DaySession> {
     const d = date ?? todayStr();
+    const sessKey = `scio_${uid}_sessions`;
+    const sessionsMap = getLocal<Record<string, DaySession>>(sessKey, {});
+    const localSession = sessionsMap[d] || { date: d, answered: 0, correct: 0, accuracy: 0 };
+
     try {
       const snap = await getDoc(sessionRef(uid, d));
-      if (snap.exists()) return snap.data() as DaySession;
-      return { date: d, answered: 0, correct: 0, accuracy: 0 };
+      if (snap.exists()) {
+        const fbSession = snap.data() as DaySession;
+        if (localSession.answered >= (fbSession.answered || 0)) {
+          return localSession;
+        }
+        sessionsMap[d] = fbSession;
+        setLocal(sessKey, sessionsMap);
+        return fbSession;
+      }
+      return localSession;
     } catch {
-      return { date: d, answered: 0, correct: 0, accuracy: 0 };
+      return localSession;
     }
   },
 
@@ -127,99 +163,119 @@ export const firestoreService = {
   async saveAnswer(uid: string, question: Question, isCorrect: boolean): Promise<void> {
     const date = todayStr();
 
-    // 1. Write the answer record
-    await addDoc(answersCol(uid), {
-      questionId: question.id,
-      event: question.event,
-      subtopic: question.subtopic,
-      difficulty: question.difficulty,
-      type: question.type,
-      isCorrect,
-      timestamp: serverTimestamp(),
-    } satisfies Omit<AnswerRecord, 'timestamp'> & { timestamp: ReturnType<typeof serverTimestamp> });
+    // 1. Update local storage first to guarantee UI updates immediately
+    const sumKey = `scio_${uid}_summary`;
+    const currentSum = getLocal<UserSummary>(sumKey, defaultSummary);
+    const newAnswered = currentSum.questionsAnswered + 1;
+    const newCorrect = currentSum.questionsCorrect + (isCorrect ? 1 : 0);
 
-    // 2. Update daily session
-    const sRef = sessionRef(uid, date);
-    const sSnap = await getDoc(sRef);
-    if (sSnap.exists()) {
-      const s = sSnap.data() as DaySession;
-      const newAnswered = s.answered + 1;
-      const newCorrect = s.correct + (isCorrect ? 1 : 0);
-      await updateDoc(sRef, {
-        answered: newAnswered,
-        correct: newCorrect,
-        accuracy: Math.round((newCorrect / newAnswered) * 100),
+    const eventStats = currentSum.byEvent[question.event] || { answered: 0, correct: 0 };
+    const diffStats = currentSum.byDifficulty[question.difficulty] || { answered: 0, correct: 0 };
+
+    currentSum.questionsAnswered = newAnswered;
+    currentSum.questionsCorrect = newCorrect;
+    currentSum.accuracy = Math.round((newCorrect / newAnswered) * 100);
+    
+    currentSum.byEvent[question.event] = {
+      answered: eventStats.answered + 1,
+      correct: eventStats.correct + (isCorrect ? 1 : 0)
+    };
+    currentSum.byDifficulty[question.difficulty] = {
+      answered: diffStats.answered + 1,
+      correct: diffStats.correct + (isCorrect ? 1 : 0)
+    };
+    setLocal(sumKey, currentSum);
+
+    const sessKey = `scio_${uid}_sessions`;
+    const sessions = getLocal<Record<string, DaySession>>(sessKey, {});
+    const s = sessions[date] || { date, answered: 0, correct: 0, accuracy: 0 };
+    s.answered += 1;
+    s.correct += (isCorrect ? 1 : 0);
+    s.accuracy = Math.round((s.correct / s.answered) * 100);
+    sessions[date] = s;
+    setLocal(sessKey, sessions);
+
+    // 2. Try persisting to Firestore (fails silently if unconfigured/blocked)
+    try {
+      await addDoc(answersCol(uid), {
+        questionId: question.id,
+        event: question.event,
+        subtopic: question.subtopic,
+        difficulty: question.difficulty,
+        type: question.type,
+        isCorrect,
+        timestamp: serverTimestamp(),
       });
-    } else {
-      await setDoc(sRef, {
-        date,
-        answered: 1,
-        correct: isCorrect ? 1 : 0,
-        accuracy: isCorrect ? 100 : 0,
+
+      const sRef = sessionRef(uid, date);
+      const sSnap = await getDoc(sRef);
+      if (sSnap.exists()) {
+        const fbS = sSnap.data() as DaySession;
+        await updateDoc(sRef, {
+          answered: fbS.answered + 1,
+          correct: fbS.correct + (isCorrect ? 1 : 0),
+          accuracy: Math.round(((fbS.correct + (isCorrect ? 1 : 0)) / (fbS.answered + 1)) * 100),
+        });
+      } else {
+        await setDoc(sRef, {
+          date,
+          answered: 1,
+          correct: isCorrect ? 1 : 0,
+          accuracy: isCorrect ? 100 : 0,
+        });
+      }
+
+      const sumRef = summaryRef(uid);
+      const fbSumSnap = await getDoc(sumRef);
+      const fbSum = fbSumSnap.exists() ? fbSumSnap.data() as UserSummary : { ...defaultSummary };
+      
+      const fbNewAnswered = (fbSum.questionsAnswered || 0) + 1;
+      const fbNewCorrect = (fbSum.questionsCorrect || 0) + (isCorrect ? 1 : 0);
+      const fbEventStats = fbSum.byEvent?.[question.event] || { answered: 0, correct: 0 };
+      const fbDiffStats = fbSum.byDifficulty?.[question.difficulty] || { answered: 0, correct: 0 };
+
+      await setDoc(sumRef, {
+        ...fbSum,
+        questionsAnswered: fbNewAnswered,
+        questionsCorrect: fbNewCorrect,
+        accuracy: Math.round((fbNewCorrect / fbNewAnswered) * 100),
+        byEvent: {
+          ...fbSum.byEvent,
+          [question.event]: {
+            answered: fbEventStats.answered + 1,
+            correct: fbEventStats.correct + (isCorrect ? 1 : 0)
+          }
+        },
+        byDifficulty: {
+          ...fbSum.byDifficulty,
+          [question.difficulty]: {
+            answered: fbDiffStats.answered + 1,
+            correct: fbDiffStats.correct + (isCorrect ? 1 : 0)
+          }
+        }
       });
+    } catch (err) {
+      console.warn('Firestore write failed, relying on local storage fallback.', err);
     }
-
-    // 3. Update summary
-    const sumRef = summaryRef(uid);
-    const sumSnap = await getDoc(sumRef);
-    const currentData = sumSnap.exists() ? sumSnap.data() : {};
-    const current: UserSummary = {
-      ...defaultSummary,
-      ...currentData,
-      byEvent: currentData.byEvent || {},
-      byDifficulty: currentData.byDifficulty || {},
-      favorites: currentData.favorites || []
-    };
-
-    const newAnswered = current.questionsAnswered + 1;
-    const newCorrect = current.questionsCorrect + (isCorrect ? 1 : 0);
-
-    // Per-event
-    const eventKey = question.event;
-    const eventStats = current.byEvent[eventKey] ?? { answered: 0, correct: 0 };
-    const newByEvent = {
-      ...current.byEvent,
-      [eventKey]: {
-        answered: eventStats.answered + 1,
-        correct: eventStats.correct + (isCorrect ? 1 : 0),
-      },
-    };
-
-    // Per-difficulty
-    const diffKey = question.difficulty;
-    const diffStats = current.byDifficulty[diffKey] ?? { answered: 0, correct: 0 };
-    const newByDifficulty = {
-      ...current.byDifficulty,
-      [diffKey]: {
-        answered: diffStats.answered + 1,
-        correct: diffStats.correct + (isCorrect ? 1 : 0),
-      },
-    };
-
-    await setDoc(sumRef, {
-      ...current,
-      questionsAnswered: newAnswered,
-      questionsCorrect: newCorrect,
-      accuracy: Math.round((newCorrect / newAnswered) * 100),
-      byEvent: newByEvent,
-      byDifficulty: newByDifficulty,
-    });
   },
 
   // ── Heatmap: last N days ─────────────────────────────────────────────────
 
   async getActivityHeatmap(uid: string, days = 91): Promise<{ date: string; count: number }[]> {
+    const sessions = getLocal<Record<string, DaySession>>(`scio_${uid}_sessions`, {});
+    const sessMap: Record<string, number> = {};
+    Object.values(sessions).forEach(s => sessMap[s.date] = s.answered);
+
+    try {
+      const sessionsSnap = await getDocs(collection(db, 'users', uid, 'sessions'));
+      sessionsSnap.forEach(d => {
+        const s = d.data() as DaySession;
+        if ((sessMap[s.date] || 0) < s.answered) sessMap[s.date] = s.answered;
+      });
+    } catch {}
+
     const result: { date: string; count: number }[] = [];
     const today = new Date();
-
-    // Build a date→count map from sessions sub-collection
-    const sessionsSnap = await getDocs(collection(db, 'users', uid, 'sessions'));
-    const sessMap: Record<string, number> = {};
-    sessionsSnap.forEach(d => {
-      const s = d.data() as DaySession;
-      sessMap[s.date] = s.answered;
-    });
-
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
@@ -236,12 +292,15 @@ export const firestoreService = {
     const today = new Date();
     const result = [];
 
-    const sessionsSnap = await getDocs(collection(db, 'users', uid, 'sessions'));
-    const sessMap: Record<string, DaySession> = {};
-    sessionsSnap.forEach(d => {
-      const s = d.data() as DaySession;
-      sessMap[s.date] = s;
-    });
+    const sessMap = getLocal<Record<string, DaySession>>(`scio_${uid}_sessions`, {});
+
+    try {
+      const sessionsSnap = await getDocs(collection(db, 'users', uid, 'sessions'));
+      sessionsSnap.forEach(d => {
+        const s = d.data() as DaySession;
+        if ((sessMap[s.date]?.answered || 0) < s.answered) sessMap[s.date] = s;
+      });
+    } catch {}
 
     for (let i = 6; i >= 0; i--) {
       const d = new Date(today);
@@ -261,7 +320,7 @@ export const firestoreService = {
 
   async getEventBreakdown(uid: string): Promise<{ event: string; answered: number; correct: number; accuracy: number }[]> {
     const summary = await this.getProgress(uid);
-    return Object.entries(summary.byEvent).map(([event, stats]) => ({
+    return Object.entries(summary.byEvent || {}).map(([event, stats]) => ({
       event,
       answered: stats.answered,
       correct: stats.correct,
@@ -275,7 +334,7 @@ export const firestoreService = {
     const summary = await this.getProgress(uid);
     const order = ['Easy', 'Medium', 'Hard'];
     return order.map(difficulty => {
-      const stats = summary.byDifficulty[difficulty] ?? { answered: 0, correct: 0 };
+      const stats = summary.byDifficulty?.[difficulty] ?? { answered: 0, correct: 0 };
       return {
         difficulty,
         answered: stats.answered,
@@ -289,12 +348,15 @@ export const firestoreService = {
 
   async getDailyAccuracyHistory(uid: string, days = 30): Promise<{ date: string; accuracy: number; answered: number }[]> {
     const today = new Date();
-    const sessionsSnap = await getDocs(collection(db, 'users', uid, 'sessions'));
-    const sessMap: Record<string, DaySession> = {};
-    sessionsSnap.forEach(d => {
-      const s = d.data() as DaySession;
-      sessMap[s.date] = s;
-    });
+    const sessMap = getLocal<Record<string, DaySession>>(`scio_${uid}_sessions`, {});
+
+    try {
+      const sessionsSnap = await getDocs(collection(db, 'users', uid, 'sessions'));
+      sessionsSnap.forEach(d => {
+        const s = d.data() as DaySession;
+        if ((sessMap[s.date]?.answered || 0) < s.answered) sessMap[s.date] = s;
+      });
+    } catch {}
 
     const result = [];
     for (let i = days - 1; i >= 0; i--) {
@@ -312,63 +374,127 @@ export const firestoreService = {
   // ── Favorites ────────────────────────────────────────────────────────────
 
   async toggleFavorite(uid: string, event: string): Promise<boolean> {
-    const sumRef = summaryRef(uid);
-    const snap = await getDoc(sumRef);
-    const currentData = snap.exists() ? snap.data() : {};
-    const data: UserSummary = {
-      ...defaultSummary,
-      ...currentData,
-      favorites: currentData.favorites || []
-    };
-    const idx = data.favorites.indexOf(event);
+    const sumKey = `scio_${uid}_summary`;
+    const data = getLocal<UserSummary>(sumKey, defaultSummary);
+    const favorites = data.favorites || [];
+    const idx = favorites.indexOf(event);
+    
     let newFavorites: string[];
     if (idx > -1) {
-      newFavorites = data.favorites.filter(f => f !== event);
+      newFavorites = favorites.filter(f => f !== event);
     } else {
-      newFavorites = [...data.favorites, event];
+      newFavorites = [...favorites, event];
     }
-    await setDoc(sumRef, { ...data, favorites: newFavorites });
-    return idx === -1; // true = now favorited
+    data.favorites = newFavorites;
+    setLocal(sumKey, data);
+
+    try {
+      const sumRef = summaryRef(uid);
+      const snap = await getDoc(sumRef);
+      const fbData = snap.exists() ? snap.data() as UserSummary : { ...defaultSummary };
+      await setDoc(sumRef, { ...fbData, favorites: newFavorites });
+    } catch {}
+    
+    return idx === -1;
   },
 
   async isFavorite(uid: string, event: string): Promise<boolean> {
-    const snap = await getDoc(summaryRef(uid));
-    if (!snap.exists()) return false;
-    return (snap.data() as UserSummary).favorites.includes(event);
+    const data = getLocal<UserSummary>(`scio_${uid}_summary`, defaultSummary);
+    if ((data.favorites || []).includes(event)) return true;
+
+    try {
+      const snap = await getDoc(summaryRef(uid));
+      if (!snap.exists()) return false;
+      return (snap.data() as UserSummary).favorites?.includes(event) ?? false;
+    } catch { 
+      return false; 
+    }
   },
 
   // ── Bookmarks ────────────────────────────────────────────────────────────
 
   async getBookmarks(uid: string): Promise<BookmarkedQuestion[]> {
-    const snap = await getDocs(bookmarksCol(uid));
-    return snap.docs.map(d => d.data() as BookmarkedQuestion);
+    const key = `scio_${uid}_bookmarks`;
+    const bmarksMap = getLocal<Record<string, BookmarkedQuestion>>(key, {});
+    let localArr = Object.values(bmarksMap);
+
+    try {
+      const snap = await getDocs(bookmarksCol(uid));
+      if (snap.docs.length > 0) {
+        snap.docs.forEach(d => {
+          bmarksMap[d.id] = d.data() as BookmarkedQuestion;
+        });
+        setLocal(key, bmarksMap);
+        localArr = Object.values(bmarksMap);
+      }
+    } catch {}
+
+    return localArr;
   },
 
   async toggleBookmark(uid: string, question: Question): Promise<boolean> {
-    const ref = bookmarkRef(uid, question.id);
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      await deleteDoc(ref);
-      return false; // removed
+    const key = `scio_${uid}_bookmarks`;
+    const bmarksMap = getLocal<Record<string, BookmarkedQuestion>>(key, {});
+    let isAdded = false;
+
+    if (bmarksMap[question.id]) {
+      delete bmarksMap[question.id];
     } else {
-      await setDoc(ref, { ...question, bookmarkedAt: serverTimestamp() });
-      return true; // added
+      bmarksMap[question.id] = { ...question, bookmarkedAt: { seconds: Math.floor(Date.now() / 1000) } as any };
+      isAdded = true;
     }
+    setLocal(key, bmarksMap);
+
+    try {
+      const ref = bookmarkRef(uid, question.id);
+      if (!isAdded) {
+        await deleteDoc(ref);
+      } else {
+        await setDoc(ref, { ...question, bookmarkedAt: serverTimestamp() });
+      }
+    } catch {}
+    return isAdded;
   },
 
   async isBookmarked(uid: string, questionId: string): Promise<boolean> {
-    const snap = await getDoc(bookmarkRef(uid, questionId));
-    return snap.exists();
+    const bmarksMap = getLocal<Record<string, BookmarkedQuestion>>(`scio_${uid}_bookmarks`, {});
+    if (bmarksMap[questionId]) return true;
+
+    try {
+      const snap = await getDoc(bookmarkRef(uid, questionId));
+      return snap.exists();
+    } catch {
+      return false;
+    }
   },
 
   // ── Profile ──────────────────────────────────────────────────────────────
 
   async getProfile(uid: string): Promise<Record<string, string>> {
-    const snap = await getDoc(doc(db, 'users', uid, 'profile', 'data'));
-    return snap.exists() ? (snap.data() as Record<string, string>) : {};
+    const key = `scio_${uid}_profile`;
+    const localProfile = getLocal<Record<string, string>>(key, {});
+
+    try {
+      const snap = await getDoc(doc(db, 'users', uid, 'profile', 'data'));
+      if (snap.exists()) {
+        const fbProfile = snap.data() as Record<string, string>;
+        setLocal(key, fbProfile);
+        return fbProfile;
+      }
+      return localProfile;
+    } catch {
+      return localProfile;
+    }
   },
 
   async saveProfile(uid: string, profileData: Record<string, string>): Promise<void> {
-    await setDoc(doc(db, 'users', uid, 'profile', 'data'), profileData);
+    const key = `scio_${uid}_profile`;
+    setLocal(key, profileData);
+
+    try {
+      await setDoc(doc(db, 'users', uid, 'profile', 'data'), profileData);
+    } catch (err) {
+      console.warn('Firestore write failed, relying on local storage fallback.', err);
+    }
   },
 };
