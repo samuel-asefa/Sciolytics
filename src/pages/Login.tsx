@@ -18,7 +18,9 @@ export default function Login() {
       await signInWithGoogle();
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google');
+      if (err.code !== 'auth/popup-closed-by-user') {
+        setError(err.message || 'Failed to sign in with Google');
+      }
     } finally {
       setLoading(false);
     }
@@ -51,7 +53,7 @@ export default function Login() {
         </div>
         <div className="landing-nav-links">
           <a href="#features">Features</a>
-          <button className="btn-primary" onClick={handleGoogleSignIn} disabled={loading}>
+          <button className="btn-primary" style={{ borderRadius: '9999px' }} onClick={handleGoogleSignIn} disabled={loading}>
             {loading ? 'Opening...' : 'Open App'}
           </button>
         </div>
@@ -67,7 +69,7 @@ export default function Login() {
             Everything you need to medal in your events.
           </motion.p>
           <motion.div variants={fadeInUp}>
-            <button className="btn-primary hero-btn" onClick={handleGoogleSignIn} disabled={loading}>
+            <button className="btn-primary hero-btn" style={{ borderRadius: '9999px' }} onClick={handleGoogleSignIn} disabled={loading}>
               Start practicing
             </button>
             {error && <p style={{ color: 'red', marginTop: '1rem', fontSize: '1rem' }}>{error}</p>}
@@ -75,12 +77,33 @@ export default function Login() {
         </motion.div>
       </section>
       <section className="social-proof">
-        <p>Sciolytics helps students win medals at Science Olympiad Invitationals hosted by:</p>
-        <div className="social-proof-logos">
-          <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>MIT</span>
-          <span style={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'serif' }}>Stanford</span>
-          <span style={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'serif' }}>Harvard</span>
-          <span style={{ fontWeight: 'bold', fontSize: '1.2rem', fontFamily: 'serif' }}>Yale</span>
+        <p style={{ fontSize: '1.1rem', marginBottom: '2rem', fontWeight: 500 }}>
+          Sciolytics helps students win medals at Science Olympiad Invitationals hosted by:
+        </p>
+        <div className="social-proof-marquee">
+          <div className="social-proof-logos">
+            <img src="/mit.png" alt="MIT" />
+            <img src="/stanford.png" alt="Stanford" />
+            <img src="/harvard.png" alt="Harvard" />
+            <img src="/princeton.png" alt="Princeton" />
+            <img src="/yale.png" alt="Yale" />
+            <img src="/columbia.png" alt="Columbia" />
+            <img src="/upenn.png" alt="UPenn" />
+            <img src="/cornell.png" alt="Cornell" />
+            <img src="/berkeley.png" alt="Berkeley" />
+            <img src="/cmu.png" alt="CMU" />
+            {/* Duplicated for seamless scrolling */}
+            <img src="/mit.png" alt="MIT" />
+            <img src="/stanford.png" alt="Stanford" />
+            <img src="/harvard.png" alt="Harvard" />
+            <img src="/princeton.png" alt="Princeton" />
+            <img src="/yale.png" alt="Yale" />
+            <img src="/columbia.png" alt="Columbia" />
+            <img src="/upenn.png" alt="UPenn" />
+            <img src="/cornell.png" alt="Cornell" />
+            <img src="/berkeley.png" alt="Berkeley" />
+            <img src="/cmu.png" alt="CMU" />
+          </div>
         </div>
       </section>
       <section id="features" className="feature-section">
@@ -99,7 +122,7 @@ export default function Login() {
               understand the core scientific concepts.
             </p>
             <br/>
-            <button className="btn-primary" onClick={handleGoogleSignIn}>Get started for free</button>
+            <button className="btn-primary" style={{ borderRadius: '9999px' }} onClick={handleGoogleSignIn}>Get started for free</button>
           </div>
           <div className="feature-graphic">
             <div className="mock-ui">
@@ -139,7 +162,7 @@ export default function Login() {
               your performance across every subtopic.
             </p>
             <br/>
-            <button className="btn-primary" onClick={handleGoogleSignIn}>Get started for free</button>
+            <button className="btn-primary" style={{ borderRadius: '9999px' }} onClick={handleGoogleSignIn}>Get started for free</button>
           </div>
           <div className="feature-graphic">
             <div className="mock-ui">

@@ -326,32 +326,69 @@ textarea {
 }
 
 .social-proof {
-  padding: 2rem;
+  padding: 3rem 2rem;
   text-align: center;
   color: var(--text-secondary);
-  font-size: 0.875rem;
   border-top: 1px solid rgba(0,0,0,0.05);
   border-bottom: 1px solid rgba(0,0,0,0.05);
   background: var(--bg-gray);
+  overflow: hidden;
+}
+
+.social-proof-marquee {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+/* Optional: Fading edges for the marquee */
+.social-proof-marquee::before,
+.social-proof-marquee::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 150px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+.social-proof-marquee::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-gray), transparent);
+}
+.social-proof-marquee::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-gray), transparent);
 }
 
 .social-proof-logos {
-  display: flex;
-  justify-content: center;
-  gap: 3rem;
-  margin-top: 1.5rem;
-  opacity: 0.6;
-  flex-wrap: wrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4rem;
+  opacity: 0.7;
+  animation: scrollLeft 35s linear infinite;
+  padding-right: 4rem; /* Match the gap */
+}
+
+@keyframes scrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .social-proof-logos img {
-  height: 30px;
+  height: 45px;
+  max-width: 200px;
+  object-fit: contain;
   filter: grayscale(100%);
-  transition: filter 0.3s, opacity 0.3s;
+  transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
 }
+
 .social-proof-logos img:hover {
   filter: grayscale(0%);
   opacity: 1;
+  transform: scale(1.15);
 }
 
 .feature-section {
@@ -400,11 +437,17 @@ textarea {
 }
 
 .mock-ui {
-  background: var(--bg-white);
+  background: white;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   padding: 1.5rem;
   border: 1px solid rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mock-ui:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
 }
 
 .landing-footer {

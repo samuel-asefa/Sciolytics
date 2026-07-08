@@ -271,14 +271,15 @@ export default function Practice() {
             </div>
 
             <div className="form-group">
-              <label className="checkbox-label">
+              <label className="custom-checkbox-label">
                 <input
                   type="checkbox"
                   checked={unansweredOnly}
                   onChange={e => setUnansweredOnly(e.target.checked)}
-                  className="checkbox-input"
+                  className="custom-checkbox-input"
                 />
-                Only unanswered questions
+                <span className="custom-checkbox-box"></span>
+                <span className="custom-checkbox-text">Only unanswered questions</span>
               </label>
             </div>
 

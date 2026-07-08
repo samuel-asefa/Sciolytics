@@ -371,10 +371,8 @@
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: conic-gradient(
-    var(--primary-color) 0% var(--percentage),
-    var(--border-color) var(--percentage) 100%
-  );
+  background: conic-gradient(var(--primary-color) 0% var(--percentage),
+      var(--border-color) var(--percentage) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -658,7 +656,62 @@
   padding: 10px 12px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  font-size: 14px;
+}
+
+.custom-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.custom-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-checkbox-box {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--text-secondary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background-color: var(--surface-color);
+  position: relative;
+}
+
+.custom-checkbox-input:checked~.custom-checkbox-box {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.custom-checkbox-input:checked~.custom-checkbox-box::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  top: 1px;
+  left: 5px;
+}
+
+.custom-checkbox-label:hover .custom-checkbox-box {
+  border-color: var(--primary-color);
+}
+
+font-size: 14px;
 }
 
 .button-group {
@@ -2587,19 +2640,45 @@
 
 .theme-circle.active {
   border-color: white;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.2);
   transform: scale(1.1);
 }
 
-.theme-blue { background: #3b82f6; }
-.theme-green { background: #10b981; }
-.theme-orange { background: #f97316; }
-.theme-purple { background: #a855f7; }
-.theme-red { background: #ef4444; }
-.theme-teal { background: #14b8a6; }
-.theme-pink { background: #ec4899; }
-.theme-yellow { background: #eab308; }
-.theme-indigo { background: #6366f1; }
+.theme-blue {
+  background: #3b82f6;
+}
+
+.theme-green {
+  background: #10b981;
+}
+
+.theme-orange {
+  background: #f97316;
+}
+
+.theme-purple {
+  background: #a855f7;
+}
+
+.theme-red {
+  background: #ef4444;
+}
+
+.theme-teal {
+  background: #14b8a6;
+}
+
+.theme-pink {
+  background: #ec4899;
+}
+
+.theme-yellow {
+  background: #eab308;
+}
+
+.theme-indigo {
+  background: #6366f1;
+}
 
 /* Profile Theme Settings */
 .profile-header {
@@ -2636,7 +2715,22 @@
 }
 
 
-.conflict-block.block-1 { background: color-mix(in srgb, var(--primary-color) 10%, transparent); border-left: 4px solid var(--primary-color); }
-.conflict-block.block-2 { background: color-mix(in srgb, var(--primary-color) 20%, transparent); border-left: 4px solid color-mix(in srgb, var(--primary-color) 80%, black); }
-.conflict-block.block-3 { background: color-mix(in srgb, var(--primary-color) 30%, transparent); border-left: 4px solid color-mix(in srgb, var(--primary-color) 60%, black); }
-.conflict-block.block-4 { background: color-mix(in srgb, var(--primary-color) 40%, transparent); border-left: 4px solid color-mix(in srgb, var(--primary-color) 40%, black); }
+.conflict-block.block-1 {
+  background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+  border-left: 4px solid var(--primary-color);
+}
+
+.conflict-block.block-2 {
+  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
+  border-left: 4px solid color-mix(in srgb, var(--primary-color) 80%, black);
+}
+
+.conflict-block.block-3 {
+  background: color-mix(in srgb, var(--primary-color) 30%, transparent);
+  border-left: 4px solid color-mix(in srgb, var(--primary-color) 60%, black);
+}
+
+.conflict-block.block-4 {
+  background: color-mix(in srgb, var(--primary-color) 40%, transparent);
+  border-left: 4px solid color-mix(in srgb, var(--primary-color) 40%, black);
+}
