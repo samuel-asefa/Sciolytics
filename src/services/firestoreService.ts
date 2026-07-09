@@ -22,6 +22,9 @@ export interface Team {
   ownerId: string;
   members: string[]; // UIDs
   joinCode: string;
+  bannerColor?: string;
+  themeColor?: string;
+  memberRoles?: Record<string, string>; // uid -> roleId
 }
 
 export interface Subteam {
@@ -32,9 +35,12 @@ export interface Subteam {
 
 export interface StreamMessage {
   id?: string;
+  authorId: string;
   authorName: string;
   content: string;
   timestamp: Timestamp | ReturnType<typeof serverTimestamp>;
+  editedAt?: Timestamp | null;
+  pinnedAt?: Timestamp | null;
 }
 
 export interface TeamAssignment {
@@ -43,6 +49,36 @@ export interface TeamAssignment {
   description: string;
   dueDate: string;
   createdAt: Timestamp | ReturnType<typeof serverTimestamp>;
+}
+
+export interface TeamEvent {
+  id?: string;
+  title: string;
+  date: string; // 'YYYY-MM-DD'
+  description?: string;
+  color?: string;
+  createdBy?: string;
+}
+
+export interface TeamRole {
+  id?: string;
+  name: string;
+  color: string;
+  permissions: {
+    manageRoster: boolean;
+    manageEvents: boolean;
+    manageAssignments: boolean;
+    manageStream: boolean;
+    manageMembers: boolean;
+    manageSettings: boolean;
+  };
+}
+
+export interface EventCategory {
+  id?: string;
+  name: string;
+  color: string;
+  events: string[];
 }
 
 export interface UserSummary {
@@ -419,11 +455,31 @@ export const firestoreService = {
       });
   },
 
-  async addStreamMessage(teamId: string, authorName: string, content: string): Promise<void> {
+  async addStreamMessage(teamId: string, authorId: string, authorName: string, content: string): Promise<void> {
     await addDoc(collection(db, 'teams', teamId, 'stream'), {
+      authorId,
       authorName,
       content,
       timestamp: serverTimestamp(),
+      editedAt: null,
+      pinnedAt: null,
+    });
+  },
+
+  async editStreamMessage(teamId: string, msgId: string, content: string): Promise<void> {
+    await updateDoc(doc(db, 'teams', teamId, 'stream', msgId), {
+      content,
+      editedAt: serverTimestamp(),
+    });
+  },
+
+  async deleteStreamMessage(teamId: string, msgId: string): Promise<void> {
+    await deleteDoc(doc(db, 'teams', teamId, 'stream', msgId));
+  },
+
+  async pinStreamMessage(teamId: string, msgId: string, pin: boolean): Promise<void> {
+    await updateDoc(doc(db, 'teams', teamId, 'stream', msgId), {
+      pinnedAt: pin ? serverTimestamp() : null,
     });
   },
 
@@ -445,4 +501,76 @@ export const firestoreService = {
       createdAt: serverTimestamp(),
     });
   },
+
+  async deleteAssignment(teamId: string, assignmentId: string): Promise<void> {
+    await deleteDoc(doc(db, 'teams', teamId, 'assignments', assignmentId));
+  },
+
+  // Team Events (calendar)
+  async getTeamEvents(teamId: string): Promise<TeamEvent[]> {
+    const snap = await getDocs(collection(db, 'teams', teamId, 'events'));
+    return snap.docs.map(d => ({ ...d.data(), id: d.id } as TeamEvent));
+  },
+
+  async addTeamEvent(teamId: string, event: Omit<TeamEvent, 'id'>): Promise<TeamEvent> {
+    const docRef = await addDoc(collection(db, 'teams', teamId, 'events'), event);
+    return { ...event, id: docRef.id };
+  },
+
+  async deleteTeamEvent(teamId: string, eventId: string): Promise<void> {
+    await deleteDoc(doc(db, 'teams', teamId, 'events', eventId));
+  },
+
+  // Roles
+  async getTeamRoles(teamId: string): Promise<TeamRole[]> {
+    const snap = await getDocs(collection(db, 'teams', teamId, 'roles'));
+    return snap.docs.map(d => ({ ...d.data(), id: d.id } as TeamRole));
+  },
+
+  async addTeamRole(teamId: string, role: Omit<TeamRole, 'id'>): Promise<TeamRole> {
+    const docRef = await addDoc(collection(db, 'teams', teamId, 'roles'), role);
+    return { ...role, id: docRef.id };
+  },
+
+  async deleteTeamRole(teamId: string, roleId: string): Promise<void> {
+    await deleteDoc(doc(db, 'teams', teamId, 'roles', roleId));
+  },
+
+  async assignMemberRole(teamId: string, memberId: string, roleId: string | null): Promise<void> {
+    const teamRef = doc(db, 'teams', teamId);
+    const snap = await getDoc(teamRef);
+    if (!snap.exists()) return;
+    const current = (snap.data()?.memberRoles || {}) as Record<string, string>;
+    if (roleId === null) {
+      delete current[memberId];
+    } else {
+      current[memberId] = roleId;
+    }
+    await updateDoc(teamRef, { memberRoles: current });
+  },
+
+  // Event Categories (roster config)
+  async getEventCategories(teamId: string): Promise<EventCategory[]> {
+    const snap = await getDocs(collection(db, 'teams', teamId, 'eventConfig'));
+    return snap.docs.map(d => ({ ...d.data(), id: d.id } as EventCategory));
+  },
+
+  async addEventCategory(teamId: string, category: Omit<EventCategory, 'id'>): Promise<EventCategory> {
+    const docRef = await addDoc(collection(db, 'teams', teamId, 'eventConfig'), category);
+    return { ...category, id: docRef.id };
+  },
+
+  async updateEventCategory(teamId: string, catId: string, data: Partial<EventCategory>): Promise<void> {
+    await updateDoc(doc(db, 'teams', teamId, 'eventConfig', catId), data as any);
+  },
+
+  async deleteEventCategory(teamId: string, catId: string): Promise<void> {
+    await deleteDoc(doc(db, 'teams', teamId, 'eventConfig', catId));
+  },
+
+  // Team settings
+  async updateTeamSettings(teamId: string, settings: Partial<Pick<Team, 'name' | 'bannerColor' | 'themeColor'>>): Promise<void> {
+    await updateDoc(doc(db, 'teams', teamId), settings as any);
+  },
 };
+

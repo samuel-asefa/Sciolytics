@@ -1460,6 +1460,26 @@ font-size: 14px;
 .calendar-day.other-month {
   opacity: 0.3;
 }
+.calendar-day.today {
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-white)) !important;
+  border: 1px solid var(--primary-color) !important;
+}
+.today-number {
+  background: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+.day-events { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; overflow: hidden; }
+.cal-event-pill { font-size: 10px; color: white; padding: 2px 6px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-event-more { font-size: 10px; color: var(--text-secondary); padding: 2px 4px; }
+
 
 .day-number {
   font-weight: 500;
