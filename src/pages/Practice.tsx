@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Search, RefreshCw, Heart } from 'lucide-react';
+import { Search, Heart } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getAllEvents, getAllSubtopics, questionBank } from '../data/questionBank';
 import { questionService } from '../services/questionService';
@@ -173,7 +173,6 @@ export default function Practice() {
                 <Search size={18} className="search-icon" />
                 <input type="text" placeholder="Search events..." className="search-input" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
               </div>
-              <button className="icon-button" onClick={() => setSearchQuery('')}><RefreshCw size={18} /></button>
             </div>
           </div>
 
@@ -253,7 +252,7 @@ export default function Practice() {
               <label>Division</label>
               <div className="button-group">
                 <button className={division === 'b' ? 'btn-option active' : 'btn-option'} onClick={() => setDivision(division === 'b' ? 'both' : 'b')}>Division B</button>
-                <button className={division === 'both' ? 'btn-option active green' : 'btn-option'} onClick={() => setDivision('both')}>Both</button>
+                <button className={division === 'both' ? 'btn-option active' : 'btn-option'} onClick={() => setDivision('both')}>Both</button>
                 <button className={division === 'c' ? 'btn-option active' : 'btn-option'} onClick={() => setDivision(division === 'c' ? 'both' : 'c')}>Division C</button>
               </div>
             </div>

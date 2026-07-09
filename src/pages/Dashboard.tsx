@@ -19,7 +19,7 @@ export default function Dashboard() {
   const [dailyStats, setDailyStats] = useState<DaySession>({ date: '', answered: 0, correct: 0, accuracy: 0 });
   const [heatmapData, setHeatmapData] = useState<HeatCell[]>([]);
   const [chartData, setChartData] = useState<WeekDay[]>([]);
-  const [chartType, setChartType] = useState<'line' | 'heatmap'>('heatmap');
+  const [chartType, setChartType] = useState<'line' | 'heatmap'>('line');
   const [chartRange, setChartRange] = useState<ChartRange>(7);
   const [loading, setLoading] = useState(true);
 
@@ -175,9 +175,9 @@ export default function Dashboard() {
           </div>
 
           {chartType === 'line' && (
-            <div className="chart-range-selector">
+            <div className="chart-toggle">
               {([7, 30, 90] as ChartRange[]).map(r => (
-                <button key={r} className={`range-btn ${chartRange === r ? 'active' : ''}`} onClick={() => setChartRange(r)}>
+                <button key={r} className={`toggle-btn ${chartRange === r ? 'active' : ''}`} onClick={() => setChartRange(r)}>
                   {r}d
                 </button>
               ))}
