@@ -73,6 +73,11 @@ export default function Teams() {
   const [createNameInput, setCreateNameInput] = useState('');
   const [createDivisionInput, setCreateDivisionInput] = useState('C');
   const [profiles, setProfiles] = useState<Record<string, any>>({});
+  
+  const [showAssignmentModal, setShowAssignmentModal] = useState(false);
+  const [assignmentTitle, setAssignmentTitle] = useState('');
+  const [assignmentDesc, setAssignmentDesc] = useState('');
+  const [assignmentDueDate, setAssignmentDueDate] = useState('');
 
   useEffect(() => {
     if (!uid) return;
@@ -153,6 +158,25 @@ export default function Teams() {
       }
     }
     setProfiles(profs);
+  };
+
+  const handleAddAssignment = async () => {
+    if (!activeTeam || !assignmentTitle) return;
+    try {
+      await firestoreService.addAssignment(activeTeam.id, {
+        title: assignmentTitle,
+        description: assignmentDesc,
+        dueDate: assignmentDueDate
+      });
+      setShowAssignmentModal(false);
+      setAssignmentTitle('');
+      setAssignmentDesc('');
+      setAssignmentDueDate('');
+      loadAssignments(activeTeam.id);
+    } catch (err) {
+      console.error("Error creating assignment:", err);
+      alert("Failed to create assignment");
+    }
   };
 
   const handleCreateTeam = async () => {
@@ -476,10 +500,40 @@ export default function Teams() {
               <div style={{padding: '24px'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
                   <h2>Team Assignments</h2>
-                  <button className="btn-primary" style={{display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '8px', padding: '8px 16px'}} onClick={() => alert('Adding assignments via UI coming soon! (Firebase method exists)')}>
+                  <button className="btn-primary" style={{display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '8px', padding: '8px 16px'}} onClick={() => setShowAssignmentModal(true)}>
                     <Plus size={18} /> Create
                   </button>
                 </div>
+                {showAssignmentModal && (
+                  <div style={{background: 'var(--bg-white)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px'}}>
+                    <h3 style={{marginBottom: '16px'}}>New Assignment</h3>
+                    <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                      <input 
+                        type="text" 
+                        placeholder="Title" 
+                        value={assignmentTitle}
+                        onChange={e => setAssignmentTitle(e.target.value)}
+                        style={{padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)'}}
+                      />
+                      <textarea 
+                        placeholder="Description" 
+                        value={assignmentDesc}
+                        onChange={e => setAssignmentDesc(e.target.value)}
+                        style={{padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)', minHeight: '80px', fontFamily: 'inherit'}}
+                      />
+                      <input 
+                        type="date" 
+                        value={assignmentDueDate}
+                        onChange={e => setAssignmentDueDate(e.target.value)}
+                        style={{padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)'}}
+                      />
+                      <div style={{display: 'flex', gap: '12px', marginTop: '8px'}}>
+                        <button className="btn-primary" onClick={handleAddAssignment}>Save Assignment</button>
+                        <button className="btn-secondary" onClick={() => setShowAssignmentModal(false)}>Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {assignments.length === 0 ? (
                   <p style={{color: 'var(--text-secondary)', textAlign: 'center', padding: '2rem'}}>No assignments yet.</p>
                 ) : (
@@ -504,7 +558,7 @@ export default function Teams() {
                     <div key={memberId} style={{background: 'var(--bg-white)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '16px'}}>
                       <div className="user-avatar"><Users size={20} /></div>
                       <div>
-                        <div style={{fontWeight: 600}}>{profiles[memberId]?.fullName || 'Anonymous User'}</div>
+                        <div style={{fontWeight: 600}}>{profiles[memberId]?.fullName || profiles[memberId]?.displayName || profiles[memberId]?.email?.split('@')[0] || 'Anonymous User'}</div>
                         <div style={{fontSize: '13px', color: 'var(--text-secondary)'}}>{memberId === activeTeam.ownerId ? 'Team Owner' : 'Member'}</div>
                       </div>
                     </div>

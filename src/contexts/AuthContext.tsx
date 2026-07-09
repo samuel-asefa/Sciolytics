@@ -7,6 +7,7 @@ import {
 } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { auth, googleProvider } from '../config/firebase';
+import { firestoreService } from '../services/firestoreService';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -22,8 +23,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+      if (user) {
+        try {
+          await firestoreService.syncUserAuthData(user);
+        } catch (err) {
+          console.error("Failed to sync user auth data:", err);
+        }
+      }
       setLoading(false);
     });
 

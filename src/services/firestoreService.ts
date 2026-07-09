@@ -314,6 +314,17 @@ export const firestoreService = {
     return snap.exists() ? (snap.data() as Record<string, string>) : {};
   },
 
+  async syncUserAuthData(user: { uid: string; email: string | null; displayName: string | null }): Promise<void> {
+    const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
+    const updateData: Record<string, any> = {};
+    if (user.email) updateData.email = user.email;
+    if (user.displayName) updateData.displayName = user.displayName;
+    
+    if (Object.keys(updateData).length > 0) {
+      await setDoc(profileRef, updateData, { merge: true });
+    }
+  },
+
   async saveProfile(uid: string, profileData: Record<string, string>): Promise<void> {
     await setDoc(doc(db, 'users', uid, 'profile', 'data'), profileData);
   },
