@@ -145,7 +145,12 @@ export default function Teams() {
   const loadProfiles = async (uids: string[]) => {
     const profs: Record<string, any> = {};
     for (const id of uids) {
-      profs[id] = await firestoreService.getProfile(id);
+      try {
+        profs[id] = await firestoreService.getProfile(id);
+      } catch (err) {
+        console.error("Error loading profile for", id, err);
+        profs[id] = {};
+      }
     }
     setProfiles(profs);
   };
