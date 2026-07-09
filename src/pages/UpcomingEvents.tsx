@@ -58,16 +58,6 @@ export default function UpcomingEvents() {
           </a>
         </nav>
 
-        <div className="your-teams">
-          <h4>YOUR TEAMS</h4>
-          <div className="team-card active">
-            <Users size={18} />
-            <div>
-              <div>South Brunswick ...</div>
-              <div className="team-division">Division C</div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div className="events-main">
