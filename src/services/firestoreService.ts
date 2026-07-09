@@ -7,11 +7,43 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
+  query,
+  where,
   Timestamp,
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import type { Question } from '../data/questionBank';
+
+export interface Team {
+  id: string;
+  name: string;
+  division: string;
+  ownerId: string;
+  members: string[]; // UIDs
+  joinCode: string;
+}
+
+export interface Subteam {
+  id: string;
+  name: string;
+  roster: Record<string, string[]>; // event -> [member1, member2]
+}
+
+export interface StreamMessage {
+  id?: string;
+  authorName: string;
+  content: string;
+  timestamp: Timestamp | ReturnType<typeof serverTimestamp>;
+}
+
+export interface TeamAssignment {
+  id?: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  createdAt: Timestamp | ReturnType<typeof serverTimestamp>;
+}
 
 export interface UserSummary {
   questionsAnswered: number;
@@ -284,5 +316,122 @@ export const firestoreService = {
 
   async saveProfile(uid: string, profileData: Record<string, string>): Promise<void> {
     await setDoc(doc(db, 'users', uid, 'profile', 'data'), profileData);
+  },
+
+  // --- Teams Methods ---
+  async createTeam(uid: string, name: string, division: string): Promise<Team> {
+    const joinCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const docRef = await addDoc(collection(db, 'teams'), {
+      name,
+      division,
+      ownerId: uid,
+      members: [uid],
+      joinCode,
+    });
+    
+    // Create default subteam
+    await addDoc(collection(db, 'teams', docRef.id, 'subteams'), {
+      name: 'Team A',
+      roster: {}
+    });
+
+    return { id: docRef.id, name, division, ownerId: uid, members: [uid], joinCode };
+  },
+
+  async joinTeam(uid: string, joinCode: string): Promise<Team | null> {
+    const q = query(collection(db, 'teams'), where('joinCode', '==', joinCode));
+    const snap = await getDocs(q);
+    if (snap.empty) return null;
+    
+    const teamDoc = snap.docs[0];
+    const teamData = teamDoc.data() as Team;
+    
+    if (!teamData.members.includes(uid)) {
+      await updateDoc(doc(db, 'teams', teamDoc.id), {
+        members: [...teamData.members, uid]
+      });
+      teamData.members.push(uid);
+    }
+    
+    return { ...teamData, id: teamDoc.id };
+  },
+
+  async getUserTeams(uid: string): Promise<Team[]> {
+    const q = query(collection(db, 'teams'), where('members', 'array-contains', uid));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ ...d.data(), id: d.id } as Team));
+  },
+
+  async getTeamSubteams(teamId: string): Promise<Subteam[]> {
+    const snap = await getDocs(collection(db, 'teams', teamId, 'subteams'));
+    return snap.docs.map(d => ({ ...d.data(), id: d.id } as Subteam));
+  },
+
+  async updateSubteamRoster(teamId: string, subteamId: string, roster: Record<string, string[]>): Promise<void> {
+    await updateDoc(doc(db, 'teams', teamId, 'subteams', subteamId), { roster });
+  },
+
+  async addSubteam(teamId: string, name: string): Promise<Subteam> {
+    const docRef = await addDoc(collection(db, 'teams', teamId, 'subteams'), {
+      name,
+      roster: {}
+    });
+    return { id: docRef.id, name, roster: {} };
+  },
+
+  async updateSubteamName(teamId: string, subteamId: string, name: string): Promise<void> {
+    await updateDoc(doc(db, 'teams', teamId, 'subteams', subteamId), { name });
+  },
+
+  async leaveTeam(uid: string, teamId: string): Promise<void> {
+    const d = await getDoc(doc(db, 'teams', teamId));
+    if (d.exists()) {
+      const data = d.data() as Team;
+      const newMembers = data.members.filter(m => m !== uid);
+      await updateDoc(doc(db, 'teams', teamId), { members: newMembers });
+    }
+  },
+
+  async deleteTeam(teamId: string): Promise<void> {
+    await deleteDoc(doc(db, 'teams', teamId));
+  },
+
+  // Stream methods
+  async getStreamMessages(teamId: string): Promise<StreamMessage[]> {
+    const snap = await getDocs(collection(db, 'teams', teamId, 'stream'));
+    return snap.docs
+      .map(d => ({ ...d.data(), id: d.id } as StreamMessage))
+      .sort((a, b) => {
+        const timeA = (a.timestamp as any)?.toMillis?.() || 0;
+        const timeB = (b.timestamp as any)?.toMillis?.() || 0;
+        return timeB - timeA;
+      });
+  },
+
+  async addStreamMessage(teamId: string, authorName: string, content: string): Promise<void> {
+    await addDoc(collection(db, 'teams', teamId, 'stream'), {
+      authorName,
+      content,
+      timestamp: serverTimestamp(),
+    });
+  },
+
+  // Assignment methods
+  async getAssignments(teamId: string): Promise<TeamAssignment[]> {
+    const snap = await getDocs(collection(db, 'teams', teamId, 'assignments'));
+    return snap.docs
+      .map(d => ({ ...d.data(), id: d.id } as TeamAssignment))
+      .sort((a, b) => {
+        const timeA = (a.createdAt as any)?.toMillis?.() || 0;
+        const timeB = (b.createdAt as any)?.toMillis?.() || 0;
+        return timeB - timeA;
+      });
+  },
+
+  async addAssignment(teamId: string, assignment: Omit<TeamAssignment, 'id' | 'createdAt'>): Promise<void> {
+    await addDoc(collection(db, 'teams', teamId, 'assignments'), {
+      ...assignment,
+      createdAt: serverTimestamp(),
+    });
   },
 };
