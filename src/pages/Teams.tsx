@@ -63,6 +63,7 @@ export default function Teams() {
   const [assignmentDueDate, setAssignmentDueDate] = useState('');
 
   const [profiles, setProfiles] = useState<Record<string, any>>({});
+  const [profilesLoading, setProfilesLoading] = useState(false);
   const [roles, setRoles] = useState<TeamRole[]>([]);
   const [eventCategories, setEventCategories] = useState<EventCategory[]>([]);
 
@@ -82,7 +83,10 @@ export default function Teams() {
   const [showCatForm, setShowCatForm] = useState(false);
   const [newCatName, setNewCatName] = useState('');
   const [newCatColor, setNewCatColor] = useState('#2563eb');
-  const [newCatEvents, setNewCatEvents] = useState('');
+  // Editing category events inline
+  const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [editCatEvents, setEditCatEvents] = useState<string[]>([]);
+  const [newEventInput, setNewEventInput] = useState('');
 
   const menuRef = useRef<HTMLDivElement>(null);
 

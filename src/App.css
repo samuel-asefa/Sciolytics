@@ -755,7 +755,7 @@ font-size: 14px;
 }
 
 .btn-primary {
-  flex: 1;
+  flex: none;
   padding: 12px 24px;
   background: var(--primary-color);
   color: white;
@@ -1238,6 +1238,7 @@ font-size: 14px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
+  align-items: start;
 }
 
 .conflict-block {
