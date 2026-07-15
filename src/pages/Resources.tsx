@@ -11,33 +11,6 @@ export default function Resources() {
 
       <div className="events-panel" style={{ gridColumn: 'span 2', padding: '30px' }}>
         <h2 style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
-          Internal Event Resource Pages
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '40px' }}>
-          <Link to="/resources/anatomy" className="action-card" style={{ textDecoration: 'none' }}>
-            <FileText className="action-icon green" size={24} />
-            <div>
-              <h4 style={{ margin: 0, color: 'var(--text-primary)' }}>Anatomy & Physiology</h4>
-              <p style={{ margin: 0, fontSize: '14px' }}>Integumentary, Skeletal, and Muscular systems.</p>
-            </div>
-          </Link>
-          <Link to="/resources/astronomy" className="action-card" style={{ textDecoration: 'none' }}>
-            <FileText className="action-icon purple" size={24} />
-            <div>
-              <h4 style={{ margin: 0, color: 'var(--text-primary)' }}>Astronomy</h4>
-              <p style={{ margin: 0, fontSize: '14px' }}>Stellar evolution and deep sky objects.</p>
-            </div>
-          </Link>
-          <Link to="/resources/disease-detectives" className="action-card" style={{ textDecoration: 'none' }}>
-            <FileText className="action-icon blue" size={24} />
-            <div>
-              <h4 style={{ margin: 0, color: 'var(--text-primary)' }}>Disease Detectives</h4>
-              <p style={{ margin: 0, fontSize: '14px' }}>Epidemiology and study designs.</p>
-            </div>
-          </Link>
-        </div>
-
-        <h2 style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
           Official Links
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '40px' }}>

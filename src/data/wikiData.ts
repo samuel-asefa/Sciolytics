@@ -95,5 +95,125 @@ export const wikiData: Record<string, EventWiki> = {
         ]
       }
     ]
+  },
+  'air-trajectory': {
+    id: 'air-trajectory',
+    name: 'Air Trajectory',
+    description: 'Design, build, and calibrate a device capable of launching a projectile onto a target.',
+    subtopics: []
+  },
+  'bungee-drop': {
+    id: 'bungee-drop',
+    name: 'Bungee Drop',
+    description: 'Design a bungee cord that drops a mass as close as possible to the floor without touching it.',
+    subtopics: []
+  },
+  'chemistry-lab': {
+    id: 'chemistry-lab',
+    name: 'Chemistry Lab',
+    description: 'Complete one or more tasks and answer a series of questions involving the scientific processes of chemistry.',
+    subtopics: []
+  },
+  'codebusters': {
+    id: 'codebusters',
+    name: 'Codebusters',
+    description: 'Cryptanalysis and decoding of encrypted messages using various ciphers.',
+    subtopics: []
+  },
+  'detector-building': {
+    id: 'detector-building',
+    name: 'Detector Building',
+    description: 'Build, test, and calibrate a device to measure an environmental parameter like temperature or salinity.',
+    subtopics: []
+  },
+  'dynamic-planet': {
+    id: 'dynamic-planet',
+    name: 'Dynamic Planet',
+    description: 'Use process skills to complete tasks related to large-scale Earth processes.',
+    subtopics: []
+  },
+  'ecology': {
+    id: 'ecology',
+    name: 'Ecology',
+    description: 'Answer questions involving content knowledge and process skills in the area of ecology and adaptations.',
+    subtopics: []
+  },
+  'electric-vehicle': {
+    id: 'electric-vehicle',
+    name: 'Electric Vehicle',
+    description: 'Design and build a battery-powered vehicle to travel a specified distance quickly and accurately.',
+    subtopics: []
+  },
+  'experimental-design': {
+    id: 'experimental-design',
+    name: 'Experimental Design',
+    description: 'Determine the variables, conduct an experiment, and report the findings.',
+    subtopics: []
+  },
+  'fermi-questions': {
+    id: 'fermi-questions',
+    name: 'Fermi Questions',
+    description: 'Provide answers to a series of order of magnitude estimation questions.',
+    subtopics: []
+  },
+  'flight': {
+    id: 'flight',
+    name: 'Flight',
+    description: 'Prior to the tournament, teams will construct, collect data on test flights, analyze and optimize a free flight rubber-powered aircraft.',
+    subtopics: []
+  },
+  'forensics': {
+    id: 'forensics',
+    name: 'Forensics',
+    description: 'Perform tests on evidence collected from a crime scene to identify the perpetrator.',
+    subtopics: []
+  },
+  'fossils': {
+    id: 'fossils',
+    name: 'Fossils',
+    description: 'Identify and classify fossils and demonstrate knowledge of ancient life.',
+    subtopics: []
+  },
+  'geologic-mapping': {
+    id: 'geologic-mapping',
+    name: 'Geologic Mapping',
+    description: 'Demonstrate understanding of the construction and use of topographic and geologic maps.',
+    subtopics: []
+  },
+  'microbe-mission': {
+    id: 'microbe-mission',
+    name: 'Microbe Mission',
+    description: 'Answer questions, solve problems, and analyze data pertaining to microbes.',
+    subtopics: []
+  },
+  'optics': {
+    id: 'optics',
+    name: 'Optics',
+    description: 'Competitors must participate in an activity involving positioning mirrors to direct a laser beam towards a target.',
+    subtopics: []
+  },
+  'robot-tour': {
+    id: 'robot-tour',
+    name: 'Robot Tour',
+    description: 'Design, build, program and test a robotic vehicle to navigate a track.',
+    subtopics: []
+  },
+  'scrambler': {
+    id: 'scrambler',
+    name: 'Scrambler',
+    description: 'Build a mechanical device to transport a falling mass and an egg along a straight track as fast as possible without breaking the egg.',
+    subtopics: []
+  },
+  'tower': {
+    id: 'tower',
+    name: 'Tower',
+    description: 'Design and build the most efficient tower out of wood and glue.',
+    subtopics: []
+  },
+  'wind-power': {
+    id: 'wind-power',
+    name: 'Wind Power',
+    description: 'Build a blade assembly that captures wind power and answer questions related to alternative energy.',
+    subtopics: []
   }
 };

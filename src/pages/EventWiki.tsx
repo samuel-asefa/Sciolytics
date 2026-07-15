@@ -28,8 +28,8 @@ export default function EventWiki() {
         <div style={{ textAlign: 'center', marginTop: '50px' }}>
           <h2>Event Not Found</h2>
           <p>The wiki page for this event does not exist yet.</p>
-          <Link to="/resources" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', marginTop: '20px' }}>
-            Back to Resources
+          <Link to="/wiki" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', marginTop: '20px' }}>
+            Back to Wiki
           </Link>
         </div>
       </div>
@@ -39,8 +39,8 @@ export default function EventWiki() {
   return (
     <div className="practice-page" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ marginBottom: '20px' }}>
-        <Link to="/resources" style={{ display: 'flex', alignItems: 'center', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>
-          <ChevronLeft size={20} /> Back to Resources
+        <Link to="/wiki" style={{ display: 'flex', alignItems: 'center', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>
+          <ChevronLeft size={20} /> Back to Wiki
         </Link>
       </div>
 

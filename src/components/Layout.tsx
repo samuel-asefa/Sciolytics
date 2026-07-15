@@ -69,6 +69,9 @@ export default function Layout({ children }: LayoutProps) {
           <Link to="/teams" className={isActive('/teams') ? 'nav-link active' : 'nav-link'}>
             Teams
           </Link>
+          <Link to="/wiki" className={isActive('/wiki') ? 'nav-link active' : 'nav-link'}>
+            Wiki
+          </Link>
           <Link to="/analytics" className={isActive('/analytics') ? 'nav-link active' : 'nav-link'}>
             Analytics
           </Link>

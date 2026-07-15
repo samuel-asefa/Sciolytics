@@ -85,6 +85,7 @@ export default function Teams() {
   const [newCatColor, setNewCatColor] = useState('#2563eb');
   // Editing category events inline
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [editCatName, setEditCatName] = useState<string>('');
   const [editCatEvents, setEditCatEvents] = useState<string[]>([]);
   const [newEventInput, setNewEventInput] = useState('');
 
@@ -289,6 +290,16 @@ export default function Teams() {
     setShowCatForm(false); setNewCatName(''); setNewCatEvents('');
   };
 
+  const handleSaveCategoryEdit = async (catId: string) => {
+    if (!activeTeam) return;
+    const cat = eventCategories.find(c => c.id === catId);
+    if (!cat) return;
+    const updatedEvents = editCatEvents.filter(e => e.trim());
+    await firestoreService.updateEventCategory(activeTeam.id, catId, { name: editCatName, events: updatedEvents });
+    setEventCategories(p => p.map(c => c.id === catId ? { ...c, name: editCatName, events: updatedEvents } : c));
+    setEditingCatId(null);
+  };
+
   const handleSaveSettings = async () => {
     if (!activeTeam) return;
     setSettingsSaving(true);
@@ -346,7 +357,7 @@ export default function Teams() {
           </Link>
           <button
             className="nav-item"
-            style={{ border: 'none', background: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+            style={{ border: 'none', background: 'none', cursor: 'pointer', width: '100%', textAlign: 'left', fontSize: 'inherit', fontFamily: 'inherit' }}
             onClick={() => setActiveTab('settings')}
           >
             <Settings size={18} /> Settings
@@ -408,8 +419,8 @@ export default function Teams() {
         ) : (
           <>
             {/* ── Header ── */}
-            <div className="teams-header">
-              <div className="header-gradient" style={{ background: activeTeam.bannerColor || BANNER_PRESETS[0] }}>
+            <div className="teams-header" style={{ background: activeTeam.bannerColor || BANNER_PRESETS[0] }}>
+              <div className="header-gradient">
                 <h1>{activeTeam.name}</h1>
                 <p>Division {activeTeam.division} • {activeTeam.members?.length || 0} member(s)</p>
               </div>
@@ -660,11 +671,20 @@ export default function Teams() {
 
                 {/* Banner */}
                 <Section icon={<Image size={18} />} title="Team Banner">
-                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
                     {BANNER_PRESETS.map(bg => (
                       <button key={bg} onClick={() => setSettingsBanner(bg)}
                         style={{ width: '80px', height: '44px', borderRadius: '8px', background: bg, border: settingsBanner === bg ? '3px solid var(--primary-color)' : '3px solid transparent', cursor: 'pointer' }} />
                     ))}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '10px' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 600 }}>Custom:</span>
+                      <input 
+                        type="color" 
+                        value={settingsBanner.startsWith('#') ? settingsBanner : '#4b6ba2'} 
+                        onChange={e => setSettingsBanner(e.target.value)} 
+                        style={{ width: '44px', height: '44px', padding: '0', border: 'none', borderRadius: '8px', cursor: 'pointer', background: 'none' }}
+                      />
+                    </div>
                   </div>
                   <div style={{ marginTop: '10px', height: '56px', borderRadius: '12px', background: settingsBanner }} />
                   <button className="btn-primary" onClick={handleSaveSettings} style={{ marginTop: '12px' }}>Apply Banner</button>
@@ -718,12 +738,52 @@ export default function Teams() {
                     {eventCategories.length === 0 && <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>No categories yet. Add one below.</p>}
                     {eventCategories.map(cat => (
                       <div key={cat.id} style={{ padding: '12px 16px', borderRadius: '10px', borderLeft: `4px solid ${cat.color}`, background: 'var(--bg-gray)', border: `1px solid var(--border-color)`, borderLeftWidth: '4px', borderLeftColor: cat.color }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontWeight: 600 }}>{cat.name}</span>
-                          <button onClick={async () => { if (cat.id) { await firestoreService.deleteEventCategory(activeTeam.id, cat.id); setEventCategories(p => p.filter(c => c.id !== cat.id)); } }}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={14} /></button>
-                        </div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>{cat.events.join(', ')}</div>
+                        {editingCatId === cat.id ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <input 
+                              type="text" 
+                              value={editCatName} 
+                              onChange={e => setEditCatName(e.target.value)} 
+                              style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-color)', fontSize: '14px', fontWeight: 600 }}
+                            />
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                              {editCatEvents.map((ev, i) => (
+                                <div key={i} style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-white)', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '2px 6px', fontSize: '12px' }}>
+                                  {ev}
+                                  <button onClick={() => setEditCatEvents(p => p.filter((_, idx) => idx !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: '4px', color: '#ef4444', padding: 0 }}><X size={12} /></button>
+                                </div>
+                              ))}
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                              <input 
+                                type="text" 
+                                placeholder="Add event..." 
+                                value={newEventInput} 
+                                onChange={e => setNewEventInput(e.target.value)}
+                                onKeyDown={e => { if (e.key === 'Enter' && newEventInput.trim()) { setEditCatEvents(p => [...p, newEventInput.trim()]); setNewEventInput(''); } }}
+                                style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-color)', fontSize: '12px', flex: 1 }}
+                              />
+                              <button onClick={() => { if (newEventInput.trim()) { setEditCatEvents(p => [...p, newEventInput.trim()]); setNewEventInput(''); } }} style={{ background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', cursor: 'pointer', fontSize: '12px' }}>Add</button>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '4px' }}>
+                              <button onClick={() => setEditingCatId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '12px' }}>Cancel</button>
+                              <button onClick={() => cat.id && handleSaveCategoryEdit(cat.id)} style={{ background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 12px', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Save</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span style={{ fontWeight: 600 }}>{cat.name}</span>
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button onClick={() => { setEditingCatId(cat.id || null); setEditCatName(cat.name); setEditCatEvents(cat.events); setNewEventInput(''); }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}><Edit2 size={14} /></button>
+                                <button onClick={async () => { if (cat.id) { await firestoreService.deleteEventCategory(activeTeam.id, cat.id); setEventCategories(p => p.filter(c => c.id !== cat.id)); } }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={14} /></button>
+                              </div>
+                            </div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>{cat.events.join(', ')}</div>
+                          </>
+                        )}
                       </div>
                     ))}
                   </div>
