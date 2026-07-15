@@ -14,6 +14,7 @@ import Help from './pages/Help';
 import Bookmarks from './pages/Bookmarks';
 import LoadTest from './pages/LoadTest';
 import Resources from './pages/Resources';
+import EventWiki from './pages/EventWiki';
 import Settings from './pages/Settings';
 import './App.css';
 
@@ -105,6 +106,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Resources />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/resources/:eventId"
+                  element={
+                    <ProtectedRoute>
+                      <EventWiki />
                     </ProtectedRoute>
                   }
                 />
