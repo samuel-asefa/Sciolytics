@@ -1,21 +1,41 @@
 export interface WikiContentBlock {
-  type: 'paragraph' | 'list' | 'image';
+  type: 'paragraph' | 'list' | 'image' | 'heading' | 'table';
   content?: string;
-  items?: string[]; // for lists
-  url?: string; // for images
+  items?: string[];
+  url?: string;
   alt?: string;
+  caption?: string;
+  level?: 2 | 3;       // for heading blocks
+  headers?: string[];  // for table
+  rows?: string[][];   // for table
 }
 
 export interface WikiSubtopic {
   id: string;
   title: string;
+  subsections?: { id: string; title: string }[];
   blocks: WikiContentBlock[];
+}
+
+export interface WikiInfobox {
+  type?: string;             // Engineering / Study / Hybrid
+  category?: string;         // Build / Lab / Trial / Inquiry
+  participants?: number;
+  eyeProtection?: string;
+  impound?: boolean;
+  allowedResources?: string[];
+  approxTime?: string;
+  firstAppearance?: string;
+  latestAppearance?: string;
+  rotates?: boolean;
+  officialLink?: string;
 }
 
 export interface EventWiki {
   id: string;
   name: string;
   description: string;
+  infobox?: WikiInfobox;
   subtopics: WikiSubtopic[];
 }
 
@@ -24,6 +44,17 @@ export const wikiData: Record<string, EventWiki> = {
     id: 'anatomy',
     name: 'Anatomy & Physiology',
     description: 'Understand the anatomy and physiology of the human body systems (Integumentary, Skeletal, and Muscular).',
+    infobox: {
+      type: 'Study',
+      category: 'Lab',
+      participants: 2,
+      eyeProtection: 'No',
+      impound: false,
+      approxTime: '30 minutes',
+      firstAppearance: '1985',
+      latestAppearance: '2026',
+      rotates: true,
+    },
     subtopics: [
       {
         id: 'integumentary',
@@ -46,7 +77,7 @@ export const wikiData: Record<string, EventWiki> = {
         id: 'muscular',
         title: 'Muscular System',
         blocks: [
-          { type: 'paragraph', content: 'The muscular system is responsible for the movement of the human body. Attached to the bones of the skeletal system are about 700 named muscles that make up roughly half of a person’s body weight.' }
+          { type: 'paragraph', content: 'The muscular system is responsible for the movement of the human body. Attached to the bones of the skeletal system are about 700 named muscles that make up roughly half of a person\'s body weight.' }
         ]
       }
     ]
@@ -55,6 +86,17 @@ export const wikiData: Record<string, EventWiki> = {
     id: 'astronomy',
     name: 'Astronomy',
     description: 'Learn about stellar evolution, variable stars, and deep sky objects.',
+    infobox: {
+      type: 'Study',
+      category: 'Inquiry',
+      participants: 2,
+      eyeProtection: 'No',
+      impound: false,
+      approxTime: '30 minutes',
+      firstAppearance: '1993',
+      latestAppearance: '2026',
+      rotates: true,
+    },
     subtopics: [
       {
         id: 'stellar-evolution',
@@ -77,6 +119,17 @@ export const wikiData: Record<string, EventWiki> = {
     id: 'disease-detectives',
     name: 'Disease Detectives',
     description: 'Focus on epidemiology, the study of the distribution and determinants of health-related states and events.',
+    infobox: {
+      type: 'Study',
+      category: 'Trial',
+      participants: 2,
+      eyeProtection: 'No',
+      impound: false,
+      approxTime: '30 minutes',
+      firstAppearance: '2004',
+      latestAppearance: '2026',
+      rotates: false,
+    },
     subtopics: [
       {
         id: 'basic-epi',
@@ -100,120 +153,140 @@ export const wikiData: Record<string, EventWiki> = {
     id: 'air-trajectory',
     name: 'Air Trajectory',
     description: 'Design, build, and calibrate a device capable of launching a projectile onto a target.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '15 minutes', firstAppearance: '2000', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'bungee-drop': {
     id: 'bungee-drop',
     name: 'Bungee Drop',
     description: 'Design a bungee cord that drops a mass as close as possible to the floor without touching it.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, allowedResources: ['Calibration Data', 'Tools'], approxTime: '10 minutes', firstAppearance: '2014', latestAppearance: '2026', rotates: true },
     subtopics: []
   },
   'chemistry-lab': {
     id: 'chemistry-lab',
     name: 'Chemistry Lab',
     description: 'Complete one or more tasks and answer a series of questions involving the scientific processes of chemistry.',
+    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '1994', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'codebusters': {
     id: 'codebusters',
     name: 'Codebusters',
     description: 'Cryptanalysis and decoding of encrypted messages using various ciphers.',
+    infobox: { type: 'Study', category: 'Trial', participants: 3, impound: false, allowedResources: ['One scientific calculator'], approxTime: '30 minutes', firstAppearance: '2013', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'detector-building': {
     id: 'detector-building',
     name: 'Detector Building',
     description: 'Build, test, and calibrate a device to measure an environmental parameter like temperature or salinity.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '20 minutes', firstAppearance: '2010', latestAppearance: '2026', rotates: true },
     subtopics: []
   },
   'dynamic-planet': {
     id: 'dynamic-planet',
     name: 'Dynamic Planet',
     description: 'Use process skills to complete tasks related to large-scale Earth processes.',
+    infobox: { type: 'Study', category: 'Inquiry', participants: 2, impound: false, approxTime: '30 minutes', firstAppearance: '1991', latestAppearance: '2026', rotates: true },
     subtopics: []
   },
   'ecology': {
     id: 'ecology',
     name: 'Ecology',
     description: 'Answer questions involving content knowledge and process skills in the area of ecology and adaptations.',
+    infobox: { type: 'Study', category: 'Trial', participants: 2, impound: false, approxTime: '30 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'electric-vehicle': {
     id: 'electric-vehicle',
     name: 'Electric Vehicle',
     description: 'Design and build a battery-powered vehicle to travel a specified distance quickly and accurately.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '10 minutes', firstAppearance: '2005', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'experimental-design': {
     id: 'experimental-design',
     name: 'Experimental Design',
     description: 'Determine the variables, conduct an experiment, and report the findings.',
+    infobox: { type: 'Study', category: 'Lab', participants: 3, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '1998', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'fermi-questions': {
     id: 'fermi-questions',
     name: 'Fermi Questions',
     description: 'Provide answers to a series of order of magnitude estimation questions.',
+    infobox: { type: 'Study', category: 'Trial', participants: 2, impound: false, allowedResources: ['Two calculators'], approxTime: '30 minutes', firstAppearance: '1994', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'flight': {
     id: 'flight',
     name: 'Flight',
     description: 'Prior to the tournament, teams will construct, collect data on test flights, analyze and optimize a free flight rubber-powered aircraft.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '8 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'forensics': {
     id: 'forensics',
     name: 'Forensics',
     description: 'Perform tests on evidence collected from a crime scene to identify the perpetrator.',
+    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: true },
     subtopics: []
   },
   'fossils': {
     id: 'fossils',
     name: 'Fossils',
     description: 'Identify and classify fossils and demonstrate knowledge of ancient life.',
+    infobox: { type: 'Study', category: 'Trial', participants: 2, impound: true, allowedResources: ['Resource Binder'], approxTime: '30 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'geologic-mapping': {
     id: 'geologic-mapping',
     name: 'Geologic Mapping',
     description: 'Demonstrate understanding of the construction and use of topographic and geologic maps.',
+    infobox: { type: 'Study', category: 'Inquiry', participants: 2, impound: false, approxTime: '30 minutes', firstAppearance: '2005', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'microbe-mission': {
     id: 'microbe-mission',
     name: 'Microbe Mission',
     description: 'Answer questions, solve problems, and analyze data pertaining to microbes.',
+    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '2008', latestAppearance: '2026', rotates: true },
     subtopics: []
   },
   'optics': {
     id: 'optics',
     name: 'Optics',
     description: 'Competitors must participate in an activity involving positioning mirrors to direct a laser beam towards a target.',
+    infobox: { type: 'Engineering', category: 'Lab', participants: 2, impound: true, approxTime: '30 minutes', firstAppearance: '1994', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'robot-tour': {
     id: 'robot-tour',
     name: 'Robot Tour',
     description: 'Design, build, program and test a robotic vehicle to navigate a track.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '10 minutes', firstAppearance: '2010', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'scrambler': {
     id: 'scrambler',
     name: 'Scrambler',
     description: 'Build a mechanical device to transport a falling mass and an egg along a straight track as fast as possible without breaking the egg.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '8 minutes', firstAppearance: '1993', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'tower': {
     id: 'tower',
     name: 'Tower',
     description: 'Design and build the most efficient tower out of wood and glue.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '10 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
   'wind-power': {
     id: 'wind-power',
     name: 'Wind Power',
     description: 'Build a blade assembly that captures wind power and answer questions related to alternative energy.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '15 minutes', firstAppearance: '2008', latestAppearance: '2026', rotates: true },
     subtopics: []
   }
 };

@@ -1,137 +1,294 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, FileText } from 'lucide-react';
-import { wikiData } from '../data/wikiData';
-import '../App.css'; // or you can make a specific EventWiki.css if needed
+import { ChevronLeft, ChevronDown, ChevronRight } from 'lucide-react';
+import { wikiData, type WikiInfobox } from '../data/wikiData';
+import './EventWiki.css';
 
+// ─── Infobox Component ────────────────────────────────────────────────────────
+function InfoboxRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <tr className="infobox-row">
+      <td className="infobox-label">{label}</td>
+      <td className="infobox-value">{children}</td>
+    </tr>
+  );
+}
+
+function Infobox({ name, infobox }: { name: string; infobox: WikiInfobox }) {
+  const typeColor: Record<string, string> = {
+    'Engineering': '#4a7c59',
+    'Study': '#4b6ba2',
+    'Hybrid': '#7c4a7c',
+  };
+  const headerBg = typeColor[infobox.type || ''] || '#4b6ba2';
+
+  return (
+    <aside className="wiki-infobox">
+      <table className="infobox-table">
+        <tbody>
+          <tr>
+            <td colSpan={2} className="infobox-header" style={{ background: headerBg, color: 'white' }}>
+              {name}
+            </td>
+          </tr>
+          {infobox.type && <InfoboxRow label="Type">{infobox.type}</InfoboxRow>}
+          {infobox.category && <InfoboxRow label="Category">{infobox.category}</InfoboxRow>}
+          {infobox.participants !== undefined && (
+            <InfoboxRow label="Participants">{infobox.participants}</InfoboxRow>
+          )}
+
+          {/* Event Information divider */}
+          <tr>
+            <td colSpan={2} className="infobox-section-header">Event Information</td>
+          </tr>
+
+          {infobox.eyeProtection && (
+            <InfoboxRow label="Eye Protection">{infobox.eyeProtection}</InfoboxRow>
+          )}
+          {infobox.impound !== undefined && (
+            <InfoboxRow label="Impound">{infobox.impound ? 'Yes' : 'No'}</InfoboxRow>
+          )}
+          {infobox.allowedResources && infobox.allowedResources.length > 0 && (
+            <InfoboxRow label="Allowed Resources">
+              <ul className="infobox-list">
+                {infobox.allowedResources.map((r, i) => <li key={i}>{r}</li>)}
+              </ul>
+            </InfoboxRow>
+          )}
+          {infobox.approxTime && (
+            <InfoboxRow label="Approx. Time">{infobox.approxTime}</InfoboxRow>
+          )}
+
+          {/* History divider */}
+          <tr>
+            <td colSpan={2} className="infobox-section-header">History</td>
+          </tr>
+
+          {infobox.firstAppearance && (
+            <InfoboxRow label="First Appearance">{infobox.firstAppearance}</InfoboxRow>
+          )}
+          {infobox.latestAppearance && (
+            <InfoboxRow label="Latest Appearance">{infobox.latestAppearance}</InfoboxRow>
+          )}
+          {infobox.rotates !== undefined && (
+            <InfoboxRow label="Rotates">{infobox.rotates ? 'Yes' : 'No'}</InfoboxRow>
+          )}
+
+          {/* Official Resources */}
+
+        </tbody>
+      </table>
+    </aside>
+  );
+}
+
+// ─── Table of Contents ────────────────────────────────────────────────────────
+function TableOfContents({
+  subtopics,
+  activeId,
+}: {
+  subtopics: { id: string; title: string }[];
+  activeId: string | null;
+}) {
+  const [open, setOpen] = useState(true);
+
+  if (subtopics.length === 0) return null;
+
+  return (
+    <nav className="wiki-toc">
+      <div className="toc-header" onClick={() => setOpen(o => !o)}>
+        <span className="toc-title">Contents</span>
+        <button className="toc-toggle" aria-label="toggle contents">
+          {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+        </button>
+      </div>
+      {open && (
+        <ol className="toc-list">
+          {subtopics.map((s, i) => (
+            <li key={s.id} className={`toc-item ${activeId === s.id ? 'toc-active' : ''}`}>
+              <a
+                href={`#${s.id}`}
+                className="toc-link"
+                onClick={e => {
+                  e.preventDefault();
+                  document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' });
+                  window.history.replaceState(null, '', `#${s.id}`);
+                }}
+              >
+                <span className="toc-num">{i + 1}</span>
+                {s.title}
+              </a>
+            </li>
+          ))}
+        </ol>
+      )}
+    </nav>
+  );
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────────
 export default function EventWiki() {
   const { eventId } = useParams<{ eventId: string }>();
   const data = eventId ? wikiData[eventId] : null;
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
-  // Handle anchor scrolling for subtopics if there's a hash in the URL
+  // Scroll spy — track which section is in view
+  const setupObserver = useCallback(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+    if (!data) return;
+
+    const ids = data.subtopics.map(s => s.id);
+    const elements = ids.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    if (elements.length === 0) return;
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter(e => e.isIntersecting);
+        if (visible.length > 0) {
+          setActiveId(visible[0].target.id);
+        }
+      },
+      { rootMargin: '-20% 0px -70% 0px', threshold: 0 }
+    );
+
+    elements.forEach(el => observerRef.current!.observe(el));
+  }, [data]);
+
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash) {
-      const id = hash.replace('#', '');
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      window.scrollTo(0, 0);
-    }
-  }, [eventId]);
+    window.scrollTo(0, 0);
+    setActiveId(null);
+    const timer = setTimeout(setupObserver, 100);
+    return () => {
+      clearTimeout(timer);
+      observerRef.current?.disconnect();
+    };
+  }, [eventId, setupObserver]);
 
   if (!data) {
     return (
-      <div className="practice-page">
-        <div style={{ textAlign: 'center', marginTop: '50px' }}>
-          <h2>Event Not Found</h2>
-          <p>The wiki page for this event does not exist yet.</p>
-          <Link to="/wiki" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', marginTop: '20px' }}>
-            Back to Wiki
-          </Link>
-        </div>
+      <div className="wiki-not-found">
+        <h2>Event Not Found</h2>
+        <p>The wiki page for this event does not exist yet.</p>
+        <Link to="/wiki" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', marginTop: '20px' }}>
+          ← Back to Wiki
+        </Link>
       </div>
     );
   }
 
+  const tocItems = data.subtopics.map(s => ({ id: s.id, title: s.title }));
+
   return (
-    <div className="practice-page" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ marginBottom: '20px' }}>
-        <Link to="/wiki" style={{ display: 'flex', alignItems: 'center', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: '500' }}>
-          <ChevronLeft size={20} /> Back to Wiki
+    <div className="wiki-page-wrapper">
+      {/* Breadcrumb */}
+      <div className="wiki-breadcrumb">
+        <Link to="/wiki" className="wiki-breadcrumb-link">
+          <ChevronLeft size={16} /> Wiki
         </Link>
+        <span className="wiki-breadcrumb-sep">/</span>
+        <span className="wiki-breadcrumb-current">{data.name}</span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '40px', alignItems: 'start' }}>
-        {/* Sidebar Navigation */}
-        <aside style={{ position: 'sticky', top: '20px', background: 'rgba(255, 255, 255, 0.05)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
-            <FileText size={20} color="var(--primary-color)" />
-            <h3 style={{ margin: 0, fontSize: '16px' }}>Contents</h3>
-          </div>
-          <nav>
-            <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {data.subtopics.map(subtopic => (
-                <li key={subtopic.id}>
-                  <a 
-                    href={`#${subtopic.id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const element = document.getElementById(subtopic.id);
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
-                        window.history.pushState(null, '', `#${subtopic.id}`);
-                      }
-                    }}
-                    style={{ 
-                      color: 'var(--text-secondary)', 
-                      textDecoration: 'none', 
-                      fontSize: '14px',
-                      display: 'block',
-                      padding: '5px 10px',
-                      borderRadius: '6px',
-                      transition: 'background 0.2s, color 0.2s'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                      e.currentTarget.style.color = 'var(--text-primary)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.color = 'var(--text-secondary)';
-                    }}
-                  >
-                    {subtopic.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </aside>
+      {/* Page title */}
+      <h1 className="wiki-page-title">{data.name}</h1>
 
-        {/* Main Content Area */}
-        <main style={{ paddingBottom: '100px' }}>
-          <header style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '20px', marginBottom: '30px' }}>
-            <h1 style={{ fontSize: '32px', margin: '0 0 10px 0', color: 'var(--text-primary)' }}>{data.name}</h1>
-            <p style={{ fontSize: '16px', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.6' }}>{data.description}</p>
-          </header>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-            {data.subtopics.map(subtopic => (
-              <section key={subtopic.id} id={subtopic.id} style={{ scrollMarginTop: '40px' }}>
-                <h2 style={{ fontSize: '24px', color: 'var(--primary-color)', marginBottom: '15px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>
-                  {subtopic.title}
-                </h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                  {subtopic.blocks.map((block, index) => {
-                    if (block.type === 'paragraph') {
-                      return <p key={index} style={{ margin: 0, lineHeight: '1.6', color: 'var(--text-primary)' }}>{block.content}</p>;
-                    }
-                    if (block.type === 'list' && block.items) {
-                      return (
-                        <ul key={index} style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.6', color: 'var(--text-primary)' }}>
-                          {block.items.map((item, i) => (
-                            <li key={i} style={{ marginBottom: '5px' }}>{item}</li>
-                          ))}
-                        </ul>
-                      );
-                    }
-                    if (block.type === 'image' && block.url) {
-                      return (
-                        <div key={index} style={{ margin: '15px 0' }}>
-                          <img src={block.url} alt={block.alt || 'Wiki Image'} style={{ maxWidth: '100%', borderRadius: '8px', border: '1px solid var(--border-color)' }} />
-                        </div>
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
-              </section>
-            ))}
-          </div>
-        </main>
+
+      {/* Body — ToC | Content | Infobox */}
+      <div className="wiki-body">
+
+        {/* LEFT: sticky ToC */}
+        <div className="wiki-sidebar-left">
+          <TableOfContents subtopics={tocItems} activeId={activeId} />
+        </div>
+
+        {/* CENTER: main article content */}
+        <article className="wiki-article">
+          {/* Lead / description */}
+          <p className="wiki-lead">{data.description}</p>
+
+          {data.subtopics.length === 0 && (
+            <div className="wiki-empty-state">
+              <div className="wiki-empty-icon">📝</div>
+              <h3>This page is a stub</h3>
+              <p>Content for <strong>{data.name}</strong> hasn't been added yet. Check back later — notes will appear here once added.</p>
+            </div>
+          )}
+
+          {data.subtopics.map((subtopic, sectionIndex) => (
+            <section
+              key={subtopic.id}
+              id={subtopic.id}
+              className="wiki-section"
+            >
+              <h2 className="wiki-section-heading">
+                <span className="wiki-section-num">{sectionIndex + 1}</span>
+                {subtopic.title}
+              </h2>
+
+              <div className="wiki-section-body">
+                {subtopic.blocks.map((block, bIdx) => {
+                  if (block.type === 'paragraph') {
+                    return (
+                      <p key={bIdx} className="wiki-paragraph">{block.content}</p>
+                    );
+                  }
+                  if (block.type === 'list' && block.items) {
+                    return (
+                      <ul key={bIdx} className="wiki-list">
+                        {block.items.map((item, iIdx) => {
+                          const [bold, ...rest] = item.split(': ');
+                          return (
+                            <li key={iIdx}>
+                              {rest.length > 0
+                                ? <><strong>{bold}:</strong> {rest.join(': ')}</>
+                                : item}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    );
+                  }
+                  if (block.type === 'heading') {
+                    const Tag = `h${block.level || 3}` as 'h2' | 'h3';
+                    return <Tag key={bIdx} className="wiki-sub-heading">{block.content}</Tag>;
+                  }
+                  if (block.type === 'image' && block.url) {
+                    return (
+                      <figure key={bIdx} className="wiki-figure">
+                        <img src={block.url} alt={block.alt || ''} className="wiki-img" />
+                        {block.caption && <figcaption className="wiki-caption">{block.caption}</figcaption>}
+                      </figure>
+                    );
+                  }
+                  if (block.type === 'table' && block.headers && block.rows) {
+                    return (
+                      <div key={bIdx} className="wiki-table-wrap">
+                        <table className="wiki-table">
+                          <thead>
+                            <tr>{block.headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
+                          </thead>
+                          <tbody>
+                            {block.rows.map((row, rIdx) => (
+                              <tr key={rIdx}>{row.map((cell, cIdx) => <td key={cIdx}>{cell}</td>)}</tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+            </section>
+          ))}
+        </article>
+
+        {/* RIGHT: infobox */}
+        <div className="wiki-sidebar-right">
+          {data.infobox && <Infobox name={data.name} infobox={data.infobox} />}
+        </div>
       </div>
     </div>
   );
