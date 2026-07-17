@@ -170,6 +170,202 @@ export const wikiData: Record<string, EventWiki> = {
     infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '1994', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
+  'circuit-lab': {
+  id: 'circuit-lab',
+  name: 'Circuit Lab',
+  description: 'Participants must complete tasks and answer questions about electricity and magnetism.',
+  infobox: {
+    type: 'Physics',
+    category: 'Lab',
+    participants: 2,
+    allowedResources: [
+      'Notes and resources (unlimited)',
+      'writing utensils',
+      'Two Class III calculators',
+      'basic multimeters'
+    ],
+    approxTime: '50 minutes',
+    firstAppearance: '1985',
+    latestAppearance: '2026',
+    rotates: true
+  },
+  subtopics: [
+    {
+      id: 'description',
+      title: 'Description',
+      blocks: [
+        {
+          type: 'paragraph',
+          content: 'Circuit Lab is a Division C and Division B event for the 2026 season about the study of circuitry, electricity, and magnetism. In some previous rotations, it was called Shock Value in Division B. Circuit Lab is a laboratory event which deals with the various components and properties of direct current (DC) circuits.'
+        },
+        {
+          type: 'paragraph',
+          content: 'The event consists of two parts: the written test and the hands-on component. The written test consists of questions spanning a list of topics and can include a variety of question types. The hands-on component can test a variety of circuit elements in order to complete a task (such as constructing a magnet or determining the value of a resistor).'
+        }
+      ]
+    },
+    {
+      id: 'what-is-a-circuit',
+      title: 'What is a Circuit?',
+      blocks: [
+        {
+          type: 'paragraph',
+          content: 'Let\'s take an example of a battery, for now. The battery has a positive (+) end, and a minus ( - ) end. When you touch a wire onto both ends of the battery at the same time, you have created a circuit. Therefore, the definition of a circuit can simply be a never-ending looped pathway for electrons.'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'The Requirement of a Closed Conducting Path'
+        },
+        {
+          type: 'paragraph',
+          content: 'There must be a closed conducting path which extends from the positive terminal to the negative terminal. All connections must be made by conducting materials capable of carrying a charge.'
+        }
+      ]
+    },
+    {
+      id: 'basic-dc-theory',
+      title: 'Basic Electrical DC Circuit Theory',
+      blocks: [
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Current'
+        },
+        {
+          type: 'paragraph',
+          content: 'Current is the rate of flow of charge past a particular point or region. It is measured in amperes (amps). It is caused by a potential difference (voltage) applied to a conductor.'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Voltage'
+        },
+        {
+          type: 'paragraph',
+          content: 'Voltage describes the potential of the electric field to move a unit charge at a particular point in space. It is measured in volts, which is joules per coulomb.'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Resistance (R)'
+        },
+        {
+          type: 'paragraph',
+          content: 'Resistance is the opposition to the flow of electric current. It acts like friction in mechanical systems, and converts some electrical energy into heat. It is measured in ohms (Ω).'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Power'
+        },
+        {
+          type: 'paragraph',
+          content: 'Power is current times voltage and is measured in watts (P=IV). James Prescott Joule discovered P=I^2*R (Joule\'s Law).'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Energy'
+        },
+        {
+          type: 'paragraph',
+          content: 'Energy is the total amount of work done by the electric current over a period of time. Energy is measured in joules (J), or kilowatt-hours (kWh).'
+        }
+      ]
+    },
+    {
+      id: 'circuit-elements',
+      title: 'Circuit Elements',
+      blocks: [
+        {
+          type: 'paragraph',
+          content: 'Important elements include Voltage Sources, Current Sources, Resistors, and Capacitors.'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Resistor Networks'
+        },
+        {
+          type: 'paragraph',
+          content: 'Series Resistance: equivalent resistance is equal to the sum of individual resistors. Parallel Resistance: the total conductance is equal to the sum of individual conductances in parallel (1/R_eq = 1/R_1 + 1/R_2 + ...).'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Wheatstone Bridge'
+        },
+        {
+          type: 'paragraph',
+          content: 'A wheatstone bridge is used to measure an unknown resistance value to a high degree of accuracy. It uses 4 resistors set up in a diamond fashion and a voltmeter.'
+        }
+      ]
+    },
+    {
+      id: 'kirchhoffs-laws',
+      title: 'Kirchhoff\'s Laws',
+      blocks: [
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Kirchhoff\'s Current Law'
+        },
+        {
+          type: 'paragraph',
+          content: 'Kirchhoff\'s Current Law states that sum of currents entering a node is equal to the sum of currents leaving the node.'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Kirchhoff\'s Voltage Law'
+        },
+        {
+          type: 'paragraph',
+          content: 'Kirchhoff\'s Voltage Law (KVL) states that for any closed loop in a circuit, the sum of voltages will be zero.'
+        }
+      ]
+    },
+    {
+      id: 'digital-logic',
+      title: 'Digital Logic',
+      blocks: [
+        {
+          type: 'paragraph',
+          content: 'In digital logic in circuits, a current corresponds to a \'true\' or \'1\', and no or very little current corresponds to a \'false\' or \'0\'. Common gates include AND, OR, NOT, NAND, NOR, XOR, XNOR.'
+        }
+      ]
+    },
+    {
+      id: 'alternating-current',
+      title: 'Alternating Current (AC)',
+      blocks: [
+        {
+          type: 'paragraph',
+          content: 'In an AC circuit, the direction of the current flow changes, typically in a sine wave. This yields many advantages, namely, the use of transformers for voltage step-up/step-down.'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Transformers'
+        },
+        {
+          type: 'paragraph',
+          content: 'Transformers use changing magnetic fields in a primary coil to induce a voltage in a secondary coil according to the ratio of turns.'
+        },
+        {
+          type: 'heading',
+          level: 3,
+          content: 'Polyphase'
+        },
+        {
+          type: 'paragraph',
+          content: 'A polyphase system has multiple wires carrying current at a time, shifted (time delayed) by a certain amount. The most common is 3-phase power.'
+        }
+      ]
+    }
+  ]
+},
   'codebusters': {
     id: 'codebusters',
     name: 'Codebusters',
