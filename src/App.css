@@ -501,13 +501,13 @@
 
 .sort-select {
   padding: 6px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border, var(--border-color));
   border-radius: 6px;
   font-size: 14px;
-  background: var(--bg-white);
+  background: var(--input-bg, var(--bg-white));
+  color: var(--input-text, var(--text-primary));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: var(--border-color);
 }
 
 .icon-button {
@@ -541,10 +541,12 @@
 
 .search-input {
   padding: 8px 12px 8px 36px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border, var(--border-color));
   border-radius: 6px;
   font-size: 14px;
   width: 200px;
+  background: var(--input-bg, var(--bg-white));
+  color: var(--input-text, var(--text-primary));
 }
 
 .events-list {
@@ -654,8 +656,10 @@
 .form-group input,
 .form-select {
   padding: 10px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border, var(--border-color));
   border-radius: 6px;
+  background: var(--input-bg, var(--bg-white));
+  color: var(--input-text, var(--text-primary));
 }
 
 .custom-checkbox-label {
@@ -899,10 +903,12 @@ font-size: 14px;
 .school-search {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border, var(--border-color));
   border-radius: 6px;
   margin-bottom: 16px;
   font-size: 14px;
+  background: var(--input-bg, var(--bg-white));
+  color: var(--input-text, var(--text-primary));
 }
 
 .schools-list {
@@ -1303,13 +1309,11 @@ font-size: 14px;
 
 .member-inputs input {
   padding: 8px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border, var(--border-color));
   border-radius: 6px;
   font-size: 14px;
-  background: var(--bg-white);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: var(--border-color);
+  background: var(--input-bg, var(--bg-white));
+  color: var(--input-text, var(--text-primary));
 }
 
 .stream-placeholder,
@@ -1631,10 +1635,12 @@ font-size: 14px;
 .filter-select,
 .filter-input {
   padding: 8px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border, var(--border-color));
   border-radius: 6px;
   font-size: 14px;
   min-width: 150px;
+  background: var(--input-bg, var(--bg-white));
+  color: var(--input-text, var(--text-primary));
 }
 
 .leaderboard-table {
@@ -1947,17 +1953,20 @@ font-size: 14px;
 .form-input,
 .form-textarea {
   padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border, var(--border-color));
   border-radius: 8px;
   font-size: 14px;
   font-family: inherit;
-  transition: border-color 0.2s;
+  background: var(--input-bg, var(--bg-white));
+  color: var(--input-text, var(--text-primary));
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
   border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--input-focus-ring, color-mix(in srgb, var(--primary-color) 18%, transparent));
 }
 
 .form-textarea {
@@ -2399,12 +2408,14 @@ font-size: 14px;
 .frq-textarea {
   width: 100%;
   padding: 16px;
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--input-border, var(--border-color));
   border-radius: 8px;
   font-size: 16px;
   font-family: inherit;
   resize: vertical;
   min-height: 150px;
+  background: var(--input-bg, var(--bg-white));
+  color: var(--input-text, var(--text-primary));
 }
 
 .frq-textarea:focus {

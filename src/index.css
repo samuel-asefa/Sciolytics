@@ -95,6 +95,12 @@
   --border-color: rgba(0, 0, 0, 0.08);
   --card-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
   --bg-gradient: linear-gradient(-45deg, #ffffff, color-mix(in srgb, var(--primary-color) 8%, #ffffff), #ffffff, color-mix(in srgb, var(--primary-color) 4%, #f8fafc));
+  /* Inputs */
+  --input-bg: #ffffff;
+  --input-text: #0f172a;
+  --input-border: rgba(0, 0, 0, 0.15);
+  --input-placeholder: #94a3b8;
+  --input-focus-ring: color-mix(in srgb, var(--primary-color) 20%, transparent);
 }
 
 :root[data-brightness="default"] {
@@ -102,8 +108,15 @@
   --bg-gray: rgba(243, 244, 246, 0.5);
   --text-primary: #1e293b;
   --text-secondary: #475569;
+  --border-color: rgba(0, 0, 0, 0.1);
   --border: var(--border-color);
   --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+  /* Inputs */
+  --input-bg: rgba(255, 255, 255, 0.85);
+  --input-text: #1e293b;
+  --input-border: rgba(0, 0, 0, 0.12);
+  --input-placeholder: #94a3b8;
+  --input-focus-ring: color-mix(in srgb, var(--primary-color) 18%, transparent);
 }
 
 :root[data-brightness="slightly-dark"] {
@@ -111,9 +124,16 @@
   --bg-gray: rgba(15, 23, 42, 0.6);
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.08);
   --border: var(--border-color);
   --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   --bg-gradient: linear-gradient(-45deg, color-mix(in srgb, var(--primary-color) 30%, #0f172a), color-mix(in srgb, var(--primary-color) 15%, #1e293b), #1e293b, #0f172a);
+  /* Inputs */
+  --input-bg: rgba(15, 23, 42, 0.6);
+  --input-text: #f1f5f9;
+  --input-border: rgba(255, 255, 255, 0.12);
+  --input-placeholder: #64748b;
+  --input-focus-ring: color-mix(in srgb, var(--primary-color) 25%, transparent);
 }
 
 :root[data-brightness="dark"] {
@@ -121,9 +141,16 @@
   --bg-gray: rgba(2, 6, 23, 0.7);
   --text-primary: #e2e8f0;
   --text-secondary: #64748b;
+  --border-color: rgba(255, 255, 255, 0.07);
   --border: var(--border-color);
   --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   --bg-gradient: linear-gradient(-45deg, color-mix(in srgb, var(--primary-color) 20%, #020617), color-mix(in srgb, var(--primary-color) 10%, #0f172a), #0f172a, #020617);
+  /* Inputs */
+  --input-bg: rgba(5, 10, 30, 0.75);
+  --input-text: #e2e8f0;
+  --input-border: rgba(255, 255, 255, 0.09);
+  --input-placeholder: #475569;
+  --input-focus-ring: color-mix(in srgb, var(--primary-color) 28%, transparent);
 }
 
 :root[data-brightness="darker"] {
@@ -131,9 +158,16 @@
   --bg-gray: rgba(2, 4, 12, 0.85);
   --text-primary: #cbd5e1;
   --text-secondary: #475569;
+  --border-color: rgba(255, 255, 255, 0.05);
   --border: var(--border-color);
   --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
   --bg-gradient: linear-gradient(-45deg, color-mix(in srgb, var(--primary-color) 12%, #020617), #020617, #020617, color-mix(in srgb, var(--primary-color) 8%, #000));
+  /* Inputs */
+  --input-bg: rgba(2, 4, 12, 0.9);
+  --input-text: #cbd5e1;
+  --input-border: rgba(255, 255, 255, 0.06);
+  --input-placeholder: #334155;
+  --input-focus-ring: color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 
@@ -171,11 +205,34 @@ button {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ── Global input theming — adapts to every brightness mode ── */
 input,
 select,
 textarea {
   font-family: inherit;
+  background: var(--input-bg, rgba(255, 255, 255, 0.85));
+  color: var(--input-text, var(--text-primary));
+  border-color: var(--input-border, rgba(0, 0, 0, 0.12));
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--input-placeholder, #94a3b8);
+  opacity: 1;
+}
+
+select option {
+  background: var(--input-bg, #fff);
+  color: var(--input-text, #1e293b);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px var(--input-focus-ring, color-mix(in srgb, var(--primary-color) 18%, transparent));
 }
 
 .option-button {
@@ -437,7 +494,7 @@ textarea {
 }
 
 .mock-ui {
-  background: white;
+  background: var(--bg-white, white);
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   padding: 1.5rem;
