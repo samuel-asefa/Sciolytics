@@ -112,15 +112,16 @@ function WindBackground() {
     const rootStyle = getComputedStyle(document.documentElement);
     const rawColor = rootStyle.getPropertyValue('--text-primary').trim() || '#ffffff';
 
-    const particles: { x: number, y: number, age: number, lifespan: number }[] = [];
-    const numParticles = Math.floor((width * height) / 2500); // Dense based on screen size
+    const particles: { x: number, y: number, history: {x: number, y: number}[], age: number, lifespan: number }[] = [];
+    const numParticles = Math.floor((width * height) / 3500); // Slightly less dense since we draw full tails
 
     for (let i = 0; i < numParticles; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
+        history: [],
         age: Math.random() * 100,
-        lifespan: Math.random() * 150 + 50
+        lifespan: Math.random() * 200 + 50
       });
     }
 
@@ -131,43 +132,54 @@ function WindBackground() {
       // Slower field evolution
       time += 0.0003;
 
-      // Fade previous frame to transparent for trails
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'; // Trail length
-      ctx.fillRect(0, 0, width, height);
-      ctx.globalCompositeOperation = 'source-over';
+      // Clear the canvas completely so lines don't accumulate
+      ctx.clearRect(0, 0, width, height);
 
       ctx.strokeStyle = rawColor;
-      // Much more subtle color
+      // Much more subtle color, since we draw full solid tails
       ctx.globalAlpha = 0.15;
       ctx.lineWidth = 1.0;
       ctx.beginPath();
 
       particles.forEach(p => {
-        // Complex noise-like field using overlapping sines
-        const noise = Math.sin(p.x * 0.002 + time) + Math.cos(p.y * 0.003 - time) + Math.sin((p.x + p.y) * 0.0015);
+        // Chaotic noise to break up the grid
+        const nx = p.x * 0.0015;
+        const ny = p.y * 0.0015;
+        // The nx*ny term completely shatters the linear grid repetition seen with simple sines
+        const noise = Math.sin(nx * 2.1 + time) + 
+                      Math.cos(ny * 2.7 - time) + 
+                      Math.sin((nx + ny) * 1.4 + time * 1.2) +
+                      Math.cos(nx * ny * 0.8);
+
         const angle = noise * Math.PI; 
         
-        // Wind moves generally left to right but swirls heavily, slower overall
-        const speed = 0.5;
-        const vx = (Math.cos(angle) * 1.5 + 1.2) * speed; 
+        // Wind moves generally left to right but swirls organically
+        const speed = 0.6;
+        const vx = (Math.cos(angle) * 1.5 + 1.5) * speed; 
         const vy = (Math.sin(angle) * 1.5) * speed;
 
-        const nextX = p.x + vx;
-        const nextY = p.y + vy;
-
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(nextX, nextY);
-
-        p.x = nextX;
-        p.y = nextY;
+        p.x += vx;
+        p.y += vy;
         p.age++;
 
+        p.history.push({ x: p.x, y: p.y });
+        if (p.history.length > 25) { // Trail length
+          p.history.shift();
+        }
+
+        // Add trail to the single path
+        if (p.history.length > 1) {
+          ctx.moveTo(p.history[0].x, p.history[0].y);
+          for (let i = 1; i < p.history.length; i++) {
+            ctx.lineTo(p.history[i].x, p.history[i].y);
+          }
+        }
+
         // Respawn
-        if (p.age > p.lifespan || p.x < 0 || p.x > width || p.y < 0 || p.y > height) {
-          // Respawn mostly on the left side to keep it flowing across the screen
-          p.x = Math.random() < 0.2 ? Math.random() * width : -10; 
+        if (p.age > p.lifespan || p.x < -50 || p.x > width + 50 || p.y < -50 || p.y > height + 50) {
+          p.x = Math.random() * width; 
           p.y = Math.random() * height;
+          p.history = [];
           p.age = 0;
         }
       });
