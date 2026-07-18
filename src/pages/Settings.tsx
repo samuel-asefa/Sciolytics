@@ -1,5 +1,5 @@
 import { Palette, Sun, Wind } from 'lucide-react';
-import { useTheme, type BrightnessMode } from '../contexts/ThemeContext';
+import { useTheme, type BrightnessMode, type BackgroundStyle } from '../contexts/ThemeContext';
 
 const brightnessOptions: { value: BrightnessMode; label: string; desc: string }[] = [
   { value: 'light', label: '☀️ Light', desc: 'High contrast light mode' },
@@ -9,13 +9,18 @@ const brightnessOptions: { value: BrightnessMode; label: string; desc: string }[
   { value: 'darker', label: '⬛ Darker', desc: 'Deep dark mode' },
 ];
 
-const bgOptions = [
-  { value: true,  label: '✨ Dynamic', desc: 'Animated gradient that slowly shifts' },
-  { value: false, label: '🪨 Static',  desc: 'Fixed gradient, no movement' },
-] as const;
+const bgOptions: { value: BackgroundStyle; label: string; desc: string }[] = [
+  { value: 'dynamic-gradient', label: '✨ Dynamic Gradient', desc: 'Animated gradient that slowly shifts' },
+  { value: 'static-gradient',  label: '🪨 Static Gradient',  desc: 'Fixed gradient, no movement' },
+  { value: 'stars',            label: '🌌 Twinkling Stars', desc: 'A subtle animated starry night' },
+  { value: 'particles',        label: '🫧 Floating Particles', desc: 'Soft floating blurred orbs' },
+  { value: 'wind',             label: '💨 Wind Streams', desc: 'Horizontal glowing wind streams' },
+  { value: 'circuits',         label: '🔌 Pulsing Circuits', desc: 'Subtle high-tech circuit board' },
+  { value: 'city',             label: '🏙️ City Skyline', desc: 'A procedurally animated city skyline' },
+];
 
 export default function Settings() {
-  const { theme, brightness, dynamicBg, setTheme, setBrightness, setDynamicBg } = useTheme();
+  const { theme, brightness, bgStyle, setTheme, setBrightness, setBgStyle } = useTheme();
   const themeColors = ['red', 'pink', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'purple'] as const;
 
   return (
@@ -93,20 +98,19 @@ export default function Settings() {
           <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
             Choose whether the background gradient animates or stays still.
           </p>
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px' }}>
             {bgOptions.map(opt => (
               <button
-                key={String(opt.value)}
-                onClick={() => setDynamicBg(opt.value)}
+                key={opt.value}
+                onClick={() => setBgStyle(opt.value)}
                 style={{
-                  flex: 1,
                   display: 'flex',
                   alignItems: 'center',
                   gap: '14px',
                   padding: '14px 18px',
                   borderRadius: '12px',
-                  border: dynamicBg === opt.value ? '2px solid var(--primary-color)' : '2px solid var(--border-color)',
-                  background: dynamicBg === opt.value ? 'color-mix(in srgb, var(--primary-color) 10%, transparent)' : 'var(--bg-white)',
+                  border: bgStyle === opt.value ? '2px solid var(--primary-color)' : '2px solid var(--border-color)',
+                  background: bgStyle === opt.value ? 'color-mix(in srgb, var(--primary-color) 10%, transparent)' : 'var(--bg-white)',
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.2s',

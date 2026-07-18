@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MoreVertical, User, Settings, LogOut } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import BackgroundRenderer from './BackgroundRenderer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -51,6 +52,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout">
+      <BackgroundRenderer />
       <nav className="navbar">
         <div className="nav-left">
           <Link to="/dashboard" className="logo-container">

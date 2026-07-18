@@ -180,10 +180,14 @@ body {
   margin: 0;
   background: var(--bg-gradient);
   background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
+  background-position: 0% 50%;
   color: var(--text-primary);
   min-height: 100vh;
   transition: background 0.8s ease-in-out, color 0.3s;
+}
+
+:root[data-bg-style="dynamic-gradient"] body {
+  animation: gradientBG 15s ease infinite;
 }
 
 @keyframes gradientBG {
@@ -200,11 +204,6 @@ body {
   }
 }
 
-/* Static background — animation disabled */
-:root[data-static-bg] body {
-  animation: none;
-  background-position: 0% 50%;
-}
 
 #root {
   min-height: 100vh;

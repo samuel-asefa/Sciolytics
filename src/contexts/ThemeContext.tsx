@@ -3,14 +3,15 @@ import type { ReactNode } from 'react';
 
 export type ColorTheme = 'blue' | 'green' | 'orange' | 'purple' | 'red' | 'teal' | 'pink' | 'yellow' | 'indigo';
 export type BrightnessMode = 'light' | 'default' | 'slightly-dark' | 'dark' | 'darker';
+export type BackgroundStyle = 'dynamic-gradient' | 'static-gradient' | 'stars' | 'particles' | 'wind' | 'circuits' | 'city';
 
 interface ThemeContextType {
   theme: ColorTheme;
   brightness: BrightnessMode;
-  dynamicBg: boolean;
+  bgStyle: BackgroundStyle;
   setTheme: (theme: ColorTheme) => void;
   setBrightness: (mode: BrightnessMode) => void;
-  setDynamicBg: (dynamic: boolean) => void;
+  setBgStyle: (style: BackgroundStyle) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -26,9 +27,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return (['light', 'default', 'slightly-dark', 'dark', 'darker'].includes(saved)) ? saved : 'default';
   });
 
-  const [dynamicBg, setDynamicBgState] = useState<boolean>(() => {
-    const saved = localStorage.getItem('dynamicBg');
-    return saved === null ? true : saved === 'true';
+  const [bgStyle, setBgStyleState] = useState<BackgroundStyle>(() => {
+    const saved = localStorage.getItem('bgStyle') as BackgroundStyle;
+    const allowedStyles: BackgroundStyle[] = ['dynamic-gradient', 'static-gradient', 'stars', 'particles', 'wind', 'circuits', 'city'];
+    
+    // Handle migration from old dynamicBg boolean
+    if (saved === undefined || saved === null) {
+      const oldDynamicBg = localStorage.getItem('dynamicBg');
+      if (oldDynamicBg !== null) {
+        localStorage.removeItem('dynamicBg');
+        return oldDynamicBg === 'false' ? 'static-gradient' : 'dynamic-gradient';
+      }
+      return 'dynamic-gradient';
+    }
+    
+    return allowedStyles.includes(saved) ? saved : 'dynamic-gradient';
   });
 
   useEffect(() => {
@@ -39,20 +52,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme, brightness]);
 
   useEffect(() => {
-    if (dynamicBg) {
-      document.documentElement.removeAttribute('data-static-bg');
-    } else {
-      document.documentElement.setAttribute('data-static-bg', 'true');
-    }
-    localStorage.setItem('dynamicBg', String(dynamicBg));
-  }, [dynamicBg]);
+    document.documentElement.setAttribute('data-bg-style', bgStyle);
+    localStorage.setItem('bgStyle', bgStyle);
+  }, [bgStyle]);
 
   const setTheme = (newTheme: ColorTheme) => setThemeState(newTheme);
   const setBrightness = (mode: BrightnessMode) => setBrightnessState(mode);
-  const setDynamicBg = (dynamic: boolean) => setDynamicBgState(dynamic);
+  const setBgStyle = (style: BackgroundStyle) => setBgStyleState(style);
 
   return (
-    <ThemeContext.Provider value={{ theme, brightness, dynamicBg, setTheme, setBrightness, setDynamicBg }}>
+    <ThemeContext.Provider value={{ theme, brightness, bgStyle, setTheme, setBrightness, setBgStyle }}>
       {children}
     </ThemeContext.Provider>
   );
