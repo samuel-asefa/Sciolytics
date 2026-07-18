@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import './BackgroundRenderer.css';
 
@@ -90,35 +90,104 @@ function ParticlesBackground() {
 }
 
 function WindBackground() {
-  const [streams, setStreams] = useState<{ id: number, top: number, height: number, delay: number, duration: number, opacity: number }[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { theme, brightness } = useTheme(); // Dependency ensures color updates
 
   useEffect(() => {
-    const newStreams = Array.from({ length: 20 }).map((_, i) => ({
-      id: i,
-      top: Math.random() * 100,
-      height: Math.random() * 6 + 2,
-      delay: Math.random() * -10,
-      duration: Math.random() * 10 + 5,
-      opacity: Math.random() * 0.5 + 0.3
-    }));
-    setStreams(newStreams);
-  }, []);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const handleResize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Get color from theme
+    const rootStyle = getComputedStyle(document.documentElement);
+    const rawColor = rootStyle.getPropertyValue('--text-primary').trim() || '#ffffff';
+
+    const particles: { x: number, y: number, age: number, lifespan: number }[] = [];
+    const numParticles = Math.floor((width * height) / 2500); // Dense based on screen size
+
+    for (let i = 0; i < numParticles; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        age: Math.random() * 100,
+        lifespan: Math.random() * 150 + 50
+      });
+    }
+
+    let animationFrameId: number;
+    let time = 0;
+
+    const render = () => {
+      // Slower field evolution
+      time += 0.0003;
+
+      // Fade previous frame to transparent for trails
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'; // Trail length
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'source-over';
+
+      ctx.strokeStyle = rawColor;
+      // Much more subtle color
+      ctx.globalAlpha = 0.15;
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+
+      particles.forEach(p => {
+        // Complex noise-like field using overlapping sines
+        const noise = Math.sin(p.x * 0.002 + time) + Math.cos(p.y * 0.003 - time) + Math.sin((p.x + p.y) * 0.0015);
+        const angle = noise * Math.PI; 
+        
+        // Wind moves generally left to right but swirls heavily, slower overall
+        const speed = 0.5;
+        const vx = (Math.cos(angle) * 1.5 + 1.2) * speed; 
+        const vy = (Math.sin(angle) * 1.5) * speed;
+
+        const nextX = p.x + vx;
+        const nextY = p.y + vy;
+
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(nextX, nextY);
+
+        p.x = nextX;
+        p.y = nextY;
+        p.age++;
+
+        // Respawn
+        if (p.age > p.lifespan || p.x < 0 || p.x > width || p.y < 0 || p.y > height) {
+          // Respawn mostly on the left side to keep it flowing across the screen
+          p.x = Math.random() < 0.2 ? Math.random() * width : -10; 
+          p.y = Math.random() * height;
+          p.age = 0;
+        }
+      });
+
+      ctx.stroke();
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [theme, brightness]); // Re-init if theme changes so color updates
 
   return (
     <div className="bg-wind">
-      {streams.map(stream => (
-        <div 
-          key={stream.id} 
-          className="wind-stream" 
-          style={{ 
-            top: `${stream.top}%`, 
-            height: `${stream.height}px`,
-            opacity: stream.opacity,
-            animationDelay: `${stream.delay}s`,
-            animationDuration: `${stream.duration}s`
-          }} 
-        />
-      ))}
+      <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
     </div>
   );
 }
