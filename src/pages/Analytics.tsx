@@ -201,13 +201,17 @@ export default function Analytics() {
                     </div>
                   </div>
 
-                  <div style={{ marginTop: '24px', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
+                  <div style={{ marginTop: '24px', background: 'var(--bg-white)', backdropFilter: 'var(--glass-blur)', border: '1px solid var(--border)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
                     <h3 style={{ marginBottom: '16px' }}>Accuracy by Event</h3>
                     <ResponsiveContainer width="100%" height={320}>
                       <BarChart data={eventStats} layout="vertical" margin={{ left: 20, right: 20 }}>
                         <XAxis type="number" domain={[0, 100]} tickFormatter={v => `${v}%`} fontSize={12} stroke="var(--text-secondary)" />
-                        <YAxis type="category" dataKey="event" width={160} fontSize={11} stroke="var(--text-secondary)" />
-                        <Tooltip formatter={(v: number) => [`${v}%`, 'Accuracy']} />
+                        <YAxis type="category" dataKey="event" width={160} fontSize={11} stroke="var(--text-primary)" />
+                        <Tooltip 
+                          formatter={(v: number) => [`${v}%`, 'Accuracy']} 
+                          contentStyle={{ backgroundColor: 'var(--bg-white)', borderColor: 'var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }} 
+                          itemStyle={{ color: 'var(--text-primary)' }}
+                        />
                         <Bar dataKey="accuracy" radius={[0, 6, 6, 0]}>
                           {eventStats.map((_, idx) => (
                             <Cell key={idx} fill={EVENT_COLORS[idx % EVENT_COLORS.length]} />
@@ -240,13 +244,16 @@ export default function Analytics() {
                     ))}
                   </div>
 
-                  <div style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
+                  <div style={{ background: 'var(--bg-white)', backdropFilter: 'var(--glass-blur)', border: '1px solid var(--border)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
                     <h3 style={{ marginBottom: '16px' }}>Questions by Difficulty</h3>
                     <ResponsiveContainer width="100%" height={280}>
                       <BarChart data={difficultyStats}>
-                        <XAxis dataKey="difficulty" fontSize={13} stroke="var(--text-secondary)" />
+                        <XAxis dataKey="difficulty" fontSize={13} stroke="var(--text-primary)" />
                         <YAxis fontSize={12} stroke="var(--text-secondary)" />
-                        <Tooltip />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: 'var(--bg-white)', borderColor: 'var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }} 
+                          itemStyle={{ color: 'var(--text-primary)' }}
+                        />
                         <Legend />
                         <Bar dataKey="answered" name="Answered" fill="rgba(99,102,241,0.4)" radius={[4, 4, 0, 0]} />
                         <Bar dataKey="correct" name="Correct" radius={[4, 4, 0, 0]}>
@@ -266,7 +273,7 @@ export default function Analytics() {
               {historyData.length === 0 ? (
                 <EmptyState message="No history data yet" />
               ) : (
-                <div style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
+                <div style={{ background: 'var(--bg-white)', backdropFilter: 'var(--glass-blur)', border: '1px solid var(--border)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
                   <h3 style={{ marginBottom: '4px' }}>Daily Accuracy — Last 30 Days</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '20px' }}>
                     Only shows days where you answered at least one question.
@@ -277,7 +284,7 @@ export default function Analytics() {
                       <XAxis
                         dataKey="date"
                         fontSize={11}
-                        stroke="var(--text-secondary)"
+                        stroke="var(--text-primary)"
                         tickFormatter={d => d.slice(5)} // MM-DD
                       />
                       <YAxis
@@ -287,6 +294,8 @@ export default function Analytics() {
                         stroke="var(--text-secondary)"
                       />
                       <Tooltip
+                        contentStyle={{ backgroundColor: 'var(--bg-white)', borderColor: 'var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                        itemStyle={{ color: 'var(--text-primary)' }}
                         formatter={(v: number, name: string) => [
                           name === 'accuracy' ? `${v}%` : v,
                           name === 'accuracy' ? 'Accuracy' : 'Questions'
