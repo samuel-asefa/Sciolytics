@@ -7,8 +7,10 @@ export type BrightnessMode = 'light' | 'default' | 'slightly-dark' | 'dark' | 'd
 interface ThemeContextType {
   theme: ColorTheme;
   brightness: BrightnessMode;
+  dynamicBg: boolean;
   setTheme: (theme: ColorTheme) => void;
   setBrightness: (mode: BrightnessMode) => void;
+  setDynamicBg: (dynamic: boolean) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -24,6 +26,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return (['light', 'default', 'slightly-dark', 'dark', 'darker'].includes(saved)) ? saved : 'default';
   });
 
+  const [dynamicBg, setDynamicBgState] = useState<boolean>(() => {
+    const saved = localStorage.getItem('dynamicBg');
+    return saved === null ? true : saved === 'true';
+  });
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.setAttribute('data-brightness', brightness);
@@ -31,11 +38,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('brightness', brightness);
   }, [theme, brightness]);
 
+  useEffect(() => {
+    if (dynamicBg) {
+      document.documentElement.removeAttribute('data-static-bg');
+    } else {
+      document.documentElement.setAttribute('data-static-bg', 'true');
+    }
+    localStorage.setItem('dynamicBg', String(dynamicBg));
+  }, [dynamicBg]);
+
   const setTheme = (newTheme: ColorTheme) => setThemeState(newTheme);
   const setBrightness = (mode: BrightnessMode) => setBrightnessState(mode);
+  const setDynamicBg = (dynamic: boolean) => setDynamicBgState(dynamic);
 
   return (
-    <ThemeContext.Provider value={{ theme, brightness, setTheme, setBrightness }}>
+    <ThemeContext.Provider value={{ theme, brightness, dynamicBg, setTheme, setBrightness, setDynamicBg }}>
       {children}
     </ThemeContext.Provider>
   );

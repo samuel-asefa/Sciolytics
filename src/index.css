@@ -200,6 +200,12 @@ body {
   }
 }
 
+/* Static background — animation disabled */
+:root[data-static-bg] body {
+  animation: none;
+  background-position: 0% 50%;
+}
+
 #root {
   min-height: 100vh;
 }
