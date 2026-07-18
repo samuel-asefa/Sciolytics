@@ -64,11 +64,11 @@
 
 .wind-stream {
   position: absolute;
-  left: -20%;
-  width: 20%;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary-color) 30%, transparent), transparent);
+  left: -30%;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary-color) 40%, var(--text-primary)), transparent);
   border-radius: 50%;
-  filter: blur(4px);
+  filter: blur(2px);
   animation: blow infinite linear;
 }
 

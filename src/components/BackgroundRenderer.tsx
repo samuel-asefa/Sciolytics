@@ -93,13 +93,13 @@ function WindBackground() {
   const [streams, setStreams] = useState<{ id: number, top: number, height: number, delay: number, duration: number, opacity: number }[]>([]);
 
   useEffect(() => {
-    const newStreams = Array.from({ length: 15 }).map((_, i) => ({
+    const newStreams = Array.from({ length: 20 }).map((_, i) => ({
       id: i,
       top: Math.random() * 100,
-      height: Math.random() * 3 + 1,
+      height: Math.random() * 6 + 2,
       delay: Math.random() * -10,
       duration: Math.random() * 10 + 5,
-      opacity: Math.random() * 0.3 + 0.1
+      opacity: Math.random() * 0.5 + 0.3
     }));
     setStreams(newStreams);
   }, []);
