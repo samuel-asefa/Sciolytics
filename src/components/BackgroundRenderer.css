@@ -21,9 +21,9 @@
 
 .star {
   position: absolute;
-  background: white;
+  background: var(--text-primary);
   border-radius: 50%;
-  box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 4px 1px color-mix(in srgb, var(--text-primary) 40%, transparent);
   opacity: 0;
   animation: twinkle 5s infinite alternate ease-in-out;
 }
@@ -105,7 +105,8 @@
 .bg-city {
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, #020617 0%, color-mix(in srgb, var(--primary-color) 15%, #0f172a) 100%);
+  background: var(--bg-gradient);
+  background-size: 400% 400%;
   position: relative;
 }
 
@@ -124,7 +125,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--primary-color) 80%, white);
+  background: color-mix(in srgb, var(--primary-color) 20%, var(--bg-white));
   box-shadow: 0 0 30px color-mix(in srgb, var(--primary-color) 40%, transparent);
   opacity: 0.8;
 }
@@ -150,49 +151,53 @@
 
 /* Procedural-looking buildings using linear gradients */
 .layer-back {
+  --bldg: color-mix(in srgb, var(--primary-color) 20%, var(--text-primary));
   background-image: 
-    linear-gradient(to top, #020617 0%, transparent 100%),
+    linear-gradient(to top, var(--bldg) 0%, transparent 100%),
     linear-gradient(to right, 
-      color-mix(in srgb, var(--primary-color) 20%, #020617) 0%, color-mix(in srgb, var(--primary-color) 20%, #020617) 40px, 
+      var(--bldg) 0%, var(--bldg) 40px, 
       transparent 40px, transparent 50px,
-      color-mix(in srgb, var(--primary-color) 20%, #020617) 50px, color-mix(in srgb, var(--primary-color) 20%, #020617) 120px,
+      var(--bldg) 50px, var(--bldg) 120px,
       transparent 120px, transparent 135px,
-      color-mix(in srgb, var(--primary-color) 20%, #020617) 135px, color-mix(in srgb, var(--primary-color) 20%, #020617) 180px,
+      var(--bldg) 135px, var(--bldg) 180px,
       transparent 180px, transparent 200px
     );
   background-size: 200px 80%;
-  opacity: 0.6;
+  opacity: 0.15;
   animation: pan-city 120s linear infinite;
 }
 
 .layer-mid {
+  --bldg: color-mix(in srgb, var(--primary-color) 30%, var(--text-primary));
   background-image: 
-    linear-gradient(to top, #000 0%, transparent 100%),
+    linear-gradient(to top, var(--bldg) 0%, transparent 100%),
     linear-gradient(to right, 
-      color-mix(in srgb, var(--primary-color) 10%, #000) 0%, color-mix(in srgb, var(--primary-color) 10%, #000) 30px, 
+      var(--bldg) 0%, var(--bldg) 30px, 
       transparent 30px, transparent 60px,
-      color-mix(in srgb, var(--primary-color) 10%, #000) 60px, color-mix(in srgb, var(--primary-color) 10%, #000) 100px,
+      var(--bldg) 60px, var(--bldg) 100px,
       transparent 100px, transparent 120px,
-      color-mix(in srgb, var(--primary-color) 10%, #000) 120px, color-mix(in srgb, var(--primary-color) 10%, #000) 150px,
+      var(--bldg) 120px, var(--bldg) 150px,
       transparent 150px, transparent 170px
     );
   background-size: 170px 60%;
-  opacity: 0.8;
+  opacity: 0.3;
   animation: pan-city 80s linear infinite;
 }
 
 .layer-front {
+  --bldg: var(--text-primary);
   background-image: 
-    linear-gradient(to top, #000 0%, transparent 100%),
+    linear-gradient(to top, var(--bldg) 0%, transparent 100%),
     linear-gradient(to right, 
-      #000 0%, #000 50px, 
+      var(--bldg) 0%, var(--bldg) 50px, 
       transparent 50px, transparent 70px,
-      #000 70px, #000 110px,
+      var(--bldg) 70px, var(--bldg) 110px,
       transparent 110px, transparent 140px,
-      #000 140px, #000 210px,
+      var(--bldg) 140px, var(--bldg) 210px,
       transparent 210px, transparent 240px
     );
   background-size: 240px 40%;
+  opacity: 0.6;
   animation: pan-city 40s linear infinite;
 }
 
