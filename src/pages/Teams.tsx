@@ -83,9 +83,11 @@ export default function Teams() {
   const [showCatForm, setShowCatForm] = useState(false);
   const [newCatName, setNewCatName] = useState('');
   const [newCatColor, setNewCatColor] = useState('#2563eb');
+  const [newCatIcon, setNewCatIcon] = useState('');
   // Editing category events inline
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
   const [editCatName, setEditCatName] = useState<string>('');
+  const [editCatIcon, setEditCatIcon] = useState<string>('');
   const [editCatEvents, setEditCatEvents] = useState<string[]>([]);
   const [newEventInput, setNewEventInput] = useState('');
 
@@ -285,9 +287,11 @@ export default function Teams() {
   const handleAddCategory = async () => {
     if (!activeTeam || !newCatName) return;
     const evList = newCatEvents.split(',').map(s => s.trim()).filter(Boolean);
-    const cat = await firestoreService.addEventCategory(activeTeam.id, { name: newCatName, color: newCatColor, events: evList });
+    const catData: Omit<import('../services/firestoreService').EventCategory, 'id'> = { name: newCatName, color: newCatColor, events: evList };
+    if (newCatIcon.trim()) catData.icon = newCatIcon.trim();
+    const cat = await firestoreService.addEventCategory(activeTeam.id, catData);
     setEventCategories(p => [...p, cat]);
-    setShowCatForm(false); setNewCatName(''); setNewCatEvents('');
+    setShowCatForm(false); setNewCatName(''); setNewCatEvents(''); setNewCatIcon('');
   };
 
   const handleSaveCategoryEdit = async (catId: string) => {
@@ -295,8 +299,9 @@ export default function Teams() {
     const cat = eventCategories.find(c => c.id === catId);
     if (!cat) return;
     const updatedEvents = editCatEvents.filter(e => e.trim());
-    await firestoreService.updateEventCategory(activeTeam.id, catId, { name: editCatName, events: updatedEvents });
-    setEventCategories(p => p.map(c => c.id === catId ? { ...c, name: editCatName, events: updatedEvents } : c));
+    const updateData: Partial<import('../services/firestoreService').EventCategory> = { name: editCatName, events: updatedEvents, icon: editCatIcon.trim() || undefined };
+    await firestoreService.updateEventCategory(activeTeam.id, catId, updateData);
+    setEventCategories(p => p.map(c => c.id === catId ? { ...c, name: editCatName, events: updatedEvents, icon: editCatIcon.trim() || undefined } : c));
     setEditingCatId(null);
   };
 
@@ -489,7 +494,10 @@ export default function Teams() {
                       <div className="conflict-blocks">
                         {eventCategories.map(cat => (
                           <div key={cat.id} className="conflict-block" style={{ borderLeft: `4px solid ${cat.color}`, background: `color-mix(in srgb, ${cat.color} 8%, var(--bg-white))` }}>
-                            <div style={{ fontWeight: 700, marginBottom: '12px', color: cat.color }}>{cat.name}</div>
+                            <div style={{ fontWeight: 700, marginBottom: '12px', color: cat.color, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              {cat.icon && <span style={{ fontSize: '1.2em', lineHeight: 1 }}>{cat.icon}</span>}
+                              {cat.name}
+                            </div>
                             {cat.events.map((eventName, ei) => (
                               <div key={ei} className="event-assignment">
                                 <div className="event-header"><span className="event-name">{eventName}</span></div>
@@ -746,6 +754,35 @@ export default function Teams() {
                               onChange={e => setEditCatName(e.target.value)} 
                               style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-color)', fontSize: '14px', fontWeight: 600 }}
                             />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                              <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.4px', textTransform: 'uppercase' }}>Icon (optional - emoji or text)</div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontSize: '22px', minWidth: '32px', textAlign: 'center' }}>{editCatIcon || '—'}</span>
+                                <input
+                                  type="text"
+                                  placeholder="e.g. 🧪 or 🔬"
+                                  value={editCatIcon}
+                                  onChange={e => setEditCatIcon(e.target.value)}
+                                  maxLength={4}
+                                  style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-color)', fontSize: '18px', width: '80px' }}
+                                />
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                  {['🧪','🔬','⚗️','🧬','🦠','⚡','🔭','🌿','🏗️','🧲','📐','🌊','🔥','💡','🏆'].map(em => (
+                                    <button key={em} onClick={() => setEditCatIcon(em)}
+                                      title={em}
+                                      style={{ background: editCatIcon === em ? 'var(--primary-color)' : 'var(--bg-white)', border: `1px solid ${editCatIcon === em ? 'var(--primary-color)' : 'var(--border-color)'}`, borderRadius: '6px', padding: '2px 4px', fontSize: '16px', cursor: 'pointer' }}>
+                                      {em}
+                                    </button>
+                                  ))}
+                                  {editCatIcon && (
+                                    <button onClick={() => setEditCatIcon('')}
+                                      style={{ background: 'none', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '2px 6px', fontSize: '11px', cursor: 'pointer', color: '#ef4444' }}>
+                                      ✕ Clear
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                               {editCatEvents.map((ev, i) => (
                                 <div key={i} style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-white)', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '2px 6px', fontSize: '12px' }}>
@@ -773,9 +810,12 @@ export default function Teams() {
                         ) : (
                           <>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <span style={{ fontWeight: 600 }}>{cat.name}</span>
+                              <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                {cat.icon && <span style={{ fontSize: '1.15em' }}>{cat.icon}</span>}
+                                {cat.name}
+                              </span>
                               <div style={{ display: 'flex', gap: '8px' }}>
-                                <button onClick={() => { setEditingCatId(cat.id || null); setEditCatName(cat.name); setEditCatEvents(cat.events); setNewEventInput(''); }}
+                                <button onClick={() => { setEditingCatId(cat.id || null); setEditCatName(cat.name); setEditCatIcon(cat.icon || ''); setEditCatEvents(cat.events); setNewEventInput(''); }}
                                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}><Edit2 size={14} /></button>
                                 <button onClick={async () => { if (cat.id) { await firestoreService.deleteEventCategory(activeTeam.id, cat.id); setEventCategories(p => p.filter(c => c.id !== cat.id)); } }}
                                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={14} /></button>
@@ -795,6 +835,36 @@ export default function Teams() {
                     <div style={{ background: 'var(--bg-gray)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                       <input placeholder="Category name (e.g. Block 1)" value={newCatName} onChange={e => setNewCatName(e.target.value)} style={{ ...inputStyle, marginBottom: '10px' }} />
                       <input placeholder="Events (comma separated)" value={newCatEvents} onChange={e => setNewCatEvents(e.target.value)} style={{ ...inputStyle, marginBottom: '10px' }} />
+                      
+                      {/* Icon picker */}
+                      <div style={{ marginBottom: '12px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Icon (optional)</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: '22px', minWidth: '32px', textAlign: 'center' }}>{newCatIcon || '—'}</span>
+                          <input
+                            type="text"
+                            placeholder="e.g. 🧪"
+                            value={newCatIcon}
+                            onChange={e => setNewCatIcon(e.target.value)}
+                            maxLength={4}
+                            style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-color)', fontSize: '18px', width: '80px' }}
+                          />
+                          {['🧪','🔬','⚗️','🧬','🦠','⚡','🔭','🌿','🏗️','🧲','📐','🌊','🔥','💡','🏆'].map(em => (
+                            <button key={em} onClick={() => setNewCatIcon(em)}
+                              title={em}
+                              style={{ background: newCatIcon === em ? 'var(--primary-color)' : 'var(--bg-white)', border: `1px solid ${newCatIcon === em ? 'var(--primary-color)' : 'var(--border-color)'}`, borderRadius: '6px', padding: '2px 4px', fontSize: '16px', cursor: 'pointer' }}>
+                              {em}
+                            </button>
+                          ))}
+                          {newCatIcon && (
+                            <button onClick={() => setNewCatIcon('')}
+                              style={{ background: 'none', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '2px 6px', fontSize: '11px', cursor: 'pointer', color: '#ef4444' }}>
+                              ✕ Clear
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
                         {['#2563eb','#16a34a','#9333ea','#dc2626','#ea580c','#db2777'].map(c => (
                           <button key={c} onClick={() => setNewCatColor(c)}
@@ -803,7 +873,7 @@ export default function Teams() {
                       </div>
                       <div style={{ display: 'flex', gap: '10px' }}>
                         <button className="btn-primary" onClick={handleAddCategory}>Add</button>
-                        <button className="btn-secondary" onClick={() => setShowCatForm(false)}>Cancel</button>
+                        <button className="btn-secondary" onClick={() => { setShowCatForm(false); setNewCatIcon(''); }}>Cancel</button>
                       </div>
                     </div>
                   )}

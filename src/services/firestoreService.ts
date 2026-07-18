@@ -79,6 +79,7 @@ export interface EventCategory {
   name: string;
   color: string;
   events: string[];
+  icon?: string; // optional emoji or short icon string
 }
 
 export interface UserSummary {
