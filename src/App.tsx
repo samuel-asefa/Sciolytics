@@ -11,6 +11,9 @@ import Teams from './pages/Teams';
 import UpcomingEvents from './pages/UpcomingEvents';
 import Profile from './pages/Profile';
 import Help from './pages/Help';
+import JoinUs from './pages/JoinUs';
+import ContactUs from './pages/ContactUs';
+import AboutUs from './pages/AboutUs';
 import Bookmarks from './pages/Bookmarks';
 import LoadTest from './pages/LoadTest';
 
@@ -99,6 +102,30 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Help />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/join"
+                  element={
+                    <ProtectedRoute>
+                      <JoinUs />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/contact"
+                  element={
+                    <ProtectedRoute>
+                      <ContactUs />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/about"
+                  element={
+                    <ProtectedRoute>
+                      <AboutUs />
                     </ProtectedRoute>
                   }
                 />

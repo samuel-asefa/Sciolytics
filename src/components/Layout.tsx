@@ -77,9 +77,19 @@ export default function Layout({ children }: LayoutProps) {
           <Link to="/analytics" className={isActive('/analytics') ? 'nav-link active' : 'nav-link'}>
             Analytics
           </Link>
-          <Link to="/help" className={isActive('/help') ? 'nav-link active' : 'nav-link'}>
-            Help
-          </Link>
+          <div className="nav-dropdown">
+            <button className="nav-link" onClick={() => setShowMoreMenu(!showMoreMenu)}>
+              More <MoreVertical size={14} style={{ display: 'inline', marginLeft: '4px' }} />
+            </button>
+            {showMoreMenu && (
+              <div className="dropdown-menu">
+                <Link to="/join" className="dropdown-item" onClick={() => setShowMoreMenu(false)}>Join Us</Link>
+                <Link to="/contact" className="dropdown-item" onClick={() => setShowMoreMenu(false)}>Contact Us</Link>
+                <Link to="/about" className="dropdown-item" onClick={() => setShowMoreMenu(false)}>About Us</Link>
+                <Link to="/help" className="dropdown-item" onClick={() => setShowMoreMenu(false)}>Help</Link>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="nav-right">
