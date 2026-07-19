@@ -13,7 +13,7 @@ import Profile from './pages/Profile';
 import Help from './pages/Help';
 import Bookmarks from './pages/Bookmarks';
 import LoadTest from './pages/LoadTest';
-import Resources from './pages/Resources';
+
 import Wiki from './pages/Wiki';
 import EventWiki from './pages/EventWiki';
 import Settings from './pages/Settings';
@@ -102,14 +102,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route
-                  path="/resources"
-                  element={
-                    <ProtectedRoute>
-                      <Resources />
-                    </ProtectedRoute>
-                  }
-                />
+
                 <Route
                   path="/wiki"
                   element={
