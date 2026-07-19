@@ -7,25 +7,36 @@ import { firestoreService } from '../services/firestoreService';
 import { useAuth } from '../contexts/AuthContext';
 
 const categories: Record<string, string> = {
-  'Anatomy & Physiology': 'Life & Social Science',
-  'Astronomy': 'Earth and Space Science',
-  'Chemistry Lab': 'Physical Science & Chemistry',
-  'Circuit Lab': 'Physical Science & Chemistry',
-  'Codebusters': 'Inquiry & Nature of Science',
-  'Disease Detectives': 'Life & Social Science',
-  'Dynamic Planet': 'Earth and Space Science',
-  'Entomology': 'Life & Social Science',
-  'Forensics': 'Life & Social Science',
-  'Machines': 'Physical Science & Chemistry',
-  'Remote Sensing': 'Earth and Space Science',
-  'Rocks and Minerals': 'Earth and Space Science',
-  'Water Quality': 'Life & Social Science',
-  'Engineering CAD': 'Engineering',
-  'Experimental Design': 'Inquiry & Nature of Science',
-  'Hovercraft': 'Engineering',
-  'Boomilever': 'Engineering',
-  'Electric Vehicle': 'Engineering',
-  'Designer Genes': 'Life & Social Science',
+  // Life, Personal & Social Science
+  'Anatomy & Physiology':   'Life, Personal & Social Science',
+  'Botany':                 'Life, Personal & Social Science',
+  'Designer Genes':         'Life, Personal & Social Science',
+  'Disease Detectives':     'Life, Personal & Social Science',
+  'Water Quality':          'Life, Personal & Social Science',
+  // Earth & Space Science
+  'Astronomy':              'Earth & Space Science',
+  'Dynamic Planet':         'Earth & Space Science',
+  'Remote Sensing':         'Earth & Space Science',
+  'Rocks and Minerals':     'Earth & Space Science',
+  // Physical Science & Chemistry
+  'Chemistry Lab':          'Physical Science & Chemistry',
+  'Circuit Lab':            'Physical Science & Chemistry',
+  'Forensics':              'Physical Science & Chemistry',
+  'Hovercraft':             'Physical Science & Chemistry',
+  'Protein Modeling':       'Physical Science & Chemistry',
+  'Thermodynamics':         'Physical Science & Chemistry',
+  // Technology & Engineering Design
+  'Boomilever':             'Technology & Engineering Design',
+  'Electric Vehicle':       'Technology & Engineering Design',
+  'Mission Possible':       'Technology & Engineering Design',
+  'Wright Stuff':           'Technology & Engineering Design',
+  // Inquiry & Nature of Science
+  'Codebusters':            'Inquiry & Nature of Science',
+  'Engineering CAD':        'Inquiry & Nature of Science',
+  'Experimental Design':    'Inquiry & Nature of Science',
+  'Ping Pong Parachute':    'Inquiry & Nature of Science',
+  // Trial
+  'Code Craze':             'Featured Trial Event',
 };
 
 export default function Practice() {

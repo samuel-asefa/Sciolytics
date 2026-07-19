@@ -149,20 +149,7 @@ export const wikiData: Record<string, EventWiki> = {
       }
     ]
   },
-  'air-trajectory': {
-    id: 'air-trajectory',
-    name: 'Air Trajectory',
-    description: 'Design, build, and calibrate a device capable of launching a projectile onto a target.',
-    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '15 minutes', firstAppearance: '2000', latestAppearance: '2026', rotates: false },
-    subtopics: []
-  },
-  'bungee-drop': {
-    id: 'bungee-drop',
-    name: 'Bungee Drop',
-    description: 'Design a bungee cord that drops a mass as close as possible to the floor without touching it.',
-    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, allowedResources: ['Calibration Data', 'Tools'], approxTime: '10 minutes', firstAppearance: '2014', latestAppearance: '2026', rotates: true },
-    subtopics: []
-  },
+
   'chemistry-lab': {
     id: 'chemistry-lab',
     name: 'Chemistry Lab',
@@ -373,13 +360,7 @@ export const wikiData: Record<string, EventWiki> = {
     infobox: { type: 'Study', category: 'Trial', participants: 3, impound: false, allowedResources: ['One scientific calculator'], approxTime: '30 minutes', firstAppearance: '2013', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
-  'detector-building': {
-    id: 'detector-building',
-    name: 'Detector Building',
-    description: 'Build, test, and calibrate a device to measure an environmental parameter like temperature or salinity.',
-    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '20 minutes', firstAppearance: '2010', latestAppearance: '2026', rotates: true },
-    subtopics: []
-  },
+
   'dynamic-planet': {
     id: 'dynamic-planet',
     name: 'Dynamic Planet',
@@ -387,13 +368,7 @@ export const wikiData: Record<string, EventWiki> = {
     infobox: { type: 'Study', category: 'Inquiry', participants: 2, impound: false, approxTime: '30 minutes', firstAppearance: '1991', latestAppearance: '2026', rotates: true },
     subtopics: []
   },
-  'ecology': {
-    id: 'ecology',
-    name: 'Ecology',
-    description: 'Answer questions involving content knowledge and process skills in the area of ecology and adaptations.',
-    infobox: { type: 'Study', category: 'Trial', participants: 2, impound: false, approxTime: '30 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: false },
-    subtopics: []
-  },
+
   'electric-vehicle': {
     id: 'electric-vehicle',
     name: 'Electric Vehicle',
@@ -408,20 +383,7 @@ export const wikiData: Record<string, EventWiki> = {
     infobox: { type: 'Study', category: 'Lab', participants: 3, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '1998', latestAppearance: '2026', rotates: false },
     subtopics: []
   },
-  'fermi-questions': {
-    id: 'fermi-questions',
-    name: 'Fermi Questions',
-    description: 'Provide answers to a series of order of magnitude estimation questions.',
-    infobox: { type: 'Study', category: 'Trial', participants: 2, impound: false, allowedResources: ['Two calculators'], approxTime: '30 minutes', firstAppearance: '1994', latestAppearance: '2026', rotates: false },
-    subtopics: []
-  },
-  'flight': {
-    id: 'flight',
-    name: 'Flight',
-    description: 'Prior to the tournament, teams will construct, collect data on test flights, analyze and optimize a free flight rubber-powered aircraft.',
-    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '8 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: false },
-    subtopics: []
-  },
+
   'forensics': {
     id: 'forensics',
     name: 'Forensics',
@@ -429,20 +391,7 @@ export const wikiData: Record<string, EventWiki> = {
     infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: true },
     subtopics: []
   },
-  'fossils': {
-    id: 'fossils',
-    name: 'Fossils',
-    description: 'Identify and classify fossils and demonstrate knowledge of ancient life.',
-    infobox: { type: 'Study', category: 'Trial', participants: 2, impound: true, allowedResources: ['Resource Binder'], approxTime: '30 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: false },
-    subtopics: []
-  },
-  'geologic-mapping': {
-    id: 'geologic-mapping',
-    name: 'Geologic Mapping',
-    description: 'Demonstrate understanding of the construction and use of topographic and geologic maps.',
-    infobox: { type: 'Study', category: 'Inquiry', participants: 2, impound: false, approxTime: '30 minutes', firstAppearance: '2005', latestAppearance: '2026', rotates: false },
-    subtopics: []
-  },
+
   'hovercraft': {
     id: 'hovercraft',
     name: 'Hovercraft',
@@ -564,46 +513,96 @@ export const wikiData: Record<string, EventWiki> = {
       }
     ]
   },
-  'microbe-mission': {
-    id: 'microbe-mission',
-    name: 'Microbe Mission',
-    description: 'Answer questions, solve problems, and analyze data pertaining to microbes.',
-    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '2008', latestAppearance: '2026', rotates: true },
+  // ── 2026-2027 New / Returning Events ─────────────────────────────────────
+  'botany': {
+    id: 'botany',
+    name: 'Botany',
+    description: 'Demonstrate knowledge of plant biology including identification, physiology, ecology, and economic botany.',
+    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'No', impound: false, approxTime: '30 minutes', firstAppearance: '2002', latestAppearance: '2027', rotates: true },
     subtopics: []
   },
-  'optics': {
-    id: 'optics',
-    name: 'Optics',
-    description: 'Competitors must participate in an activity involving positioning mirrors to direct a laser beam towards a target.',
-    infobox: { type: 'Engineering', category: 'Lab', participants: 2, impound: true, approxTime: '30 minutes', firstAppearance: '1994', latestAppearance: '2026', rotates: false },
+  'designer-genes': {
+    id: 'designer-genes',
+    name: 'Designer Genes',
+    description: 'Answer questions and solve problems related to molecular genetics, biotechnology, and genetic engineering.',
+    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'No', impound: false, approxTime: '30 minutes', firstAppearance: '2006', latestAppearance: '2027', rotates: true },
     subtopics: []
   },
-  'robot-tour': {
-    id: 'robot-tour',
-    name: 'Robot Tour',
-    description: 'Design, build, program and test a robotic vehicle to navigate a track.',
-    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '10 minutes', firstAppearance: '2010', latestAppearance: '2026', rotates: false },
+  'water-quality': {
+    id: 'water-quality',
+    name: 'Water Quality',
+    description: 'Demonstrate knowledge of aquatic environments, water quality indicators, and their ecological significance. Focus areas: Marine and Estuaries.',
+    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '2003', latestAppearance: '2027', rotates: true },
     subtopics: []
   },
-  'scrambler': {
-    id: 'scrambler',
-    name: 'Scrambler',
-    description: 'Build a mechanical device to transport a falling mass and an egg along a straight track as fast as possible without breaking the egg.',
-    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '8 minutes', firstAppearance: '1993', latestAppearance: '2026', rotates: false },
+  'remote-sensing': {
+    id: 'remote-sensing',
+    name: 'Remote Sensing',
+    description: 'Interpret remotely sensed images and data from satellites to identify Earth surface features and phenomena.',
+    infobox: { type: 'Study', category: 'Inquiry', participants: 2, eyeProtection: 'No', impound: false, approxTime: '30 minutes', firstAppearance: '2007', latestAppearance: '2027', rotates: true },
     subtopics: []
   },
-  'tower': {
-    id: 'tower',
-    name: 'Tower',
-    description: 'Design and build the most efficient tower out of wood and glue.',
-    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '10 minutes', firstAppearance: '1985', latestAppearance: '2026', rotates: false },
+  'rocks-and-minerals': {
+    id: 'rocks-and-minerals',
+    name: 'Rocks and Minerals',
+    description: 'Demonstrate knowledge of rocks and minerals including their formation, identification, and economic uses.',
+    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'No', impound: false, approxTime: '30 minutes', firstAppearance: '1985', latestAppearance: '2027', rotates: true },
     subtopics: []
   },
-  'wind-power': {
-    id: 'wind-power',
-    name: 'Wind Power',
-    description: 'Build a blade assembly that captures wind power and answer questions related to alternative energy.',
-    infobox: { type: 'Engineering', category: 'Build', participants: 2, impound: true, approxTime: '15 minutes', firstAppearance: '2008', latestAppearance: '2026', rotates: true },
+  'thermodynamics': {
+    id: 'thermodynamics',
+    name: 'Thermodynamics',
+    description: 'Demonstrate knowledge of heat transfer, the laws of thermodynamics, and their applications.',
+    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'Category B', impound: false, approxTime: '30 minutes', firstAppearance: '1997', latestAppearance: '2027', rotates: true },
+    subtopics: []
+  },
+  'protein-modeling': {
+    id: 'protein-modeling',
+    name: 'Protein Modeling',
+    description: 'Build physical models of proteins and demonstrate knowledge of protein structure and biochemistry.',
+    infobox: { type: 'Study', category: 'Lab', participants: 2, eyeProtection: 'No', impound: false, approxTime: '30 minutes', firstAppearance: '2008', latestAppearance: '2027', rotates: true },
+    subtopics: []
+  },
+  'boomilever': {
+    id: 'boomilever',
+    name: 'Boomilever',
+    description: 'Design and build the most efficient cantilevered structure that holds the greatest load.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, eyeProtection: 'Category B', impound: true, approxTime: '8 minutes', firstAppearance: '1994', latestAppearance: '2027', rotates: false },
+    subtopics: []
+  },
+  'mission-possible': {
+    id: 'mission-possible',
+    name: 'Mission Possible',
+    description: 'Design, build, and test a Rube Goldberg-like device that completes a sequence of tasks.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 3, eyeProtection: 'Category B', impound: true, approxTime: '8 minutes', firstAppearance: '1988', latestAppearance: '2027', rotates: false },
+    subtopics: []
+  },
+  'wright-stuff': {
+    id: 'wright-stuff',
+    name: 'Wright Stuff',
+    description: 'Construct and fly a rubber-powered monoplane to achieve the maximum flight duration.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, eyeProtection: 'No', impound: true, approxTime: '8 minutes', firstAppearance: '1988', latestAppearance: '2027', rotates: false },
+    subtopics: []
+  },
+  'engineering-cad': {
+    id: 'engineering-cad',
+    name: 'Engineering CAD',
+    description: 'Use Computer-Aided Design software to solve engineering design problems and produce technical drawings.',
+    infobox: { type: 'Engineering', category: 'Lab', participants: 2, eyeProtection: 'No', impound: false, approxTime: '30 minutes', firstAppearance: '2021', latestAppearance: '2027', rotates: false },
+    subtopics: []
+  },
+  'ping-pong-parachute': {
+    id: 'ping-pong-parachute',
+    name: 'Ping Pong Parachute',
+    description: 'Design and construct a device to drop a ping pong ball as accurately and slowly as possible to a target.',
+    infobox: { type: 'Engineering', category: 'Build', participants: 2, eyeProtection: 'No', impound: true, approxTime: '8 minutes', firstAppearance: '2019', latestAppearance: '2027', rotates: false },
+    subtopics: []
+  },
+  'code-craze': {
+    id: 'code-craze',
+    name: 'Code Craze',
+    description: 'Write and debug computer programs to solve a series of computational problems. (Featured Trial Event 2026-2027)',
+    infobox: { type: 'Study', category: 'Trial', participants: 2, eyeProtection: 'No', impound: false, approxTime: '30 minutes', firstAppearance: '2027', latestAppearance: '2027', rotates: false },
     subtopics: []
   }
 };

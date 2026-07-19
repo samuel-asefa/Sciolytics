@@ -42,29 +42,44 @@ export default function Resources() {
         </h2>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '40px' }}>
-          <div style={{ background: 'rgba(255, 255, 255, 0.4)', padding: '20px', borderRadius: '12px' }}>
-            <h3 style={{ margin: '0 0 10px 0', color: 'var(--primary-color)' }}>Life Sciences (Anatomy, Disease Detectives)</h3>
+          <div style={{ background: 'var(--bg-white)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--primary-color)' }}>Life, Personal &amp; Social Science (Anatomy, Botany, Designer Genes, Disease Detectives, Water Quality)</h3>
             <ul style={{ paddingLeft: '20px', margin: 0, color: 'var(--text-secondary)' }}>
               <li><strong>Campbell Biology (12th Edition)</strong> - The holy grail for any life science event.</li>
-              <li><strong>Vander's Human Physiology</strong> - Excellent for Anatomy & Physiology.</li>
+              <li><strong>Vander's Human Physiology</strong> - Excellent for Anatomy &amp; Physiology.</li>
               <li><strong>Principles of Epidemiology in Public Health Practice (CDC)</strong> - Essential for Disease Detectives.</li>
+              <li><strong>Lewin's Genes</strong> - Ideal for Designer Genes and molecular biology.</li>
+              <li><strong>Raven's Biology of Plants</strong> - The go-to reference for Botany.</li>
             </ul>
           </div>
 
-          <div style={{ background: 'rgba(255, 255, 255, 0.4)', padding: '20px', borderRadius: '12px' }}>
-            <h3 style={{ margin: '0 0 10px 0', color: 'var(--primary-color)' }}>Earth & Space Sciences (Astronomy, Dynamic Planet)</h3>
+          <div style={{ background: 'var(--bg-white)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--primary-color)' }}>Earth &amp; Space Science (Astronomy, Dynamic Planet, Remote Sensing, Rocks and Minerals)</h3>
             <ul style={{ paddingLeft: '20px', margin: 0, color: 'var(--text-secondary)' }}>
               <li><strong>Foundations of Astronomy (Seeds/Backman)</strong> - Great overview for Astronomy.</li>
-              <li><strong>Tarbuck's Earth Science</strong> - Foundational text for Rocks & Minerals and Dynamic Planet.</li>
+              <li><strong>Tarbuck's Earth Science</strong> - Foundational text for Rocks &amp; Minerals and Dynamic Planet.</li>
               <li><strong>AAVSO Webinars</strong> - Great video resources for advanced Astronomy topics.</li>
+              <li><strong>NASA Earthdata Resources</strong> - Essential for Remote Sensing concepts.</li>
             </ul>
           </div>
 
-          <div style={{ background: 'rgba(255, 255, 255, 0.4)', padding: '20px', borderRadius: '12px' }}>
-            <h3 style={{ margin: '0 0 10px 0', color: 'var(--primary-color)' }}>Physical Sciences (Chem Lab, Forensics)</h3>
+          <div style={{ background: 'var(--bg-white)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--primary-color)' }}>Physical Science &amp; Chemistry (Circuit Lab, Chem Lab, Forensics, Hovercraft, Protein Modeling, Thermodynamics)</h3>
             <ul style={{ paddingLeft: '20px', margin: 0, color: 'var(--text-secondary)' }}>
-              <li><strong>Zumdahl Chemistry</strong> - Detailed textbook for Chem Lab.</li>
-              <li><strong>Saferstein's Criminalistics: An Introduction to Forensic Science</strong> - Standard for Forensics.</li>
+              <li><strong>Zumdahl Chemistry</strong> - Detailed textbook for Chem Lab (focus on Kinetics and Gases).</li>
+              <li><strong>Saferstein's Criminalistics</strong> - Standard reference for Forensics.</li>
+              <li><strong>Halliday/Resnick Fundamentals of Physics</strong> - Core resource for Circuit Lab and Thermodynamics.</li>
+              <li><strong>Lehninger Principles of Biochemistry</strong> - Ideal for Protein Modeling.</li>
+            </ul>
+          </div>
+
+          <div style={{ background: 'var(--bg-white)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--primary-color)' }}>Technology, Engineering &amp; Inquiry (Boomilever, Electric Vehicle, Mission Possible, Wright Stuff, Codebusters, Engineering CAD, Experimental Design, Ping Pong Parachute)</h3>
+            <ul style={{ paddingLeft: '20px', margin: 0, color: 'var(--text-secondary)' }}>
+              <li><strong>Scioly.org Wiki</strong> - Community build tips and past test resources for every event.</li>
+              <li><strong>Applied Cryptography (Schneier)</strong> - Deep dive for Codebusters.</li>
+              <li><strong>Autodesk Fusion 360 Tutorials</strong> - Free online training for Engineering CAD.</li>
+              <li><strong>Scioly.org Test Exchange</strong> - Thousands of past tournament tests for every event.</li>
             </ul>
           </div>
         </div>

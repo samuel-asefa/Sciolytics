@@ -358,7 +358,7 @@ const accurateQuestions: Question[] = [
   },
   {
     id: 'q_ppp_1',
-    event: 'Ping-Pong Parachute',
+    event: 'Ping Pong Parachute',
     subtopic: 'Physics',
     division: 'C',
     type: 'MCQ',
@@ -998,10 +998,38 @@ export const getQuestionsByEvent = (event: string): Question[] => {
 export const getQuestionsBySubtopic = (event: string, subtopic: string): Question[] => {
   return questionBank.filter(q => q.event === event && q.subtopic === subtopic);
 };
-export const getAllEvents = (): string[] => {
-  const events = new Set(questionBank.map(q => q.event));
-  return Array.from(events).sort();
-};
+export const getAllEvents = (): string[] => [
+  // Life, Personal & Social Science
+  'Anatomy & Physiology',
+  'Botany',
+  'Designer Genes',
+  'Disease Detectives',
+  'Water Quality',
+  // Earth & Space Science
+  'Astronomy',
+  'Dynamic Planet',
+  'Remote Sensing',
+  'Rocks and Minerals',
+  // Physical Science & Chemistry
+  'Chemistry Lab',
+  'Circuit Lab',
+  'Forensics',
+  'Hovercraft',
+  'Protein Modeling',
+  'Thermodynamics',
+  // Technology & Engineering Design
+  'Boomilever',
+  'Electric Vehicle',
+  'Mission Possible',
+  'Wright Stuff',
+  // Inquiry & Nature of Science
+  'Codebusters',
+  'Engineering CAD',
+  'Experimental Design',
+  'Ping Pong Parachute',
+  // Featured Trial Event
+  'Code Craze',
+];
 
 export const getAllSubtopics = (): Record<string, string[]> => {
   const subtopicsDict: Record<string, Set<string>> = {};

@@ -45,7 +45,7 @@ export default function Bookmarks() {
           Loading your bookmarks…
         </div>
       ) : bookmarks.length === 0 ? (
-        <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-secondary)', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', borderRadius: '16px', boxShadow: 'var(--card-shadow)' }}>
+        <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-secondary)', background: 'var(--bg-white)', backdropFilter: 'blur(var(--glass-blur))', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: 'var(--card-shadow)' }}>
           <AlertCircle size={48} style={{ margin: '0 auto 16px', opacity: 0.4 }} />
           <h3 style={{ margin: '0 0 8px' }}>No bookmarks yet</h3>
           <p style={{ fontSize: '14px' }}>
