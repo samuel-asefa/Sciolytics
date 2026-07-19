@@ -10,47 +10,43 @@ export default function AboutUs() {
         return (
           <>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
-              We obtained Science Olympiad tournament archives with permission. Then, we ran PDF and .docx files of past tests through the latest Google Gemini model to process these questions into a machine-readable format, which are served through a custom API.
+              We manage and serve Science Olympiad practice questions using a modern React architecture powered by Firebase, ensuring lightning-fast load times and a seamless user experience.
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-              {/* Card 1 */}
               <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0ea5e9', marginBottom: '12px' }}>
                   <Code size={24} />
                 </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>PDF Processing</h4>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>React SPA</h4>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Extract questions from archives, verify Gemini schema with Pydantic.
+                  A snappy Single Page Application built with React 19 and React Router for instant page transitions.
                 </p>
               </div>
-              {/* Card 2 */}
-              <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#3b82f6', marginBottom: '12px' }}>
-                  <Zap size={24} />
-                </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Google Gemini</h4>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Advanced AI processing &amp; answer generation
-                </p>
-              </div>
-              {/* Card 3 */}
               <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f59e0b', marginBottom: '12px' }}>
                   <Database size={24} />
                 </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Processing &amp; Storage</h4>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Firebase Firestore</h4>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Filter, validate &amp; store in PostgreSQL
+                  A flexible, scalable NoSQL cloud database to store and sync questions and user data in real-time.
                 </p>
               </div>
-              {/* Card 4 */}
               <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#a855f7', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8b5cf6', marginBottom: '12px' }}>
+                  <Zap size={24} />
+                </div>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Vite Build Tool</h4>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  Lightning-fast Hot Module Replacement (HMR) and optimized production builds.
+                </p>
+              </div>
+              <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', marginBottom: '12px' }}>
                   <Layout size={24} />
                 </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Deployment &amp; Frontend</h4>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Vanilla CSS Styling</h4>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Next.js frontend on Serverless Functions
+                  Clean, themeable CSS variables to support light and dark modes natively without heavy frameworks.
                 </p>
               </div>
             </div>
@@ -60,43 +56,43 @@ export default function AboutUs() {
         return (
           <>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
-              Team spaces combine Postgres-backed rosters, Supabase auth, tRPC APIs, and Ably realtime so captains can manage people, assignments, and live streams without leaving the app.
+              We leverage Firebase Authentication and structured data modeling to ensure team spaces are secure, accessible, and synchronized across devices.
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
               <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', marginBottom: '12px' }}>
-                  <Layers size={24} />
-                </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Drizzle &amp; Postgres</h4>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Relational models for teams, memberships, rosters, and assignments.
-                </p>
-              </div>
-              <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f59e0b', marginBottom: '12px' }}>
                   <Shield size={24} />
                 </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Supabase Auth</h4>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Firebase Auth</h4>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Session handling and secure access to team-scoped data.
+                  Secure, robust user sign-in flows and persistent session management.
                 </p>
               </div>
               <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#3b82f6', marginBottom: '12px' }}>
+                  <Layers size={24} />
+                </div>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Document Modeling</h4>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  Structuring team rosters and membership roles seamlessly within our cloud database.
+                </p>
+              </div>
+              <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', marginBottom: '12px' }}>
                   <Network size={24} />
                 </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>tRPC APIs</h4>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Client-Side State</h4>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  End-to-end typed procedures for team CRUD and roster operations.
+                  React Hooks to efficiently manage team data context across the application.
                 </p>
               </div>
               <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ef4444', marginBottom: '12px' }}>
                   <Activity size={24} />
                 </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Ably Realtime</h4>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Lucide Icons</h4>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Pub/sub channels for team streams, presence, and live updates in the Next.js app.
+                  Consistent, beautiful vector iconography that scales perfectly across all team dashboards.
                 </p>
               </div>
             </div>
@@ -106,43 +102,43 @@ export default function AboutUs() {
         return (
           <>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
-              Analytics turn historical results into Elo trends, comparisons, and charts. Offline jobs tune parameters against pairwise loss; visualized with memoized Chart.js configs.
+              Visualizing performance is key. We process practice results locally and render insightful, responsive charts instantly.
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+              <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0ea5e9', marginBottom: '12px' }}>
+                  <BarChart3 size={24} />
+                </div>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Recharts Integration</h4>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  A composable charting library built on React components for beautiful, responsive data visualization.
+                </p>
+              </div>
               <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8b5cf6', marginBottom: '12px' }}>
                   <Code size={24} />
                 </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Offline tuning</h4>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Client-Side Processing</h4>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Python scripts optimize config weights against tournament loss surfaces—stochastic refinement of nationals vs. state tradeoffs before we freeze params for the next publish.
+                  Computing averages, accuracy trends, and event statistics directly in the browser to save server costs.
                 </p>
               </div>
               <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', marginBottom: '12px' }}>
-                  <Activity size={24} />
+                  <Zap size={24} />
                 </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Elo rating engine</h4>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Performance Tuning</h4>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Score-based pairwise updates with K-factors that shrink as teams play more, damped deltas, recency-weighted events, and season-to-season regression toward a target rating between events.
+                  Using React's useMemo and useCallback to prevent expensive chart re-renders during navigation.
                 </p>
               </div>
               <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f59e0b', marginBottom: '12px' }}>
                   <Server size={24} />
                 </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Precomputed state</h4>
+                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Framer Motion</h4>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  MessagePack bundles ship precomputed Elo, metadata, and histories per division and state group so the dashboard loads compact static files instead of recomputing ratings in the browser.
-                </p>
-              </div>
-              <div style={{ background: 'var(--bg-gray)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0ea5e9', marginBottom: '12px' }}>
-                  <BarChart3 size={24} />
-                </div>
-                <h4 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Frontend</h4>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Memoized Chart.js configs, memo-wrapped chart tabs, and useLazyEloData merging msgpack slices so school, event, and season changes recompute trend lines only when the loaded Elo series change.
+                  Adding subtle, elegant layout animations to make data interactions feel fluid and modern.
                 </p>
               </div>
             </div>
