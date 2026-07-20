@@ -1,20 +1,13 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MoreVertical, User, Settings, LogOut, Bell, CheckCircle2 } from 'lucide-react';
+import { MoreVertical, User, Settings, LogOut, Bell, CheckCircle2, Calendar, ClipboardList } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import BackgroundRenderer from './BackgroundRenderer';
+import { notificationService } from '../services/notificationService';
+import type { AppNotification } from '../services/notificationService';
 
 interface LayoutProps {
   children: React.ReactNode;
-}
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  time: string;
-  read: boolean;
-  type: 'team' | 'system';
 }
 
 export default function Layout({ children }: LayoutProps) {
@@ -24,32 +17,40 @@ export default function Layout({ children }: LayoutProps) {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      title: 'New Team Message',
-      message: 'Coach Smith: Practice is moved to 4 PM today.',
-      time: '10m ago',
-      read: false,
-      type: 'team'
-    },
-    {
-      id: '2',
-      title: 'Tournament Update',
-      message: 'The regional schedule has been posted.',
-      time: '2h ago',
-      read: false,
-      type: 'system'
-    }
-  ]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
   const isActive = (path: string) => location.pathname === path;
 
-  const markAllRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
+  // ── Real-time subscription + initial sync ──────────────────────────────────
+  useEffect(() => {
+    if (!currentUser) return;
+
+    // Subscribe to real-time notification updates from Firestore
+    const unsubscribe = notificationService.subscribe(currentUser.uid, setNotifications);
+
+    // Sync new notifications from team activity (runs once on mount)
+    notificationService.syncFromTeamActivity(currentUser.uid).catch(console.error);
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  const markAllRead = async () => {
+    if (!currentUser) return;
+    await notificationService.markAllRead(currentUser.uid);
+  };
+
+  const handleNotifClick = async (notif: AppNotification) => {
+    if (!currentUser) return;
+    if (!notif.read) {
+      await notificationService.markRead(currentUser.uid, notif.id);
+    }
+    setShowNotifications(false);
+    if (notif.teamId) {
+      navigate('/teams');
+    }
   };
 
   const handleProfileClick = () => {
@@ -86,6 +87,24 @@ export default function Layout({ children }: LayoutProps) {
   const userInitials = currentUser?.displayName
     ? currentUser.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : currentUser?.email?.[0].toUpperCase() || 'U';
+
+  const getNotifIcon = (type: AppNotification['type']) => {
+    switch (type) {
+      case 'team': return <User size={16} />;
+      case 'assignment': return <ClipboardList size={16} />;
+      case 'event': return <Calendar size={16} />;
+      default: return <Bell size={16} />;
+    }
+  };
+
+  const getNotifColor = (type: AppNotification['type']) => {
+    switch (type) {
+      case 'team': return '#10b981';
+      case 'assignment': return '#f59e0b';
+      case 'event': return '#8b5cf6';
+      default: return '#3b82f6';
+    }
+  };
 
   return (
     <div className="layout">
@@ -179,25 +198,22 @@ export default function Layout({ children }: LayoutProps) {
                         gap: '12px',
                         alignItems: 'flex-start'
                       }}
-                      onClick={() => {
-                        setNotifications(notifications.map(n => n.id === notif.id ? { ...n, read: true } : n));
-                        setShowNotifications(false);
-                      }}
+                      onClick={() => handleNotifClick(notif)}
                     >
-                      <div style={{ marginTop: '2px', color: notif.type === 'team' ? '#10b981' : '#3b82f6' }}>
-                        {notif.type === 'team' ? <User size={16} /> : <Bell size={16} />}
+                      <div style={{ marginTop: '2px', color: getNotifColor(notif.type) }}>
+                        {getNotifIcon(notif.type)}
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
                           <span style={{ fontSize: '13px', fontWeight: notif.read ? 500 : 600, color: 'var(--text-primary)' }}>{notif.title}</span>
-                          <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{notif.time}</span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-secondary)', whiteSpace: 'nowrap', marginLeft: '8px' }}>{notif.time}</span>
                         </div>
                         <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
                           {notif.message}
                         </p>
                       </div>
                       {!notif.read && (
-                        <div style={{ width: '8px', height: '8px', backgroundColor: '#3b82f6', borderRadius: '50%', marginTop: '6px' }} />
+                        <div style={{ width: '8px', height: '8px', backgroundColor: '#3b82f6', borderRadius: '50%', marginTop: '6px', flexShrink: 0 }} />
                       )}
                     </div>
                   )) : (
@@ -247,6 +263,6 @@ export default function Layout({ children }: LayoutProps) {
       <main className="main-content">
         {children}
       </main>
-    </div >
+    </div>
   );
 }
