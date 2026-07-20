@@ -1,20 +1,21 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useUserData } from '../contexts/UserDataContext';
+import PageLoadingScreen from './PageLoadingScreen';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { currentUser, loading } = useAuth();
+  const { currentUser, loading: authLoading } = useAuth();
+  const { loaded: dataLoaded } = useUserData();
 
-  if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-spinner"></div>
-        <p>Loading...</p>
-      </div>
-    );
+  // Show loading screen while auth resolves OR initial data is being fetched
+  const isLoading = authLoading || (!!currentUser && !dataLoaded);
+
+  if (isLoading) {
+    return <PageLoadingScreen loading={true} />;
   }
 
   if (!currentUser) {
@@ -23,4 +24,3 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   return <>{children}</>;
 }
-

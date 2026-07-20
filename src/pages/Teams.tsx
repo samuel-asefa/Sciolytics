@@ -11,6 +11,7 @@ import {
   type Team, type Subteam, type StreamMessage, type TeamAssignment,
   type TeamRole, type EventCategory
 } from '../services/firestoreService';
+import PageLoadingScreen from '../components/PageLoadingScreen';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function formatTime(ts: any): string {
@@ -338,7 +339,7 @@ export default function Teams() {
   const pinnedMessages = streamMessages.filter(m => m.pinnedAt);
   const unpinnedMessages = streamMessages.filter(m => !m.pinnedAt);
 
-  if (loading) return <div className="teams-page"><p style={{ padding: '2rem' }}>Loading teams...</p></div>;
+  if (loading) return <PageLoadingScreen loading={true} />;
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (

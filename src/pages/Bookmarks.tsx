@@ -3,6 +3,7 @@ import { Bookmark as BookmarkIcon, Trash2, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { firestoreService, type BookmarkedQuestion } from '../services/firestoreService';
+import PageLoadingScreen from '../components/PageLoadingScreen';
 
 export default function Bookmarks() {
   const { currentUser } = useAuth();
@@ -40,11 +41,8 @@ export default function Bookmarks() {
         <p>Questions you've bookmarked during practice — review them any time.</p>
       </div>
 
-      {loading ? (
-        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-          Loading your bookmarks…
-        </div>
-      ) : bookmarks.length === 0 ? (
+      <PageLoadingScreen loading={loading} />
+      {!loading && bookmarks.length === 0 ? (
         <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-secondary)', background: 'var(--bg-white)', backdropFilter: 'blur(var(--glass-blur))', border: '1px solid var(--border)', borderRadius: '16px', boxShadow: 'var(--card-shadow)' }}>
           <AlertCircle size={48} style={{ margin: '0 auto 16px', opacity: 0.4 }} />
           <h3 style={{ margin: '0 0 8px' }}>No bookmarks yet</h3>
@@ -55,7 +53,7 @@ export default function Bookmarks() {
             Go Practice
           </Link>
         </div>
-      ) : (
+      ) : !loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{bookmarks.length} saved question{bookmarks.length !== 1 ? 's' : ''}</p>
           {bookmarks.map(q => (
@@ -94,7 +92,7 @@ export default function Bookmarks() {
             </div>
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

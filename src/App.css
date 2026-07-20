@@ -2177,7 +2177,7 @@ font-size: 14px;
   line-height: 1.5;
 }
 
-/* Loading Screen */
+/* ── Legacy inline loading (ProtectedRoute) ─────────────────────────────── */
 .loading-screen {
   min-height: 100vh;
   display: flex;
@@ -2197,9 +2197,96 @@ font-size: 14px;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
+}
+
+/* ── PageLoadingScreen — Premium Fullscreen Loader ──────────────────────── */
+.page-loading-root {
+  /* gradient background handled inline via var(--bg-gradient) */
+  animation: gradientBG 8s ease infinite;
+}
+
+/* Dual-orbit orb */
+.loading-orb-wrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-orb {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--primary-color);
+  border-right-color: color-mix(in srgb, var(--primary-color) 35%, transparent);
+}
+
+.loading-orb--inner {
+  inset: 14px;
+  border-top-color: transparent;
+  border-bottom-color: var(--primary-color);
+  border-left-color: color-mix(in srgb, var(--primary-color) 50%, transparent);
+  opacity: 0.75;
+}
+
+.loading-orb-center {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--primary-color) 20%, transparent),
+    0 0 24px 4px color-mix(in srgb, var(--primary-color) 40%, transparent);
+}
+
+/* Shimmer progress bar */
+.loading-bar-track {
+  width: 180px;
+  height: 3px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 55%;
+  border-radius: 99px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary-color),
+    color-mix(in srgb, var(--primary-color) 60%, white),
+    var(--primary-color),
+    transparent
+  );
+}
+
+/* Text */
+.loading-app-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  opacity: 0.92;
+}
+
+.loading-page-hint {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  opacity: 0.7;
 }
 
 /* User Avatar Image */

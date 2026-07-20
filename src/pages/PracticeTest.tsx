@@ -6,6 +6,7 @@ import { firestoreService } from '../services/firestoreService';
 import { aiGradingService } from '../services/aiGradingService';
 import { useAuth } from '../contexts/AuthContext';
 import type { Question } from '../data/questionBank';
+import PageLoadingScreen from '../components/PageLoadingScreen';
 
 export default function PracticeTest() {
   const navigate = useNavigate();
@@ -86,12 +87,7 @@ export default function PracticeTest() {
   };
 
   if (questions.length === 0 || !questions[currentIndex]) {
-    return (
-      <div className="practice-test-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading questions...</p>
-      </div>
-    );
+    return <PageLoadingScreen loading={true} />;
   }
 
   const currentQuestion = questions[currentIndex];

@@ -15,6 +15,7 @@ import {
   Legend,
 } from 'recharts';
 import { useUserData } from '../contexts/UserDataContext';
+import PageLoadingScreen from '../components/PageLoadingScreen';
 
 const DIFF_COLORS: Record<string, string> = {
   Easy: '#10b981',
@@ -76,9 +77,7 @@ export default function Analytics() {
       </div>
 
       {!loaded ? (
-        <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-          Loading your analytics…
-        </div>
+        <PageLoadingScreen loading={true} />
       ) : (
         <>
           {activeTab === 'overview' && (

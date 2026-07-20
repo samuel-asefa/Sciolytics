@@ -4,6 +4,7 @@ import { PenTool, Lock, Bookmark, TrendingUp, Heart, Flame, FileText, BarChart2 
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserData } from '../contexts/UserDataContext';
+import PageLoadingScreen from '../components/PageLoadingScreen';
 
 interface HeatCell { date: string; count: number }
 
@@ -30,15 +31,7 @@ export default function Dashboard() {
     return `color-mix(in srgb, var(--primary-color) ${Math.round((0.15 + intensity * 0.85) * 100)}%, transparent)`;
   };
 
-  if (!loaded) {
-    return (
-      <div className="dashboard">
-        <div className="dashboard-header">
-          <div className="welcome-card"><h1>Loading your dashboard…</h1></div>
-        </div>
-      </div>
-    );
-  }
+  if (!loaded) return <PageLoadingScreen loading={true} />;
 
 
   return (
