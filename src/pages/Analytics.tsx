@@ -35,8 +35,8 @@ export default function Analytics() {
   const totalAnswered = summary?.questionsAnswered ?? 0;
   const totalCorrect = summary?.questionsCorrect ?? 0;
   const overallAccuracy = summary?.accuracy ?? 0;
-  const bestEvent = eventStats.sort((a, b) => b.accuracy - a.accuracy)[0];
-  const worstEvent = eventStats.filter(e => e.answered >= 3).sort((a, b) => a.accuracy - b.accuracy)[0];
+  const bestEvent = eventStats.slice().sort((a, b) => b.accuracy - a.accuracy)[0];
+  const worstEvent = eventStats.filter(e => e.answered >= 3).slice().sort((a, b) => a.accuracy - b.accuracy)[0];
 
   const EmptyState = ({ message }: { message: string }) => (
     <div style={{
