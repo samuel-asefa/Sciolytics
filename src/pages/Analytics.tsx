@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { BarChart3, Target, TrendingUp, Award, BookOpen } from 'lucide-react';
 import {
@@ -14,12 +14,7 @@ import {
   Cell,
   Legend,
 } from 'recharts';
-import { useAuth } from '../contexts/AuthContext';
-import { firestoreService, type UserSummary } from '../services/firestoreService';
-
-interface EventStat { event: string; answered: number; correct: number; accuracy: number }
-interface DifficultyStat { difficulty: string; answered: number; correct: number; accuracy: number }
-interface DayAccuracy { date: string; accuracy: number; answered: number }
+import { useUserData } from '../contexts/UserDataContext';
 
 const DIFF_COLORS: Record<string, string> = {
   Easy: '#10b981',
@@ -30,45 +25,12 @@ const DIFF_COLORS: Record<string, string> = {
 const EVENT_COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#f97316', '#ec4899', '#6366f1'];
 
 export default function Analytics() {
-  const { currentUser } = useAuth();
   const location = useLocation();
-  const uid = currentUser?.uid ?? '';
+  const { summary, eventStats, difficultyStats, historyData, loaded } = useUserData();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'events' | 'difficulty' | 'history'>(location.state?.activeTab || 'overview');
-  const [summary, setSummary] = useState<UserSummary | null>(null);
-  const [eventStats, setEventStats] = useState<EventStat[]>([]);
-  const [difficultyStats, setDifficultyStats] = useState<DifficultyStat[]>([]);
-  const [historyData, setHistoryData] = useState<DayAccuracy[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!uid) return;
-    let cancelled = false;
 
-    async function load() {
-      setLoading(true);
-      try {
-        const [prog, events, difficulty, history] = await Promise.all([
-          firestoreService.getProgress(uid),
-          firestoreService.getEventBreakdown(uid),
-          firestoreService.getDifficultyBreakdown(uid),
-          firestoreService.getDailyAccuracyHistory(uid, 30),
-        ]);
-        if (!cancelled) {
-          setSummary(prog);
-          setEventStats(events);
-          setDifficultyStats(difficulty);
-          setHistoryData(history);
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error(err);
-        if (!cancelled) setLoading(false);
-      }
-    }
-    load();
-    return () => { cancelled = true; };
-  }, [uid]);
 
   const totalAnswered = summary?.questionsAnswered ?? 0;
   const totalCorrect = summary?.questionsCorrect ?? 0;
@@ -113,7 +75,7 @@ export default function Analytics() {
         ))}
       </div>
 
-      {loading ? (
+      {!loaded ? (
         <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-secondary)' }}>
           Loading your analytics…
         </div>

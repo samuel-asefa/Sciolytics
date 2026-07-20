@@ -1,63 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PenTool, Lock, Bookmark, TrendingUp, Heart, Flame, FileText, BarChart2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../contexts/AuthContext';
-import { firestoreService, type UserSummary, type DaySession } from '../services/firestoreService';
+import { useUserData } from '../contexts/UserDataContext';
 
 interface HeatCell { date: string; count: number }
-interface WeekDay { name: string; questions: number; correct: number }
 
 type ChartRange = 7 | 30 | 90;
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const uid = currentUser?.uid ?? '';
+  const { summary, dailyStats, heatmapData, chartData7, chartData30, chartData90, loaded } = useUserData();
 
-  const [summary, setSummary] = useState<UserSummary | null>(null);
-  const [dailyStats, setDailyStats] = useState<DaySession>({ date: '', answered: 0, correct: 0, accuracy: 0 });
-  const [heatmapData, setHeatmapData] = useState<HeatCell[]>([]);
-  const [chartData, setChartData] = useState<WeekDay[]>([]);
   const [chartType, setChartType] = useState<'line' | 'heatmap'>('line');
   const [chartRange, setChartRange] = useState<ChartRange>(7);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!uid) return;
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const [prog, daily, heat] = await Promise.all([
-          firestoreService.getProgress(uid),
-          firestoreService.getDailyStats(uid),
-          firestoreService.getActivityHeatmap(uid, 91),
-        ]);
-        if (!cancelled) {
-          setSummary(prog);
-          setDailyStats(daily);
-          setHeatmapData(heat);
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error('Dashboard load error:', err);
-        if (!cancelled) setLoading(false);
-      }
-    }
-    load();
-    return () => { cancelled = true; };
-  }, [uid]);
-
-  useEffect(() => {
-    if (!uid || chartType !== 'line') return;
-    firestoreService.getChartActivity(uid, chartRange).then(setChartData).catch(console.error);
-  }, [uid, chartType, chartRange]);
 
   const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'there';
   const favorites = summary?.favorites ?? [];
   const displayedFavorites = favorites.slice(0, 4);
-  const maxCount = Math.max(1, ...heatmapData.map(d => d.count));
+  const maxCount = Math.max(1, ...heatmapData.map((d: HeatCell) => d.count));
+
+  const chartData = chartRange === 7 ? chartData7 : chartRange === 30 ? chartData30 : chartData90;
 
   const heatColor = (count: number) => {
     if (count === 0) return 'rgba(0,0,0,0.06)';
@@ -65,7 +30,7 @@ export default function Dashboard() {
     return `color-mix(in srgb, var(--primary-color) ${Math.round((0.15 + intensity * 0.85) * 100)}%, transparent)`;
   };
 
-  if (loading) {
+  if (!loaded) {
     return (
       <div className="dashboard">
         <div className="dashboard-header">
@@ -74,6 +39,7 @@ export default function Dashboard() {
       </div>
     );
   }
+
 
   return (
     <div className="dashboard">

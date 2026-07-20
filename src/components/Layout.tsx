@@ -21,18 +21,23 @@ export default function Layout({ children }: LayoutProps) {
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
+  // Track which uid we've already synced so we don't re-scan Firestore on every navigation
+  const syncedUidRef = useRef<string>('');
 
   const isActive = (path: string) => location.pathname === path;
 
-  // ── Real-time subscription + initial sync ──────────────────────────────────
+  // ── Real-time subscription + one-time sync ────────────────────────────────
   useEffect(() => {
     if (!currentUser) return;
 
     // Subscribe to real-time notification updates from Firestore
     const unsubscribe = notificationService.subscribe(currentUser.uid, setNotifications);
 
-    // Sync new notifications from team activity (runs once on mount)
-    notificationService.syncFromTeamActivity(currentUser.uid).catch(console.error);
+    // Only sync team activity once per session per user (not on every navigation)
+    if (syncedUidRef.current !== currentUser.uid) {
+      syncedUidRef.current = currentUser.uid;
+      notificationService.syncFromTeamActivity(currentUser.uid).catch(console.error);
+    }
 
     return () => unsubscribe();
   }, [currentUser]);
