@@ -1,8 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 
 interface PageLoadingScreenProps {
   loading: boolean;
+  /** Minimum ms to keep the screen visible even if loading resolves fast. Default: 700 */
+  minDuration?: number;
 }
 
 const PAGE_META: Record<string, { label: string; icon: string }> = {
@@ -32,12 +35,31 @@ function usePageMeta() {
   return PAGE_META[key] ?? { label: 'Sciolytics', icon: '◈' };
 }
 
-export default function PageLoadingScreen({ loading }: PageLoadingScreenProps) {
+export default function PageLoadingScreen({ loading, minDuration = 700 }: PageLoadingScreenProps) {
   const { label, icon } = usePageMeta();
+
+  // `visible` stays true for at least `minDuration` ms after loading starts,
+  // even if `loading` flips to false almost immediately.
+  const [visible, setVisible] = useState(loading);
+  const shownAtRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (loading) {
+      // Loading started — show immediately and record the timestamp
+      setVisible(true);
+      shownAtRef.current = Date.now();
+    } else {
+      // Loading ended — wait until minDuration has passed before hiding
+      const elapsed = shownAtRef.current ? Date.now() - shownAtRef.current : minDuration;
+      const remaining = Math.max(0, minDuration - elapsed);
+      const t = setTimeout(() => setVisible(false), remaining);
+      return () => clearTimeout(t);
+    }
+  }, [loading, minDuration]);
 
   return (
     <AnimatePresence>
-      {loading && (
+      {visible && (
         <motion.div
           key="page-loading"
           initial={{ opacity: 0 }}
