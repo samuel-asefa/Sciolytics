@@ -49,6 +49,18 @@ export interface TeamAssignment {
   description: string;
   dueDate: string;
   createdAt: Timestamp | ReturnType<typeof serverTimestamp>;
+  customTestId?: string;
+}
+
+export interface CustomTest {
+  id?: string;
+  title: string;
+  description: string;
+  creatorId: string;
+  createdAt: Timestamp | ReturnType<typeof serverTimestamp>;
+  updatedAt: Timestamp | ReturnType<typeof serverTimestamp>;
+  questions: Question[];
+  isPublic?: boolean;
 }
 
 export interface TeamEvent {
@@ -505,6 +517,42 @@ export const firestoreService = {
 
   async deleteAssignment(teamId: string, assignmentId: string): Promise<void> {
     await deleteDoc(doc(db, 'teams', teamId, 'assignments', assignmentId));
+  },
+
+  // Custom Tests Methods
+  async getCustomTests(uid: string): Promise<CustomTest[]> {
+    const snap = await getDocs(query(collection(db, 'customTests'), where('creatorId', '==', uid)));
+    return snap.docs.map(d => ({ ...d.data(), id: d.id } as CustomTest))
+      .sort((a, b) => {
+        const timeA = (a.updatedAt as any)?.toMillis?.() || 0;
+        const timeB = (b.updatedAt as any)?.toMillis?.() || 0;
+        return timeB - timeA;
+      });
+  },
+
+  async getCustomTest(testId: string): Promise<CustomTest | null> {
+    const snap = await getDoc(doc(db, 'customTests', testId));
+    return snap.exists() ? { ...snap.data(), id: snap.id } as CustomTest : null;
+  },
+
+  async createCustomTest(test: Omit<CustomTest, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const docRef = await addDoc(collection(db, 'customTests'), {
+      ...test,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    return docRef.id;
+  },
+
+  async updateCustomTest(testId: string, updates: Partial<Omit<CustomTest, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
+    await updateDoc(doc(db, 'customTests', testId), {
+      ...updates,
+      updatedAt: serverTimestamp()
+    });
+  },
+
+  async deleteCustomTest(testId: string): Promise<void> {
+    await deleteDoc(doc(db, 'customTests', testId));
   },
 
   // Team Events (calendar)

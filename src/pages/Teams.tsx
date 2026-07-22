@@ -9,7 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   firestoreService,
   type Team, type Subteam, type StreamMessage, type TeamAssignment,
-  type TeamRole, type EventCategory
+  type TeamRole, type EventCategory, type CustomTest
 } from '../services/firestoreService';
 import PageLoadingScreen from '../components/PageLoadingScreen';
 
@@ -62,6 +62,9 @@ export default function Teams() {
   const [assignmentTitle, setAssignmentTitle] = useState('');
   const [assignmentDesc, setAssignmentDesc] = useState('');
   const [assignmentDueDate, setAssignmentDueDate] = useState('');
+  const [assignmentCustomTestId, setAssignmentCustomTestId] = useState('');
+  
+  const [customTests, setCustomTests] = useState<CustomTest[]>([]);
 
   const [profiles, setProfiles] = useState<Record<string, any>>({});
   const [profilesLoading, setProfilesLoading] = useState(false);
@@ -104,7 +107,22 @@ export default function Teams() {
     })();
 
   // ── Effects ──
-  useEffect(() => { if (uid) loadTeams(); }, [uid]);
+  useEffect(() => { 
+    if (uid) {
+      loadTeams();
+      loadCustomTests();
+    }
+  }, [uid]);
+
+  const loadCustomTests = async () => {
+    if (!uid) return;
+    try {
+      const tests = await firestoreService.getCustomTests(uid);
+      setCustomTests(tests);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     if (!activeTeam) return;
@@ -272,8 +290,14 @@ export default function Teams() {
   const handleAddAssignment = async () => {
     if (!activeTeam || !assignmentTitle) return;
     try {
-      await firestoreService.addAssignment(activeTeam.id, { title: assignmentTitle, description: assignmentDesc, dueDate: assignmentDueDate });
-      setShowAssignmentModal(false); setAssignmentTitle(''); setAssignmentDesc(''); setAssignmentDueDate('');
+      await firestoreService.addAssignment(activeTeam.id, { 
+        title: assignmentTitle, 
+        description: assignmentDesc, 
+        dueDate: assignmentDueDate,
+        customTestId: assignmentCustomTestId || undefined
+      });
+      setShowAssignmentModal(false);
+      setAssignmentTitle(''); setAssignmentDesc(''); setAssignmentDueDate(''); setAssignmentCustomTestId('');
       loadAssignments(activeTeam.id);
     } catch { alert('Failed to create assignment'); }
   };
@@ -590,6 +614,18 @@ export default function Teams() {
                         style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)', minHeight: '80px', fontFamily: 'inherit' }} />
                       <input type="date" value={assignmentDueDate} onChange={e => setAssignmentDueDate(e.target.value)}
                         style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }} />
+                      
+                      <select 
+                        value={assignmentCustomTestId} 
+                        onChange={e => setAssignmentCustomTestId(e.target.value)}
+                        style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }}
+                      >
+                        <option value="">-- Optional: Attach a Custom Test --</option>
+                        {customTests.map(t => (
+                          <option key={t.id} value={t.id}>{t.title}</option>
+                        ))}
+                      </select>
+
                       <div style={{ display: 'flex', gap: '12px' }}>
                         <button className="btn-primary" onClick={handleAddAssignment}>Save</button>
                         <button className="btn-secondary" onClick={() => setShowAssignmentModal(false)}>Cancel</button>
@@ -606,7 +642,14 @@ export default function Teams() {
                         <div>
                           <h4 style={{ marginBottom: '4px' }}>{a.title}</h4>
                           <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '8px' }}>{a.description}</p>
-                          {a.dueDate && <span style={{ fontSize: '12px', background: 'var(--bg-gray)', padding: '4px 8px', borderRadius: '4px' }}>Due: {a.dueDate}</span>}
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            {a.dueDate && <span style={{ fontSize: '12px', background: 'var(--bg-gray)', padding: '4px 8px', borderRadius: '4px' }}>Due: {a.dueDate}</span>}
+                            {a.customTestId && (
+                              <Link to={`/test/${a.customTestId}`} style={{ fontSize: '12px', background: 'var(--primary-color)', color: 'white', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none' }}>
+                                Take Test
+                              </Link>
+                            )}
+                          </div>
                         </div>
                         {isAdmin(activeTeam) && (
                           <button onClick={async () => { if (a.id) { await firestoreService.deleteAssignment(activeTeam.id, a.id); loadAssignments(activeTeam.id); } }}

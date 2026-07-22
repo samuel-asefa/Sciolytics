@@ -16,6 +16,9 @@ import ContactUs from './pages/ContactUs';
 import AboutUs from './pages/AboutUs';
 import Bookmarks from './pages/Bookmarks';
 import LoadTest from './pages/LoadTest';
+import CreateDashboard from './pages/CreateDashboard';
+import TestEditor from './pages/TestEditor';
+import TakeTest from './pages/TakeTest';
 
 import Wiki from './pages/Wiki';
 import EventWiki from './pages/EventWiki';
@@ -78,6 +81,30 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Teams />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/create"
+                  element={
+                    <ProtectedRoute>
+                      <CreateDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/create/editor/:testId"
+                  element={
+                    <ProtectedRoute>
+                      <TestEditor />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/test/:testId"
+                  element={
+                    <ProtectedRoute>
+                      <TakeTest />
                     </ProtectedRoute>
                   }
                 />
