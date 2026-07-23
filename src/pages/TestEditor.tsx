@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Save, Plus, Trash2, Printer, Wand2, ArrowLeft, Loader2 } from 'lucide-react';
+import { Save, Plus, Trash2, Printer, Wand2, ArrowLeft, Loader2, Share2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { firestoreService, type CustomTest } from '../services/firestoreService';
 import { aiTestImportService } from '../services/aiTestImportService';
 import type { Question } from '../data/questionBank';
 import PageLoadingScreen from '../components/PageLoadingScreen';
+import ShareTestModal from '../components/ShareTestModal';
 import './TestEditor.css';
 
 export default function TestEditor() {
@@ -16,6 +17,7 @@ export default function TestEditor() {
   const [test, setTest] = useState<CustomTest | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   
   const [showAiModal, setShowAiModal] = useState(false);
   const [aiText, setAiText] = useState('');
@@ -145,6 +147,13 @@ export default function TestEditor() {
           <button className="btn-secondary" onClick={() => window.print()}>
             <Printer size={16} /> Print / PDF
           </button>
+          <button
+            className="btn-secondary"
+            onClick={() => setShowShareModal(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+          >
+            <Share2 size={16} /> Share
+          </button>
           <button className="btn-primary" onClick={handleSave} disabled={saving}>
             {saving ? <Loader2 size={16} className="spin" /> : <Save size={16} />} 
             {saving ? 'Saving...' : 'Save Draft'}
@@ -272,6 +281,16 @@ export default function TestEditor() {
             </div>
           </div>
         </div>
+      )}
+      {showShareModal && test && (
+        <ShareTestModal
+          test={test}
+          onClose={() => setShowShareModal(false)}
+          onShared={() => {
+            // Sync the isPublic flag locally
+            setTest(prev => prev ? { ...prev, isPublic: true } : prev);
+          }}
+        />
       )}
     </div>
   );

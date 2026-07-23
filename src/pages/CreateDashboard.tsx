@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, FileText, Trash2, Edit2, Loader2, FilePlus } from 'lucide-react';
+import { Plus, FileText, Trash2, Edit2, Loader2, FilePlus, Share2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { firestoreService, type CustomTest } from '../services/firestoreService';
 import PageLoadingScreen from '../components/PageLoadingScreen';
+import ShareTestModal from '../components/ShareTestModal';
 
 export default function CreateDashboard() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [tests, setTests] = useState<CustomTest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sharingTest, setSharingTest] = useState<CustomTest | null>(null);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -131,20 +133,25 @@ export default function CreateDashboard() {
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <h3 style={{ margin: 0, fontSize: '18px', paddingRight: '24px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                <h3 style={{ margin: 0, fontSize: '18px', paddingRight: '60px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                   {test.title || 'Untitled Test'}
                 </h3>
-                <button 
-                  onClick={(e) => deleteTest(e, test.id!)}
-                  style={{ 
-                    position: 'absolute', top: '24px', right: '24px',
-                    background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer',
-                    padding: '4px'
-                  }}
-                  title="Delete Test"
-                >
-                  <Trash2 size={16} />
-                </button>
+                <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '4px' }}>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSharingTest(test); }}
+                    style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', padding: '4px', borderRadius: '6px' }}
+                    title="Share Test"
+                  >
+                    <Share2 size={16} />
+                  </button>
+                  <button
+                    onClick={(e) => deleteTest(e, test.id!)}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px', borderRadius: '6px' }}
+                    title="Delete Test"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
               <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '8px', flex: 1 }}>
                 {test.description || 'No description provided.'}
@@ -158,5 +165,17 @@ export default function CreateDashboard() {
         </div>
       </div>
     </div>
+
+    {sharingTest && (
+      <ShareTestModal
+        test={sharingTest}
+        onClose={() => setSharingTest(null)}
+        onShared={() => {
+          setTests(prev => prev.map(t =>
+            t.id === sharingTest.id ? { ...t, isPublic: true } : t
+          ));
+        }}
+      />
+    )}
   );
 }

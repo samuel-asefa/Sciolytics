@@ -1014,6 +1014,39 @@ function StreamMsgCard({ msg, uid, isAdmin, editingMsgId, editMsgContent, openMs
         <div style={{ color: 'var(--text-primary)' }}>{msg.content}</div>
       )}
 
+      {/* Attached test card */}
+      {msg.customTestId && (
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: 'linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(124,58,237,0.08) 100%)',
+          border: '1px solid rgba(37,99,235,0.25)',
+          borderRadius: '12px', padding: '14px 16px', marginTop: '10px', gap: '12px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ fontSize: '18px' }}>📝</span>
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {msg.customTestTitle || 'Custom Test'}
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Custom Test</div>
+            </div>
+          </div>
+          <Link
+            to={`/test/${msg.customTestId}`}
+            style={{
+              flexShrink: 0, padding: '8px 16px',
+              background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+              color: 'white', borderRadius: '8px', textDecoration: 'none',
+              fontWeight: 600, fontSize: '13px', whiteSpace: 'nowrap',
+            }}
+          >
+            Take Test →
+          </Link>
+        </div>
+      )}
+
       <div style={{ display: 'flex', gap: '12px', marginTop: '6px', fontSize: '11px', color: 'var(--text-secondary)' }}>
         <span>Sent {formatTime(msg.timestamp)}</span>
         {msg.editedAt && <span>• Edited {formatTime(msg.editedAt)}</span>}

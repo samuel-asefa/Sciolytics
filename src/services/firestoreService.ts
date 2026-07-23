@@ -41,6 +41,8 @@ export interface StreamMessage {
   timestamp: Timestamp | ReturnType<typeof serverTimestamp>;
   editedAt?: Timestamp | null;
   pinnedAt?: Timestamp | null;
+  customTestId?: string;
+  customTestTitle?: string;
 }
 
 export interface TeamAssignment {
@@ -468,15 +470,25 @@ export const firestoreService = {
       });
   },
 
-  async addStreamMessage(teamId: string, authorId: string, authorName: string, content: string): Promise<void> {
-    await addDoc(collection(db, 'teams', teamId, 'stream'), {
+  async addStreamMessage(
+    teamId: string, 
+    authorId: string, 
+    authorName: string, 
+    content: string,
+    customTestId?: string,
+    customTestTitle?: string
+  ): Promise<void> {
+    const data: any = {
       authorId,
       authorName,
       content,
       timestamp: serverTimestamp(),
       editedAt: null,
       pinnedAt: null,
-    });
+    };
+    if (customTestId) data.customTestId = customTestId;
+    if (customTestTitle) data.customTestTitle = customTestTitle;
+    await addDoc(collection(db, 'teams', teamId, 'stream'), data);
   },
 
   async editStreamMessage(teamId: string, msgId: string, content: string): Promise<void> {
