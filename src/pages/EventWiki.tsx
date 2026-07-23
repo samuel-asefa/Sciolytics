@@ -15,19 +15,12 @@ function InfoboxRow({ label, children }: { label: string; children: React.ReactN
 }
 
 function Infobox({ name, infobox }: { name: string; infobox: WikiInfobox }) {
-  const typeColor: Record<string, string> = {
-    'Engineering': '#4a7c59',
-    'Study': '#4b6ba2',
-    'Hybrid': '#7c4a7c',
-  };
-  const headerBg = typeColor[infobox.type || ''] || '#4b6ba2';
-
   return (
     <aside className="wiki-infobox">
       <table className="infobox-table">
         <tbody>
           <tr>
-            <td colSpan={2} className="infobox-header" style={{ background: headerBg, color: 'white' }}>
+            <td colSpan={2} className="infobox-header">
               {name}
             </td>
           </tr>
