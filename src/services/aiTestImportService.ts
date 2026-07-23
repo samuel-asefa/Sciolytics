@@ -81,9 +81,9 @@ ${text}
         subtopic: q.subtopic || 'General',
         difficulty: (q.difficulty === 'Easy' || q.difficulty === 'Medium' || q.difficulty === 'Hard') ? q.difficulty : 'Medium',
         type: (q.type === 'MCQ' || q.type === 'FRQ') ? q.type : 'FRQ',
-        question: q.question,
-        options: q.type === 'MCQ' ? (q.options || []) : undefined,
-        correctAnswer: q.answer,
+        question: q.question || 'Untitled Question',
+        options: q.type === 'MCQ' ? (q.options || []) : [],
+        correctAnswer: q.answer || '',
         explanation: q.explanation || ''
       }));
     } catch (error) {

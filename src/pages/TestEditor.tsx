@@ -47,10 +47,19 @@ export default function TestEditor() {
     if (!test || !testId) return;
     setSaving(true);
     try {
+      const cleanQuestions = test.questions.map(q => {
+        const cleaned = { ...q };
+        if (cleaned.options === undefined) cleaned.options = [];
+        if (cleaned.correctAnswer === undefined) cleaned.correctAnswer = '';
+        if (cleaned.question === undefined) cleaned.question = '';
+        if (cleaned.explanation === undefined) cleaned.explanation = '';
+        return cleaned;
+      });
+
       await firestoreService.updateCustomTest(testId, {
         title: test.title,
         description: test.description,
-        questions: test.questions
+        questions: cleanQuestions
       });
       // maybe show a toast
     } catch (err) {
