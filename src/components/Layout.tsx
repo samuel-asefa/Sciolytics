@@ -141,6 +141,9 @@ export default function Layout({ children }: LayoutProps) {
           <Link to="/create" className={isActive('/create') ? 'nav-link active' : 'nav-link'}>
             Create
           </Link>
+          <Link to="/community" className={isActive('/community') ? 'nav-link active' : 'nav-link'}>
+            Community
+          </Link>
           <div className="nav-dropdown">
             <button className="nav-link" onClick={() => setShowMoreMenu(!showMoreMenu)}>
               More <MoreVertical size={14} style={{ display: 'inline', marginLeft: '4px' }} />

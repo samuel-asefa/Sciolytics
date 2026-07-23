@@ -19,6 +19,7 @@ import LoadTest from './pages/LoadTest';
 import CreateDashboard from './pages/CreateDashboard';
 import TestEditor from './pages/TestEditor';
 import TakeTest from './pages/TakeTest';
+import Community from './pages/Community';
 
 import Wiki from './pages/Wiki';
 import EventWiki from './pages/EventWiki';
@@ -97,6 +98,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <TestEditor />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/community"
+                  element={
+                    <ProtectedRoute>
+                      <Community />
                     </ProtectedRoute>
                   }
                 />

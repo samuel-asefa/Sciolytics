@@ -61,7 +61,8 @@ export default function CreateDashboard() {
   if (loading) return <PageLoadingScreen loading={true} />;
 
   return (
-    <div className="create-dashboard" style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto' }}>
+    <>
+      <div className="create-dashboard" style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ marginBottom: '40px' }}>
         <h1 style={{ fontSize: '32px', marginBottom: '8px' }}>Test Creation</h1>
         <p style={{ color: 'var(--text-secondary)' }}>Start a new test or revisit your current drafts.</p>
@@ -176,6 +177,7 @@ export default function CreateDashboard() {
           ));
         }}
       />
-    )}
+      )}
+    </>
   );
 }

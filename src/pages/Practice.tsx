@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Search, Heart } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getAllEvents, getAllSubtopics, questionBank } from '../data/questionBank';
+import { getAllEvents } from '../data/questionBank';
 import { questionService } from '../services/questionService';
 import { firestoreService } from '../services/firestoreService';
 import { useAuth } from '../contexts/AuthContext';
+import PageLoadingScreen from '../components/PageLoadingScreen';
 
 const categories: Record<string, string> = {
   // Life, Personal & Social Science
@@ -45,8 +46,8 @@ export default function Practice() {
   const { currentUser } = useAuth();
   const uid = currentUser?.uid ?? '';
   const events = getAllEvents();
-  const subtopicsMap = getAllSubtopics();
 
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<string | null>(location.state?.selectedEvent || null);
   const [numQuestions, setNumQuestions] = useState('10');
   const [timeLimit, setTimeLimit] = useState('10');
@@ -59,6 +60,12 @@ export default function Practice() {
   const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [answeredIds, setAnsweredIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    questionService.initialize().then(() => {
+      setLoadingQuestions(false);
+    });
+  }, []);
 
   useEffect(() => {
     if (!uid) return;
@@ -76,32 +83,49 @@ export default function Practice() {
   useEffect(() => {
     if (location.state && location.state.selectedEvent) {
       setSelectedEvent(location.state.selectedEvent);
-      // Optional: replace state to avoid re-selecting on page refresh if desired, 
-      // but syncing is generally enough.
     }
   }, [location.state]);
+
+  const allQuestions = questionService.getAllQuestions();
+
+  const subtopicsMap = useMemo(() => {
+    const map: Record<string, Set<string>> = {};
+    allQuestions.forEach(q => {
+      if (!map[q.event]) map[q.event] = new Set();
+      if (q.subtopic) map[q.event].add(q.subtopic);
+    });
+    const result: Record<string, string[]> = {};
+    for (const event in map) {
+      result[event] = Array.from(map[event]).sort();
+    }
+    return result;
+  }, [allQuestions]);
 
   const availableSubtopics = selectedEvent ? subtopicsMap[selectedEvent] || [] : [];
 
   const getEventCount = (event: string): number =>
-    questionBank.filter(q => q.event === event).length;
+    allQuestions.filter(q => q.event === event).length;
 
   const getSubtopicCount = (subtopic: string): number =>
-    questionBank.filter(q => q.event === selectedEvent && q.subtopic === subtopic).length;
+    allQuestions.filter(q => q.event === selectedEvent && q.subtopic === subtopic).length;
 
   const availableCount = useMemo(() => {
     if (!selectedEvent) return 0;
-    return questionBank.filter(q => {
+    return allQuestions.filter(q => {
       if (q.event !== selectedEvent) return false;
       if (selectedSubtopic !== 'All Subtopics' && q.subtopic !== selectedSubtopic) return false;
       if (division !== 'both' && q.division !== division.toUpperCase() && q.division !== 'Both') return false;
       if (difficulty !== 'All' && q.difficulty !== difficulty) return false;
       if (questionType === 'mcq' && q.type !== 'MCQ') return false;
       if (questionType === 'frq' && q.type !== 'FRQ') return false;
-      if (unansweredOnly && answeredIds.has(q.id)) return false;
+      if (unansweredOnly && q.id && answeredIds.has(q.id)) return false;
       return true;
     }).length;
-  }, [selectedEvent, selectedSubtopic, division, difficulty, questionType, unansweredOnly, answeredIds]);
+  }, [selectedEvent, selectedSubtopic, division, difficulty, questionType, unansweredOnly, answeredIds, allQuestions]);
+
+  if (loadingQuestions) {
+    return <PageLoadingScreen loading={true} />;
+  }
 
   const handleNumChange = (val: string) => {
     const n = parseInt(val);

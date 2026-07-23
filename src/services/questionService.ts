@@ -1,4 +1,5 @@
-import { questionBank, getSubtopicList, type Question } from '../data/questionBank';
+import { questionBank as staticQuestionBank, getSubtopicList, type Question } from '../data/questionBank';
+import { firestoreService } from './firestoreService';
 
 export interface QuestionFilter {
   event?: string;
@@ -18,9 +19,29 @@ export interface UserProgress {
   favorites: string[];
 }
 
+let combinedQuestionBank: Question[] = [...staticQuestionBank];
+let isInitialized = false;
+
 export const questionService = {
+  async initialize() {
+    if (isInitialized) return;
+    try {
+      const officialQuestions = await firestoreService.getOfficialQuestions();
+      combinedQuestionBank = [...staticQuestionBank, ...officialQuestions];
+      isInitialized = true;
+    } catch (err) {
+      console.error('Failed to load official questions:', err);
+      // Fallback to just static bank
+      combinedQuestionBank = [...staticQuestionBank];
+    }
+  },
+
+  getAllQuestions(): Question[] {
+    return combinedQuestionBank;
+  },
+
   getQuestions(filter: QuestionFilter = {}): Question[] {
-    let questions = [...questionBank];
+    let questions = [...combinedQuestionBank];
 
     if (filter.event) questions = questions.filter(q => q.event === filter.event);
     if (filter.subtopic && filter.event) questions = questions.filter(q => q.subtopic === filter.subtopic);

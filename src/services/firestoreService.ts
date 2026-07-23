@@ -15,6 +15,11 @@ import {
 import { db } from '../config/firebase';
 import type { Question } from '../data/questionBank';
 
+export const ADMIN_EMAIL = 'samuelasefa20@gmail.com';
+export function isAdmin(user: any): boolean {
+  return user?.email === ADMIN_EMAIL;
+}
+
 export interface Team {
   id: string;
   name: string;
@@ -540,6 +545,37 @@ export const firestoreService = {
         const timeB = (b.updatedAt as any)?.toMillis?.() || 0;
         return timeB - timeA;
       });
+  },
+
+  async getPublicCustomTests(): Promise<CustomTest[]> {
+    const snap = await getDocs(query(collection(db, 'customTests'), where('isPublic', '==', true)));
+    return snap.docs.map(d => ({ ...d.data(), id: d.id } as CustomTest))
+      .sort((a, b) => {
+        const timeA = (a.createdAt as any)?.toMillis?.() || 0;
+        const timeB = (b.createdAt as any)?.toMillis?.() || 0;
+        return timeB - timeA;
+      });
+  },
+
+  async publishQuestionsToBank(test: CustomTest): Promise<void> {
+    for (const q of test.questions) {
+      await addDoc(collection(db, 'officialQuestions'), {
+        ...q,
+        sourceTestId: test.id,
+        publishedAt: serverTimestamp()
+      });
+    }
+  },
+
+  async getOfficialQuestions(): Promise<Question[]> {
+    const snap = await getDocs(collection(db, 'officialQuestions'));
+    return snap.docs.map(d => {
+      const data = d.data();
+      // Remove metadata fields that aren't part of Question
+      delete data.sourceTestId;
+      delete data.publishedAt;
+      return data as Question;
+    });
   },
 
   async getCustomTest(testId: string): Promise<CustomTest | null> {
