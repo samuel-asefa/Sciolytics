@@ -67,11 +67,12 @@ export default function TestEditor() {
       id: crypto.randomUUID(),
       event: 'General',
       subtopic: 'General',
+      division: 'Both',
       difficulty: 'Medium',
       type: 'MCQ',
       question: '',
       options: ['', '', '', ''],
-      answer: '',
+      correctAnswer: '',
       explanation: ''
     };
     setTest({ ...test, questions: [...test.questions, newQ] });
@@ -204,8 +205,8 @@ export default function TestEditor() {
                       <input 
                         type="radio" 
                         name={`answer-${q.id}`} 
-                        checked={q.answer === opt && opt !== ''} 
-                        onChange={() => handleQuestionChange(q.id, 'answer', opt)}
+                        checked={q.correctAnswer === opt && opt !== ''} 
+                        onChange={() => handleQuestionChange(q.id, 'correctAnswer', opt)}
                         className="no-print"
                       />
                     </div>
@@ -216,8 +217,8 @@ export default function TestEditor() {
               {q.type === 'FRQ' && (
                 <div className="q-frq-answer">
                   <textarea 
-                    value={q.answer}
-                    onChange={e => handleQuestionChange(q.id, 'answer', e.target.value)}
+                    value={q.correctAnswer}
+                    onChange={e => handleQuestionChange(q.id, 'correctAnswer', e.target.value)}
                     placeholder="Correct Answer Key..."
                   />
                   <div className="print-only print-frq-lines"></div>

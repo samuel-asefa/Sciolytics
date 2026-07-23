@@ -24,7 +24,7 @@ const testSchema = Schema.object({
 });
 
 const model = getGenerativeModel(ai, {
-  model: "gemini-2.5-flash",
+  model: "gemini-3.6-flash",
   generationConfig: {
     responseMimeType: "application/json",
     responseSchema: testSchema,
@@ -43,6 +43,7 @@ I will provide you with raw text/notes. Extract and generate high-quality test q
 
 Event: ${event}
 Format constraints:
+- You must return a JSON object with a single "questions" array containing the question objects.
 - Generate a mix of Multiple Choice Questions (MCQ) and Free Response Questions (FRQ).
 - MCQ must have exactly 4 options. The "options" array should contain the 4 strings.
 - "answer" for MCQ must perfectly match one of the options.
@@ -62,7 +63,8 @@ ${text}
       
       let parsed;
       try {
-        parsed = JSON.parse(textResponse);
+        const cleanText = textResponse.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        parsed = JSON.parse(cleanText);
       } catch (e) {
         console.error("Failed to parse AI response as JSON", textResponse);
         throw new Error("Invalid AI output format.");
@@ -75,12 +77,13 @@ ${text}
       return parsed.questions.map((q: any) => ({
         id: uuidv4(),
         event,
+        division: 'Both',
         subtopic: q.subtopic || 'General',
         difficulty: (q.difficulty === 'Easy' || q.difficulty === 'Medium' || q.difficulty === 'Hard') ? q.difficulty : 'Medium',
         type: (q.type === 'MCQ' || q.type === 'FRQ') ? q.type : 'FRQ',
         question: q.question,
         options: q.type === 'MCQ' ? (q.options || []) : undefined,
-        answer: q.answer,
+        correctAnswer: q.answer,
         explanation: q.explanation || ''
       }));
     } catch (error) {

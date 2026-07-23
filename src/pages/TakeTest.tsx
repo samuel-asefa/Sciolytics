@@ -60,12 +60,12 @@ export default function TakeTest() {
       setAiFeedback(null);
 
       if (currentQuestion.type === 'MCQ') {
-        isCorrect = selectedAnswer === currentQuestion.answer;
+        isCorrect = selectedAnswer === currentQuestion.correctAnswer;
       } else {
         setIsGrading(true);
         const result = await aiGradingService.gradeFRQ(
           currentQuestion.question,
-          currentQuestion.answer,
+          currentQuestion.correctAnswer,
           currentQuestion.explanation || '',
           selectedAnswer
         );
@@ -158,7 +158,7 @@ export default function TakeTest() {
           <div className="options-grid">
             {currentQuestion.options?.map((option, idx) => {
               const isSelected = selectedAnswer === option;
-              const isCorrectAnswer = showResult && option === currentQuestion.answer;
+              const isCorrectAnswer = showResult && option === currentQuestion.correctAnswer;
               const isWrongSelection = showResult && isSelected && !isCorrectAnswer;
 
               let optionClass = 'option-btn';
@@ -221,10 +221,10 @@ export default function TakeTest() {
         </div>
 
         {showResult && (
-          <div className={`explanation-box ${selectedAnswer === currentQuestion.answer || (currentQuestion.type === 'FRQ' && aiFeedback && !aiFeedback.includes('incorrect')) ? 'correct' : 'wrong'}`}>
+          <div className={`explanation-box ${selectedAnswer === currentQuestion.correctAnswer || (currentQuestion.type === 'FRQ' && aiFeedback && !aiFeedback.includes('incorrect')) ? 'correct' : 'wrong'}`}>
             <h3>
               {currentQuestion.type === 'MCQ' 
-                ? (selectedAnswer === currentQuestion.answer ? 'Correct!' : 'Incorrect')
+                ? (selectedAnswer === currentQuestion.correctAnswer ? 'Correct!' : 'Incorrect')
                 : (aiFeedback?.includes('incorrect') ? 'Needs Improvement' : 'Correct!')}
             </h3>
             
@@ -237,7 +237,7 @@ export default function TakeTest() {
 
             <div className="correct-answer">
               <strong>Official Answer: </strong>
-              {currentQuestion.answer}
+              {currentQuestion.correctAnswer}
             </div>
             
             {currentQuestion.explanation && (
