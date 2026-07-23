@@ -78,13 +78,11 @@ export default function Dashboard() {
                       size={16} 
                       className="hover-icon"
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate('/analytics', { state: { activeTab: 'events', selectedEvent: event } }); }} 
-                      title="View Question History"
                     />
                     <BarChart2 
                       size={16} 
                       className="hover-icon"
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate('/analytics', { state: { activeTab: 'events', selectedEvent: event } }); }} 
-                      title="View Performance"
                     />
                   </div>
                 </Link>

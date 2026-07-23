@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Cat, Database, Zap, Code, Layout, Layers, Shield, Network, Activity, BarChart3, Binary, Server, User } from 'lucide-react';
+import { useState } from 'react';
+import { Database, Zap, Code, Layout, Layers, Shield, Network, Activity, BarChart3, Server, User } from 'lucide-react';
 
 export default function AboutUs() {
   const [activeTab, setActiveTab] = useState('questions');

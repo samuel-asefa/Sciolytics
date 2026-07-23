@@ -67,7 +67,6 @@ export default function Teams() {
   const [customTests, setCustomTests] = useState<CustomTest[]>([]);
 
   const [profiles, setProfiles] = useState<Record<string, any>>({});
-  const [profilesLoading, setProfilesLoading] = useState(false);
   const [roles, setRoles] = useState<TeamRole[]>([]);
   const [eventCategories, setEventCategories] = useState<EventCategory[]>([]);
 
@@ -86,6 +85,7 @@ export default function Teams() {
   // New category form
   const [showCatForm, setShowCatForm] = useState(false);
   const [newCatName, setNewCatName] = useState('');
+  const [newCatEvents, setNewCatEvents] = useState('');
   const [newCatColor, setNewCatColor] = useState('#2563eb');
   const [newCatIcon, setNewCatIcon] = useState('');
   // Editing category events inline

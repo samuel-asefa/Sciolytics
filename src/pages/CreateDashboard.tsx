@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, FileText, Trash2, Edit2, Loader2, FilePlus, Share2, Globe } from 'lucide-react';
+import { Plus, FileText, Trash2, Share2, Globe } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { firestoreService, type CustomTest } from '../services/firestoreService';
 import PageLoadingScreen from '../components/PageLoadingScreen';

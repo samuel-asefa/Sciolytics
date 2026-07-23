@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { User, Mail, MessageSquare, Send, MessageCircle } from 'lucide-react';
 
 export default function ContactUs() {

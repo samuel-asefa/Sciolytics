@@ -4,7 +4,7 @@ import { ArrowLeft, Clock, CheckCircle2, XCircle, ArrowRight } from 'lucide-reac
 import { useAuth } from '../contexts/AuthContext';
 import { firestoreService, type CustomTest } from '../services/firestoreService';
 import { aiGradingService } from '../services/aiGradingService';
-import type { Question } from '../data/questionBank';
+
 import PageLoadingScreen from '../components/PageLoadingScreen';
 
 export default function TakeTest() {

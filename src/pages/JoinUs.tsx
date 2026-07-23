@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { User, Mail, MessageCircle, Briefcase, Clock, GraduationCap, Heart } from 'lucide-react';
 
 export default function JoinUs() {
