@@ -61,6 +61,7 @@ export default function TestEditor() {
       await firestoreService.updateCustomTest(testId, {
         title: test.title,
         description: test.description,
+        isPublic: test.isPublic || false,
         questions: cleanQuestions
       });
       // maybe show a toast
@@ -176,6 +177,18 @@ export default function TestEditor() {
             onChange={e => setTest({...test, description: e.target.value})}
             placeholder="Test Description or Instructions"
           />
+          <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px' }}>
+            <input 
+              type="checkbox" 
+              id="isPublicToggle"
+              checked={test.isPublic || false}
+              onChange={e => setTest({...test, isPublic: e.target.checked})}
+              style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+            />
+            <label htmlFor="isPublicToggle" style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500 }}>
+              Make this test public to the community
+            </label>
+          </div>
         </div>
 
         <div className="questions-list">

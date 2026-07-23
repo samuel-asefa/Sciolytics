@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, FileText, Trash2, Edit2, Loader2, FilePlus, Share2 } from 'lucide-react';
+import { Plus, FileText, Trash2, Edit2, Loader2, FilePlus, Share2, Globe } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { firestoreService, type CustomTest } from '../services/firestoreService';
 import PageLoadingScreen from '../components/PageLoadingScreen';
@@ -55,6 +55,18 @@ export default function CreateDashboard() {
     } catch (err) {
       console.error('Error deleting test', err);
       alert('Could not delete test. Please try again.');
+    }
+  };
+
+  const togglePublic = async (e: React.MouseEvent, test: CustomTest) => {
+    e.stopPropagation();
+    try {
+      const newStatus = !test.isPublic;
+      await firestoreService.updateCustomTest(test.id!, { isPublic: newStatus });
+      setTests(prev => prev.map(t => t.id === test.id ? { ...t, isPublic: newStatus } : t));
+    } catch (err) {
+      console.error('Error toggling public status', err);
+      alert('Could not update test status. Please try again.');
     }
   };
 
@@ -134,10 +146,17 @@ export default function CreateDashboard() {
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <h3 style={{ margin: 0, fontSize: '18px', paddingRight: '60px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                <h3 style={{ margin: 0, fontSize: '18px', paddingRight: '90px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                   {test.title || 'Untitled Test'}
                 </h3>
                 <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '4px' }}>
+                  <button
+                    onClick={(e) => togglePublic(e, test)}
+                    style={{ background: 'none', border: 'none', color: test.isPublic ? '#10b981' : 'var(--text-secondary)', cursor: 'pointer', padding: '4px', borderRadius: '6px', opacity: test.isPublic ? 1 : 0.6 }}
+                    title={test.isPublic ? "Public in Community (Click to make Private)" : "Private (Click to make Public)"}
+                  >
+                    <Globe size={16} />
+                  </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); setSharingTest(test); }}
                     style={{ background: 'none', border: 'none', color: 'var(--primary-color)', cursor: 'pointer', padding: '4px', borderRadius: '6px' }}
