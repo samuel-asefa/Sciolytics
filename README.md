@@ -1,8 +1,25 @@
 # Sciolytics 🔬
 
+[![React](https://img.shields.io/badge/React-18-blue.svg?logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-Fast-646CFF.svg?logo=vite)](https://vitejs.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-Backend-FFCA28.svg?logo=firebase)](https://firebase.google.com/)
+[![Gemini](https://img.shields.io/badge/AI-Gemini-8E75B2.svg?logo=google)](https://deepmind.google/technologies/gemini/)
+
 A powerful, modern practice platform and community hub built for **Science Olympiad** competitors, coaches, and teams. 
 
 Sciolytics goes beyond simple multiple-choice quizzes by offering deep analytics, team collaboration, custom test creation, and AI-powered study tools to help you dominate your events.
+
+---
+
+## 📚 Table of Contents
+1. [Features](#-features)
+2. [Tech Stack](#-tech-stack)
+3. [Project Structure](#-project-structure)
+4. [Getting Started (Local Development)](#-getting-started-local-development)
+5. [Deployment](#-deployment)
+6. [Security & Roles](#-security--roles)
+7. [Contributing](#-contributing)
 
 ---
 
@@ -29,6 +46,25 @@ Sciolytics goes beyond simple multiple-choice quizzes by offering deep analytics
 - **Backend & Database**: Firebase Authentication, Cloud Firestore
 - **AI Integration**: Google Gemini (via `@google/genai`) for the AI Test Importer
 - **Charts**: Recharts
+
+---
+
+## 📂 Project Structure
+
+```text
+Sciolytics/
+├── src/
+│   ├── components/      # Reusable UI components (NavBar, Modals, Loading screens)
+│   ├── contexts/        # React context providers (AuthContext, ThemeContext, UserDataContext)
+│   ├── data/            # Static data, default configurations, and wiki data
+│   ├── pages/           # Main route components (Dashboard, TestEditor, Teams, Practice)
+│   ├── services/        # Firebase integrations (firestoreService.ts, geminiService.ts)
+│   ├── App.tsx          # Main application routing and wrapper
+│   └── index.css        # Global CSS, theme variables, and shared utility classes
+├── firestore.rules      # Security rules for Firebase Cloud Firestore
+├── vercel.json          # Deployment configuration for Vercel SPA routing
+└── package.json         # Node.js dependencies and scripts
+```
 
 ---
 
@@ -63,7 +99,7 @@ Navigate to `http://localhost:5173`.
 
 ---
 
-## ☁️ Deployment (Vercel / Firebase Hosting)
+## ☁️ Deployment
 
 Sciolytics is built with **Vite** (not Create React App). 
 - **Build Command**: `npm run build`
@@ -78,3 +114,18 @@ If deploying to Vercel, the included `vercel.json` ensures that single-page appl
 
 - **Admin Capabilities**: Accounts designated as admins (e.g., in `firestoreService.ts`) have the ability to review community tests and officially publish them.
 - **Firestore Rules**: Ensure your `firestore.rules` are deployed using `firebase deploy --only firestore:rules` to properly restrict read/write access for teams, private tests, and official question banks.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions to expand the Sciolytics ecosystem!
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+---
+
+*Sciolytics - Practice smarter, not harder.*
