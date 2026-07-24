@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { Target, BarChart2, Calendar, BookOpen } from 'lucide-react';
+import { Target, BarChart2, Calendar, BookOpen, Users, Globe, Sparkles, Share2, LayoutList } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 export default function Login() {
@@ -221,6 +221,141 @@ export default function Login() {
                 <div>
                   <h4 style={{ margin: 0, fontSize: '1rem' }}>State Tournament</h4>
                   <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>49 days 12 hrs remaining</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+        <motion.div 
+          className="feature-row reverse"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+        >
+          <div className="feature-text">
+            <h2>Turn any PDF into a practice test</h2>
+            <p>
+              Don't want to type out questions? Use our Antigravity AI Test Importer (Powered by Gemini) 
+              to instantly convert old tournament PDFs into interactive, digital practice tests in seconds.
+            </p>
+          </div>
+          <div className="feature-graphic">
+            <div className="mock-ui" style={{ textAlign: 'center', padding: '2rem' }}>
+              <div style={{ display: 'inline-flex', padding: '1rem', background: '#e0e7ff', borderRadius: '50%', marginBottom: '1rem' }}>
+                <Sparkles size={32} color="#4f46e5" />
+              </div>
+              <h4 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem' }}>AI Importer</h4>
+              <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>Upload a PDF exam and let Gemini do the rest.</p>
+              <div style={{ padding: '1.5rem', border: '2px dashed #cbd5e1', borderRadius: '12px', background: '#f8fafc' }}>
+                <span style={{ color: '#94a3b8', fontWeight: 600 }}>Drop tournament_test.pdf here</span>
+              </div>
+              <button className="btn-primary" style={{ marginTop: '1.5rem', width: '100%', borderRadius: '8px' }}>Generate Test</button>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          className="feature-row"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+        >
+          <div className="feature-text">
+            <h2>Train together, win together</h2>
+            <p>
+              Create teams, invite your partners, and share custom tests directly to your team's stream. 
+              Compete on leaderboards and see exactly where your team needs the most practice.
+            </p>
+          </div>
+          <div className="feature-graphic">
+            <div className="mock-ui">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid #eee', paddingBottom: '1rem' }}>
+                <Users size={20} color="var(--primary-color-dark)"/> 
+                <span style={{ fontWeight: 600 }}>Science Olympiad Team</span>
+                <span style={{ marginLeft: 'auto', background: '#e0e7ff', color: '#4f46e5', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>PRO</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: '#f8fafc', borderRadius: '8px' }}>
+                  <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>1. Alice S.</span>
+                  <span style={{ color: '#10b981', fontWeight: 700, fontSize: '0.9rem' }}>92% Avg</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: '#f8fafc', borderRadius: '8px' }}>
+                  <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>2. Bob M.</span>
+                  <span style={{ color: '#10b981', fontWeight: 700, fontSize: '0.9rem' }}>88% Avg</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem', color: '#64748b', fontSize: '0.85rem' }}>
+                  <Share2 size={16} /> Shared "Hard Anatomy Set" to stream
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          className="feature-row reverse"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+        >
+          <div className="feature-text">
+            <h2>Create & publish to the Community</h2>
+            <p>
+              Build your own custom practice tests and publish them to the official Community Bank. 
+              Admins review submissions to ensure the highest quality questions are available for everyone.
+            </p>
+          </div>
+          <div className="feature-graphic">
+            <div className="mock-ui">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <Globe size={20} color="#10b981"/> 
+                <span style={{ fontWeight: 600 }}>Community Tests</span>
+              </div>
+              <div style={{ padding: '1rem', border: '1px solid #eee', borderRadius: '12px', marginBottom: '1rem' }}>
+                <h4 style={{ margin: '0 0 0.25rem', fontSize: '1rem' }}>Ultimate Cell Biology Quiz</h4>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b', marginBottom: '0.75rem' }}>By Samuel • 50 Questions</p>
+                <div style={{ display: 'inline-block', background: '#d1fae5', color: '#059669', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  ✓ OFFICIAL
+                </div>
+              </div>
+              <button className="btn-primary" style={{ width: '100%', borderRadius: '8px', background: '#10b981' }}>Take Test</button>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          className="feature-row"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+        >
+          <div className="feature-text">
+            <h2>Beautiful Event Wikis</h2>
+            <p>
+              Ditch the messy Google Docs. Our event wikis are clean, distraction-free, 
+              and designed specifically for deep study. Access rules, study guides, and past exams all in one place.
+            </p>
+          </div>
+          <div className="feature-graphic">
+            <div className="mock-ui" style={{ background: '#f8fafc', padding: '1.5rem', border: '1px solid #e2e8f0', boxShadow: '0 12px 24px rgba(0,0,0,0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.75rem' }}>
+                <LayoutList size={20} color="#3b82f6"/> 
+                <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>Event Wiki</span>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ width: '30%', borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
+                  <div style={{ height: '8px', background: '#bfdbfe', borderRadius: '4px', marginBottom: '0.5rem', width: '80%' }}></div>
+                  <div style={{ height: '8px', background: '#e2e8f0', borderRadius: '4px', marginBottom: '0.5rem', width: '60%' }}></div>
+                  <div style={{ height: '8px', background: '#e2e8f0', borderRadius: '4px', width: '90%' }}></div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 800 }}>Anatomy & Physiology</h3>
+                  <div style={{ height: '6px', background: '#e2e8f0', borderRadius: '3px', marginBottom: '0.5rem', width: '100%' }}></div>
+                  <div style={{ height: '6px', background: '#e2e8f0', borderRadius: '3px', marginBottom: '0.5rem', width: '100%' }}></div>
+                  <div style={{ height: '6px', background: '#e2e8f0', borderRadius: '3px', width: '70%' }}></div>
                 </div>
               </div>
             </div>
