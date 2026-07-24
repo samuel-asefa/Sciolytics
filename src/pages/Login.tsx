@@ -236,7 +236,7 @@ export default function Login() {
           <div className="feature-text">
             <h2>Turn any PDF into a practice test</h2>
             <p>
-              Don't want to type out questions? Use our Antigravity AI Test Importer (Powered by Gemini) 
+              Don't want to type out questions? Use our Gemini AI Test Importer
               to instantly convert old tournament PDFs into interactive, digital practice tests in seconds.
             </p>
           </div>

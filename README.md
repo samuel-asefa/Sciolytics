@@ -9,7 +9,7 @@ Sciolytics goes beyond simple multiple-choice quizzes by offering deep analytics
 ## ✨ Features
 
 - **Massive Dynamic Question Bank**: Practice tests covering all major Science Olympiad events (Divisions B & C). Filter by difficulty, question type (MCQ/FRQ), subtopic, and unanswered questions.
-- **Antigravity AI Test Importer**: Paste your study guides, rule manuals, or Wikipedia articles. Using Google's Gemini AI, Sciolytics will instantly extract and generate high-quality multiple-choice and free-response questions.
+- **Gemini AI Test Importer**: Paste your study guides, rule manuals, or Wikipedia articles. Using Google's Gemini AI, Sciolytics will instantly extract and generate high-quality multiple-choice and free-response questions.
 - **Custom Test Creator**: Build your own tests from scratch. Save drafts, preview them, and print them as PDFs for physical study sessions.
 - **Teams & Collaboration**: 
   - Create custom teams and invite members using a unique 6-digit join code.
