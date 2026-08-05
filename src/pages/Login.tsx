@@ -107,7 +107,7 @@ export default function Login() {
         </div>
       </section>
       <section id="features" className="feature-section">
-        <motion.div 
+        <motion.div
           className="feature-row"
           initial="hidden"
           whileInView="visible"
@@ -117,17 +117,17 @@ export default function Login() {
           <div className="feature-text">
             <h2>Never stay stuck on a question</h2>
             <p>
-              Over 500+ human-written Science Olympiad questions across 20+ events, 
-              each with a step-by-step walkthrough and instant feedback to ensure you 
+              Over 500+ human-written Science Olympiad questions across 20+ events,
+              each with a step-by-step walkthrough and instant feedback to ensure you
               understand the core scientific concepts.
             </p>
-            <br/>
+            <br />
             <button className="btn-primary" style={{ borderRadius: '9999px' }} onClick={handleGoogleSignIn}>Get started for free</button>
           </div>
           <div className="feature-graphic">
             <div className="mock-ui">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid #eee', paddingBottom: '1rem' }}>
-                <BookOpen size={20} color="var(--primary-color-dark)"/> 
+                <BookOpen size={20} color="var(--primary-color-dark)" />
                 <span style={{ fontWeight: 600 }}>Anatomy & Physiology</span>
               </div>
               <p style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
@@ -147,7 +147,7 @@ export default function Login() {
             </div>
           </div>
         </motion.div>
-        <motion.div 
+        <motion.div
           className="feature-row reverse"
           initial="hidden"
           whileInView="visible"
@@ -157,17 +157,17 @@ export default function Login() {
           <div className="feature-text">
             <h2>Know your weak spots</h2>
             <p>
-              See weekly activity, accuracy by topic, and time share by difficulty 
-              so you know exactly what to study. Our advanced analytics break down 
+              See weekly activity, accuracy by topic, and time share by difficulty
+              so you know exactly what to study. Our advanced analytics break down
               your performance across every subtopic.
             </p>
-            <br/>
+            <br />
             <button className="btn-primary" style={{ borderRadius: '9999px' }} onClick={handleGoogleSignIn}>Get started for free</button>
           </div>
           <div className="feature-graphic">
             <div className="mock-ui">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                <BarChart2 size={20} color="var(--primary-color-dark)"/> 
+                <BarChart2 size={20} color="var(--primary-color-dark)" />
                 <span style={{ fontWeight: 600 }}>Accuracy by Event</span>
               </div>
               <div style={{ height: '200px', width: '100%' }}>
@@ -187,7 +187,7 @@ export default function Login() {
             </div>
           </div>
         </motion.div>
-        <motion.div 
+        <motion.div
           className="feature-row"
           initial="hidden"
           whileInView="visible"
@@ -197,8 +197,8 @@ export default function Login() {
           <div className="feature-text">
             <h2>Stop wondering what to study next</h2>
             <p>
-              Each week's schedule is built from your tournament date and latest activity. 
-              The plan recalibrates as your accuracy changes, ensuring you are always focused 
+              Each week's schedule is built from your tournament date and latest activity.
+              The plan recalibrates as your accuracy changes, ensuring you are always focused
               on the highest-impact areas.
             </p>
           </div>
@@ -226,7 +226,7 @@ export default function Login() {
             </div>
           </div>
         </motion.div>
-        <motion.div 
+        <motion.div
           className="feature-row reverse"
           initial="hidden"
           whileInView="visible"
@@ -255,7 +255,7 @@ export default function Login() {
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="feature-row"
           initial="hidden"
           whileInView="visible"
@@ -265,14 +265,14 @@ export default function Login() {
           <div className="feature-text">
             <h2>Train together, win together</h2>
             <p>
-              Create teams, invite your partners, and share custom tests directly to your team's stream. 
+              Create teams, invite your partners, and share custom tests directly to your team's stream.
               Compete on leaderboards and see exactly where your team needs the most practice.
             </p>
           </div>
           <div className="feature-graphic">
             <div className="mock-ui">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid #eee', paddingBottom: '1rem' }}>
-                <Users size={20} color="var(--primary-color-dark)"/> 
+                <Users size={20} color="var(--primary-color-dark)" />
                 <span style={{ fontWeight: 600 }}>Science Olympiad Team</span>
                 <span style={{ marginLeft: 'auto', background: '#e0e7ff', color: '#4f46e5', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>PRO</span>
               </div>
@@ -293,7 +293,7 @@ export default function Login() {
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="feature-row reverse"
           initial="hidden"
           whileInView="visible"
@@ -303,14 +303,14 @@ export default function Login() {
           <div className="feature-text">
             <h2>Create & publish to the Community</h2>
             <p>
-              Build your own custom practice tests and publish them to the official Community Bank. 
+              Build your own custom practice tests and publish them to the official Community Bank.
               Admins review submissions to ensure the highest quality questions are available for everyone.
             </p>
           </div>
           <div className="feature-graphic">
             <div className="mock-ui">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                <Globe size={20} color="#10b981"/> 
+                <Globe size={20} color="#10b981" />
                 <span style={{ fontWeight: 600 }}>Community Tests</span>
               </div>
               <div style={{ padding: '1rem', border: '1px solid #eee', borderRadius: '12px', marginBottom: '1rem' }}>
@@ -325,7 +325,7 @@ export default function Login() {
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="feature-row"
           initial="hidden"
           whileInView="visible"
@@ -335,14 +335,14 @@ export default function Login() {
           <div className="feature-text">
             <h2>Beautiful Event Wikis</h2>
             <p>
-              Ditch the messy Google Docs. Our event wikis are clean, distraction-free, 
+              Ditch the messy Google Docs. Our event wikis are clean, distraction-free,
               and designed specifically for deep study. Access rules, study guides, and past exams all in one place.
             </p>
           </div>
           <div className="feature-graphic">
             <div className="mock-ui" style={{ background: '#f8fafc', padding: '1.5rem', border: '1px solid #e2e8f0', boxShadow: '0 12px 24px rgba(0,0,0,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.75rem' }}>
-                <LayoutList size={20} color="#3b82f6"/> 
+                <LayoutList size={20} color="#3b82f6" />
                 <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>Event Wiki</span>
               </div>
               <div style={{ display: 'flex', gap: '1rem' }}>

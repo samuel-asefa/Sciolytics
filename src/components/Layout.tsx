@@ -162,8 +162,8 @@ export default function Layout({ children }: LayoutProps) {
         <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           {/* Notifications */}
           <div className="user-menu-container" ref={notificationsRef}>
-            <button 
-              className="nav-link" 
+            <button
+              className="nav-link"
               style={{ padding: '8px', position: 'relative', background: 'transparent', border: 'none', cursor: 'pointer' }}
               onClick={() => setShowNotifications(!showNotifications)}
             >
@@ -187,7 +187,7 @@ export default function Layout({ children }: LayoutProps) {
                 <div style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-white)' }}>
                   <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>Notifications</h3>
                   {notifications.some(n => !n.read) && (
-                    <button 
+                    <button
                       onClick={markAllRead}
                       style={{ background: 'none', border: 'none', color: 'var(--primary-color)', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
                     >
@@ -195,13 +195,13 @@ export default function Layout({ children }: LayoutProps) {
                     </button>
                   )}
                 </div>
-                
+
                 <div style={{ maxHeight: '300px', overflowY: 'auto', background: 'var(--bg-white)' }}>
                   {notifications.length > 0 ? notifications.map(notif => (
-                    <div 
-                      key={notif.id} 
-                      style={{ 
-                        padding: '12px 16px', 
+                    <div
+                      key={notif.id}
+                      style={{
+                        padding: '12px 16px',
                         borderBottom: '1px solid var(--border)',
                         background: notif.read ? 'transparent' : 'rgba(59, 130, 246, 0.05)',
                         cursor: 'pointer',

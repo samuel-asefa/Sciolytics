@@ -103,24 +103,26 @@ export default function Practice() {
 
   const availableSubtopics = selectedEvent ? subtopicsMap[selectedEvent] || [] : [];
 
+  const checkFilters = (q: any, ignoreEvent = false, ignoreSubtopic = false) => {
+    if (!ignoreEvent && selectedEvent && q.event !== selectedEvent) return false;
+    if (!ignoreSubtopic && selectedSubtopic !== 'All Subtopics' && q.subtopic !== selectedSubtopic) return false;
+    if (division !== 'both' && q.division !== division.toUpperCase() && q.division !== 'Both') return false;
+    if (difficulty !== 'All' && q.difficulty !== difficulty) return false;
+    if (questionType === 'mcq' && q.type !== 'MCQ') return false;
+    if (questionType === 'frq' && q.type !== 'FRQ') return false;
+    if (unansweredOnly && q.id && answeredIds.has(q.id)) return false;
+    return true;
+  };
+
   const getEventCount = (event: string): number =>
-    allQuestions.filter(q => q.event === event).length;
+    allQuestions.filter(q => q.event === event && checkFilters(q, true, true)).length;
 
   const getSubtopicCount = (subtopic: string): number =>
-    allQuestions.filter(q => q.event === selectedEvent && q.subtopic === subtopic).length;
+    allQuestions.filter(q => q.event === selectedEvent && q.subtopic === subtopic && checkFilters(q, false, true)).length;
 
   const availableCount = useMemo(() => {
     if (!selectedEvent) return 0;
-    return allQuestions.filter(q => {
-      if (q.event !== selectedEvent) return false;
-      if (selectedSubtopic !== 'All Subtopics' && q.subtopic !== selectedSubtopic) return false;
-      if (division !== 'both' && q.division !== division.toUpperCase() && q.division !== 'Both') return false;
-      if (difficulty !== 'All' && q.difficulty !== difficulty) return false;
-      if (questionType === 'mcq' && q.type !== 'MCQ') return false;
-      if (questionType === 'frq' && q.type !== 'FRQ') return false;
-      if (unansweredOnly && q.id && answeredIds.has(q.id)) return false;
-      return true;
-    }).length;
+    return allQuestions.filter(q => checkFilters(q)).length;
   }, [selectedEvent, selectedSubtopic, division, difficulty, questionType, unansweredOnly, answeredIds, allQuestions]);
 
   if (loadingQuestions) {

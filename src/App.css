@@ -1470,10 +1470,12 @@ font-size: 14px;
 .calendar-day.other-month {
   opacity: 0.3;
 }
+
 .calendar-day.today {
   background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-white)) !important;
   border: 1px solid var(--primary-color) !important;
 }
+
 .today-number {
   background: var(--primary-color);
   color: white;
@@ -1486,9 +1488,30 @@ font-size: 14px;
   font-weight: 700;
   font-size: 13px;
 }
-.day-events { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; overflow: hidden; }
-.cal-event-pill { font-size: 10px; color: white; padding: 2px 6px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cal-event-more { font-size: 10px; color: var(--text-secondary); padding: 2px 4px; }
+
+.day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.cal-event-pill {
+  font-size: 10px;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cal-event-more {
+  font-size: 10px;
+  color: var(--text-secondary);
+  padding: 2px 4px;
+}
 
 
 .day-number {
@@ -2197,7 +2220,9 @@ font-size: 14px;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── PageLoadingScreen — Premium Fullscreen Loader ──────────────────────── */
@@ -2261,14 +2286,12 @@ font-size: 14px;
   height: 100%;
   width: 55%;
   border-radius: 99px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--primary-color),
-    color-mix(in srgb, var(--primary-color) 60%, white),
-    var(--primary-color),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      var(--primary-color),
+      color-mix(in srgb, var(--primary-color) 60%, white),
+      var(--primary-color),
+      transparent);
 }
 
 /* Text */
@@ -2386,7 +2409,7 @@ font-size: 14px;
   height: 100%;
   background: var(--primary-color);
   border-radius: 99px;
-  transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  transition: width 0.4s cubic-bezier(.4, 0, .2, 1);
 }
 
 /* ── Question card ──────────────────────────────────── */
@@ -2625,7 +2648,9 @@ font-size: 14px;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Action bar ─────────────────────────────────────── */
@@ -2692,8 +2717,15 @@ font-size: 14px;
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .explanation-box.correct {
