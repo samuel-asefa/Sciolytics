@@ -51,7 +51,7 @@ export default function Practice() {
   const [selectedEvent, setSelectedEvent] = useState<string | null>(location.state?.selectedEvent || null);
   const [numQuestions, setNumQuestions] = useState('10');
   const [timeLimit, setTimeLimit] = useState('10');
-  const [questionType, setQuestionType] = useState<'mcq' | 'mcq-frq' | 'frq'>('mcq');
+  const [questionType, setQuestionType] = useState<'mcq' | 'mcq-frq' | 'frq'>('mcq-frq');
   const [division, setDivision] = useState<'b' | 'both' | 'c'>('both');
   const [difficulty, setDifficulty] = useState<'All' | 'Easy' | 'Medium' | 'Hard'>('All');
   const [selectedSubtopic, setSelectedSubtopic] = useState<string>('All Subtopics');
