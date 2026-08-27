@@ -235,7 +235,7 @@ export default function Analytics() {
                 <EmptyState message="No history data yet" />
               ) : (
                 <div style={{ background: 'var(--bg-white)', backdropFilter: 'var(--glass-blur)', border: '1px solid var(--border)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--card-shadow)' }}>
-                  <h3 style={{ marginBottom: '4px' }}>Daily Accuracy — Last 30 Days</h3>
+                  <h3 style={{ marginBottom: '4px' }}>Daily Accuracy - Last 30 Days</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '20px' }}>
                     Only shows days where you answered at least one question.
                   </p>

@@ -475,7 +475,7 @@ export const wikiData: Record<string, EventWiki> = {
         ],
         blocks: [
           { type: 'paragraph', content: 'Note: This section is from a previous season\'s rules (2018). Hovercraft no longer has an exam component and is a pure build event. The information is preserved for reference.' },
-          { type: 'paragraph', content: 'Part 1 of the event consists of a written test which draws from the AP Physics 1, or algebra-based mechanics, curriculum. This test must contain at least five questions from each of the following topics: Newton\'s laws of motion, kinematics, kinetic energy, air cushioned vehicles and applications, and fluid mechanics for Div. C only. 20 – 30 minutes is suggested to complete this test.' },
+          { type: 'paragraph', content: 'Part 1 of the event consists of a written test which draws from the AP Physics 1, or algebra-based mechanics, curriculum. This test must contain at least five questions from each of the following topics: Newton\'s laws of motion, kinematics, kinetic energy, air cushioned vehicles and applications, and fluid mechanics for Div. C only. 20 - 30 minutes is suggested to complete this test.' },
           { type: 'heading', level: 3, content: 'Newton\'s Laws of Motion' },
           { type: 'paragraph', content: 'Newton\'s First Law: An object will remain at rest or in uniform motion unless acted on by an external force. This describes inertia.' },
           { type: 'paragraph', content: 'Newton\'s Second Law: The acceleration of an object as produced by a net force is directly proportional to the magnitude of the net force and inversely proportional to the mass of the object (F = ma).' },

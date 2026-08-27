@@ -38,7 +38,7 @@ export default function Bookmarks() {
     <div className="practice-page">
       <div className="practice-header">
         <h1>Bookmarks</h1>
-        <p>Questions you've bookmarked during practice — review them any time.</p>
+        <p>Questions you've bookmarked during practice - review them any time.</p>
       </div>
 
       <PageLoadingScreen loading={loading} />

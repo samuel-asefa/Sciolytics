@@ -89,7 +89,7 @@ export default function Dashboard() {
               ))
             ) : (
               <div className="config-box" style={{ gridColumn: 'span 2', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px' }}>
-                No favorites yet — star an event in Practice
+                No favorites yet - star an event in Practice
               </div>
             )}
           </div>
@@ -156,7 +156,7 @@ export default function Dashboard() {
                 </div>
                 {heatmapData.every(d => d.count === 0) && (
                   <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px', marginTop: '8px' }}>
-                    No activity yet — start practicing to see your heatmap fill up!
+                    No activity yet - start practicing to see your heatmap fill up!
                   </p>
                 )}
               </>
@@ -164,7 +164,7 @@ export default function Dashboard() {
               <div style={{ width: '100%', height: '150px', marginTop: '10px' }}>
                 {chartData.every(d => d.questions === 0) ? (
                   <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px', paddingTop: '50px' }}>
-                    No activity in this period — start practicing!
+                    No activity in this period - start practicing!
                   </p>
                 ) : (
                   <ResponsiveContainer width="100%" height="100%">

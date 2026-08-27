@@ -45,11 +45,11 @@ export default function PageLoadingScreen({ loading, minDuration = 700 }: PageLo
 
   useEffect(() => {
     if (loading) {
-      // Loading started — show immediately and record the timestamp
+      // Loading started - show immediately and record the timestamp
       setVisible(true);
       shownAtRef.current = Date.now();
     } else {
-      // Loading ended — wait until minDuration has passed before hiding
+      // Loading ended - wait until minDuration has passed before hiding
       const elapsed = shownAtRef.current ? Date.now() - shownAtRef.current : minDuration;
       const remaining = Math.max(0, minDuration - elapsed);
       const t = setTimeout(() => setVisible(false), remaining);
@@ -102,7 +102,7 @@ export default function PageLoadingScreen({ loading, minDuration = 700 }: PageLo
                 borderRightColor: 'color-mix(in srgb, var(--primary-color) 30%, transparent)',
               }}
             />
-            {/* Inner ring — counter-rotate */}
+            {/* Inner ring - counter-rotate */}
             <motion.div
               animate={{ rotate: -360 }}
               transition={{ repeat: Infinity, duration: 2.6, ease: 'linear' }}

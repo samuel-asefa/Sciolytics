@@ -126,7 +126,7 @@ export default function EventWiki() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  // Scroll spy — track which section is in view
+  // Scroll spy - track which section is in view
   const setupObserver = useCallback(() => {
     if (observerRef.current) observerRef.current.disconnect();
     if (!data) return;
@@ -188,7 +188,7 @@ export default function EventWiki() {
 
 
 
-      {/* Body — ToC | Content | Infobox */}
+      {/* Body - ToC | Content | Infobox */}
       <div className="wiki-body">
 
         {/* LEFT: sticky ToC */}
@@ -205,7 +205,7 @@ export default function EventWiki() {
             <div className="wiki-empty-state">
               <div className="wiki-empty-icon">📝</div>
               <h3>This page is a stub</h3>
-              <p>Content for <strong>{data.name}</strong> hasn't been added yet. Check back later — notes will appear here once added.</p>
+              <p>Content for <strong>{data.name}</strong> hasn't been added yet. Check back later - notes will appear here once added.</p>
             </div>
           )}
 

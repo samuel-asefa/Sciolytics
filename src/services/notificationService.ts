@@ -99,7 +99,7 @@ export const notificationService = {
   /**
    * Sync real notifications from team activity.
    * Checks each team the user belongs to for recent stream messages,
-   * assignments, and events — creates notifications for new ones only.
+   * assignments, and events - creates notifications for new ones only.
    */
   async syncFromTeamActivity(uid: string): Promise<void> {
     try {
@@ -167,7 +167,7 @@ export const notificationService = {
             const newRef = doc(notificationsCol(uid));
             batch.set(newRef, {
               title: `New assignment in ${team.name}`,
-              message: `"${a.title}" — due ${a.dueDate}`,
+              message: `"${a.title}" - due ${a.dueDate}`,
               read: false,
               type: 'assignment',
               teamId: team.id,
@@ -202,7 +202,7 @@ export const notificationService = {
             const desc: string = e.description ?? '';
             batch.set(newRef, {
               title: `Upcoming event: ${team.name}`,
-              message: `"${e.title}" on ${e.date}${desc ? ` — ${desc.slice(0, 60)}` : ''}`,
+              message: `"${e.title}" on ${e.date}${desc ? ` - ${desc.slice(0, 60)}` : ''}`,
               read: false,
               type: 'event',
               teamId: team.id,

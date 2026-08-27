@@ -2225,7 +2225,7 @@ font-size: 14px;
   }
 }
 
-/* ── PageLoadingScreen — Premium Fullscreen Loader ──────────────────────── */
+/* ── PageLoadingScreen - Premium Fullscreen Loader ──────────────────────── */
 .page-loading-root {
   /* gradient background handled inline via var(--bg-gradient) */
   animation: gradientBG 8s ease infinite;
@@ -2347,7 +2347,7 @@ font-size: 14px;
 
 
 /* ═══════════════════════════════════════════════════════
-   TAKE TEST / PRACTICE TEST — Complete Styles
+   TAKE TEST / PRACTICE TEST - Complete Styles
    All classes use CSS variables so they work with
    every color theme (blue, green, purple, …) and
    every brightness mode (light → darker).

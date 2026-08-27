@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   EventWiki.css  –  Scioly-wiki-inspired layout for Sciolytics
+   EventWiki.css  -  Scioly-wiki-inspired layout for Sciolytics
 ───────────────────────────────────────────────────────────────────────────── */
 
 /* Page wrapper */
@@ -77,7 +77,7 @@
   }
 }
 
-/* ── LEFT sidebar — Table of Contents ───────────────────────────────────────── */
+/* ── LEFT sidebar - Table of Contents ───────────────────────────────────────── */
 .wiki-sidebar-left {
   position: sticky;
   top: 100px;
@@ -168,7 +168,7 @@
   background: var(--primary-color);
 }
 
-/* ── CENTER — Article content ────────────────────────────────────────────────── */
+/* ── CENTER - Article content ────────────────────────────────────────────────── */
 .wiki-article {
   min-width: 0;
 }
@@ -303,7 +303,7 @@
 .wiki-empty-state p { margin: 0; color: var(--text-secondary); font-size: 15px; }
 .wiki-empty-state a { color: var(--primary-color); font-weight: 600; }
 
-/* ── RIGHT sidebar — Infobox ─────────────────────────────────────────────────── */
+/* ── RIGHT sidebar - Infobox ─────────────────────────────────────────────────── */
 .wiki-sidebar-right {
   position: sticky;
   top: 100px;

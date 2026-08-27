@@ -4,12 +4,12 @@ import { Mail, BookOpen, MessageCircle, ChevronDown, Zap, Users, BarChart2, Sett
 const faqs = [
   {
     q: 'How do I change my theme?',
-    a: 'Navigate to Settings and pick any color from the App Theme palette. You can also adjust brightness (Light, Default, Dim, Dark, Darker) and the background style — including animated options like stars, wind streams, and city skyline.',
+    a: 'Navigate to Settings and pick any color from the App Theme palette. You can also adjust brightness (Light, Default, Dim, Dark, Darker) and the background style - including animated options like stars, wind streams, and city skyline.',
     icon: 'settings',
   },
   {
     q: 'How are questions scored?',
-    a: 'Multiple Choice (MCQ) answers are graded instantly and automatically. Free Response (FRQ) answers are compared against a set of required keywords — your score reflects how many key concepts your answer contains.',
+    a: 'Multiple Choice (MCQ) answers are graded instantly and automatically. Free Response (FRQ) answers are compared against a set of required keywords - your score reflects how many key concepts your answer contains.',
     icon: 'zap',
   },
   {
@@ -39,7 +39,7 @@ const faqs = [
   },
   {
     q: 'How do Teams work?',
-    a: 'Teams let you collaborate with teammates. Create a team, share your join code, assign events to members, post updates in the team stream, and set up roles with custom permissions — all in one place.',
+    a: 'Teams let you collaborate with teammates. Create a team, share your join code, assign events to members, post updates in the team stream, and set up roles with custom permissions - all in one place.',
     icon: 'users',
   },
 ];
@@ -138,7 +138,7 @@ export default function Help() {
       {/* Header */}
       <div className="practice-header" style={{ marginBottom: '32px' }}>
         <h1>Help &amp; Support</h1>
-        <p>Find answers, get guidance, or reach out — we've got you covered.</p>
+        <p>Find answers, get guidance, or reach out - we've got you covered.</p>
       </div>
 
       {/* Quick Links */}

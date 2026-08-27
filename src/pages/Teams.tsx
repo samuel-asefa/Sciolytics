@@ -418,7 +418,7 @@ export default function Teams() {
       {/* ── Main ── */}
       <div className="teams-main">
         {!activeTeam ? (
-          /* No team — join/create */
+          /* No team - join/create */
           <div style={{ padding: '3rem', maxWidth: '500px', margin: '0 auto' }}>
             <h2>You don't have a team yet</h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
@@ -801,7 +801,7 @@ export default function Teams() {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                               <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.4px', textTransform: 'uppercase' }}>Icon (optional - emoji or text)</div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ fontSize: '22px', minWidth: '32px', textAlign: 'center' }}>{editCatIcon || '—'}</span>
+                                <span style={{ fontSize: '22px', minWidth: '32px', textAlign: 'center' }}>{editCatIcon || '-'}</span>
                                 <input
                                   type="text"
                                   placeholder="e.g. 🧪 or 🔬"
@@ -884,7 +884,7 @@ export default function Teams() {
                       <div style={{ marginBottom: '12px' }}>
                         <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Icon (optional)</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: '22px', minWidth: '32px', textAlign: 'center' }}>{newCatIcon || '—'}</span>
+                          <span style={{ fontSize: '22px', minWidth: '32px', textAlign: 'center' }}>{newCatIcon || '-'}</span>
                           <input
                             type="text"
                             placeholder="e.g. 🧪"
