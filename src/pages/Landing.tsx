@@ -384,19 +384,42 @@ export default function Landing() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Firebase only reports "popup closed" ~8s after the user closes the Google
+  // window (it waits for a possible late auth result), which left the button
+  // stuck on "Opening…". When focus returns to this page without a sign-in,
+  // re-enable the buttons right away. attemptRef ignores stale attempts.
+  const attemptRef = useRef(0);
+
   const handleSignIn = async () => {
+    const attempt = ++attemptRef.current;
+    setError('');
+    setSigningIn(true);
+
+    let focusTimer: ReturnType<typeof setTimeout> | undefined;
+    const release = () => {
+      clearTimeout(focusTimer);
+      // give a completed sign-in a moment to land before resetting
+      focusTimer = setTimeout(() => {
+        if (attemptRef.current === attempt) setSigningIn(false);
+      }, 600);
+    };
+    const onVisible = () => { if (document.visibilityState === 'visible') release(); };
+    window.addEventListener('focus', release);
+    document.addEventListener('visibilitychange', onVisible);
+
     try {
-      setError('');
-      setSigningIn(true);
       await signInWithGoogle();
-      navigate(from && from !== '/login' ? from : '/dashboard', { replace: true });
+      if (attemptRef.current === attempt) navigate(from && from !== '/login' ? from : '/dashboard', { replace: true });
     } catch (err) {
       const code = (err as { code?: string })?.code;
-      if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
+      if (attemptRef.current === attempt && code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
         setError((err as Error)?.message || 'Failed to sign in with Google');
       }
     } finally {
-      setSigningIn(false);
+      window.removeEventListener('focus', release);
+      document.removeEventListener('visibilitychange', onVisible);
+      clearTimeout(focusTimer);
+      if (attemptRef.current === attempt) setSigningIn(false);
     }
   };
 
