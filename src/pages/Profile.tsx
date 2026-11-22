@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { User, Mail, Calendar, MapPin, School, Save, Edit2, X } from 'lucide-react';
+import { User, Mail, Calendar, MapPin, School, Save, Edit2, X, Trophy } from 'lucide-react';
+import { divisionFromGradYear } from '../lib/division';
 import { useAuth } from '../contexts/AuthContext';
 import { updateProfile } from 'firebase/auth';
 import { firestoreService } from '../services/firestoreService';
@@ -9,10 +10,11 @@ interface UserProfile {
   location: string;
   school: string;
   graduationYear: string;
+  division: string;
   bio: string;
 }
 
-const defaultProfile: UserProfile = { fullName: '', location: '', school: '', graduationYear: '', bio: '' };
+const defaultProfile: UserProfile = { fullName: '', location: '', school: '', graduationYear: '', division: '', bio: '' };
 
 export default function Profile() {
   const { currentUser } = useAuth();
@@ -31,6 +33,7 @@ export default function Profile() {
         location: (p.location as string) || '',
         school: (p.school as string) || '',
         graduationYear: (p.graduationYear as string) || '',
+        division: p.division === 'B' || p.division === 'C' ? p.division : '',
         bio: (p.bio as string) || '',
       };
       setProfile(loaded);
@@ -53,6 +56,10 @@ export default function Profile() {
     setSaving(true);
     try {
       await firestoreService.saveProfile(currentUser.uid, formData as unknown as Record<string, string>);
+      try {
+        if (formData.division) localStorage.setItem(`sciolytics:division:${currentUser.uid}`, formData.division);
+        else localStorage.removeItem(`sciolytics:division:${currentUser.uid}`);
+      } catch { /* storage unavailable */ }
       if (formData.fullName && formData.fullName !== currentUser.displayName) {
         await updateProfile(currentUser, { displayName: formData.fullName });
       }
@@ -147,6 +154,26 @@ export default function Profile() {
               ) : (
                 <div className="form-display">{profile.graduationYear || 'Not set'}</div>
               )}
+            </div>
+
+            <div className="form-section">
+              <label className="form-label"><Trophy size={18} />Division</label>
+              {isEditing ? (
+                <div className="ui-segment" style={{ alignSelf: 'flex-start' }}>
+                  <button type="button" className={formData.division === 'B' ? 'is-active' : ''} onClick={() => handleChange('division', 'B')}>Division B</button>
+                  <button type="button" className={formData.division === 'C' ? 'is-active' : ''} onClick={() => handleChange('division', 'C')}>Division C</button>
+                  <button type="button" className={formData.division === '' ? 'is-active' : ''} onClick={() => handleChange('division', '')}>Auto</button>
+                </div>
+              ) : (
+                <div className="form-display">
+                  {profile.division
+                    ? `Division ${profile.division}`
+                    : divisionFromGradYear(profile.graduationYear)
+                      ? `Division ${divisionFromGradYear(profile.graduationYear)} (from graduation year)`
+                      : 'Not set'}
+                </div>
+              )}
+              <p className="form-hint">Practice filters default to this. Auto uses your team or graduation year.</p>
             </div>
 
             <div className="form-section">

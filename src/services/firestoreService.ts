@@ -9,6 +9,7 @@ import {
   deleteDoc,
   query,
   where,
+  collectionGroup,
   Timestamp,
   serverTimestamp,
 } from 'firebase/firestore';
@@ -68,6 +69,19 @@ export interface CustomTest {
   updatedAt: Timestamp | ReturnType<typeof serverTimestamp>;
   questions: Question[];
   isPublic?: boolean;
+  /** Primary event (categorisation for Community + Create filters) */
+  event?: string;
+  division?: 'B' | 'C' | 'Both';
+  /** Private organisation on the Create page */
+  folder?: string;
+  tags?: string[];
+  creatorName?: string;
+}
+
+export interface RatingSummary {
+  avg: number;
+  count: number;
+  mine?: number;
 }
 
 export interface TeamEvent {
@@ -382,7 +396,8 @@ export const firestoreService = {
   },
 
   async saveProfile(uid: string, profileData: Record<string, string>): Promise<void> {
-    await setDoc(doc(db, 'users', uid, 'profile', 'data'), profileData);
+    // merge: never wipe fields written elsewhere (email/displayName sync, division)
+    await setDoc(doc(db, 'users', uid, 'profile', 'data'), profileData, { merge: true });
   },
 
   // --- Teams Methods ---
@@ -555,6 +570,33 @@ export const firestoreService = {
         const timeB = (b.createdAt as any)?.toMillis?.() || 0;
         return timeB - timeA;
       });
+  },
+
+  // ── Community ratings (customTests/{testId}/ratings/{uid}) ──
+  async rateCustomTest(testId: string, uid: string, stars: number): Promise<void> {
+    await setDoc(doc(db, 'customTests', testId, 'ratings', uid), {
+      stars: Math.max(1, Math.min(5, Math.round(stars))),
+      uid,
+      testId,
+      updatedAt: serverTimestamp(),
+    });
+  },
+
+  async getRatingSummaries(uid?: string): Promise<Record<string, RatingSummary>> {
+    const snap = await getDocs(collectionGroup(db, 'ratings'));
+    const acc: Record<string, { sum: number; count: number; mine?: number }> = {};
+    snap.forEach(d => {
+      const data = d.data() as { stars?: number; uid?: string };
+      const testId = d.ref.parent.parent?.id;
+      if (!testId || typeof data.stars !== 'number') return;
+      const a = (acc[testId] ??= { sum: 0, count: 0 });
+      a.sum += data.stars;
+      a.count += 1;
+      if (uid && (data.uid === uid || d.id === uid)) a.mine = data.stars;
+    });
+    const out: Record<string, RatingSummary> = {};
+    for (const [id, a] of Object.entries(acc)) out[id] = { avg: a.sum / a.count, count: a.count, mine: a.mine };
+    return out;
   },
 
   async publishQuestionsToBank(test: CustomTest): Promise<void> {

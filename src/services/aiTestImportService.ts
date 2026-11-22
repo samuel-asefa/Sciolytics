@@ -1,5 +1,5 @@
 import { getGenerativeModel, Schema } from 'firebase/ai';
-import { ai } from '../config/firebase';
+import { ai } from '../config/ai';
 import type { Question } from '../data/questionBank';
 import { v4 as uuidv4 } from 'uuid';
 

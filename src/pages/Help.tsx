@@ -9,12 +9,12 @@ const faqs = [
   },
   {
     q: 'How are questions scored?',
-    a: 'Multiple Choice (MCQ) answers are graded instantly and automatically. Free Response (FRQ) answers are compared against a set of required keywords - your score reflects how many key concepts your answer contains.',
+    a: 'Multiple choice answers are graded instantly and exactly. Free response answers are graded by AI against the official answer key, with feedback on what you got right or missed. The answer key is always shown next to the feedback. If you miss a multiple-choice question, tap "Explain my mistake" for an AI tutor explanation.',
     icon: 'zap',
   },
   {
     q: 'Where do the practice questions come from?',
-    a: 'Our question bank is curated from past Science Olympiad invitational and official tournaments, official study materials, and community contributions. All questions are reviewed for accuracy.',
+    a: 'Most questions come from past invitational tests, Scioly.org Summer Study Session exams and practice tests, each tagged with its source and year where known. Community tests can be merged into the official bank after admin review.',
     icon: 'book',
   },
   {
@@ -36,6 +36,31 @@ const faqs = [
     q: 'What are Bookmarks?',
     a: 'You can bookmark any question during a practice session by clicking the bookmark icon. Revisit all saved questions anytime from the Bookmarks page to review material you found challenging.',
     icon: 'bookmark',
+  },
+  {
+    q: 'How do flashcards work?',
+    a: 'Every question becomes a flashcard. After flipping a card, rate it Again, Hard, Good or Easy (keys 1–4). Cards you struggle with come back sooner and easy ones are spaced out. After a test, tap "Make flashcards" to send your misses to the Mistakes deck.',
+    icon: 'zap',
+  },
+  {
+    q: 'How do I make a cheat sheet?',
+    a: 'Open Cheat Sheets, pick an event, and start from the wiki notes or a template. Write with simple markup (# headings, - lists, **bold**, ==highlight==, H~2~O, x^2^, tables). The fit meter tells you whether it fits on one 8.5×11 sheet, front and back. Then print or save as PDF. Always check your event rules for what is allowed.',
+    icon: 'book',
+  },
+  {
+    q: 'What is Partner Mode?',
+    a: 'Most events are taken in pairs. In Partner Mode one person hosts a test and shares a 6-character code. You both work on one shared answer sheet in real time, see who answered what and where your partner is, flag questions for each other, and submit together on a shared timer.',
+    icon: 'users',
+  },
+  {
+    q: 'Can I highlight and take notes in the wiki?',
+    a: 'Yes. While signed in, select any text on an event wiki page to highlight it in one of four colors or attach a note. Your notes appear in the sidebar and can be turned into a cheat sheet in one click.',
+    icon: 'bookmark',
+  },
+  {
+    q: 'Are there keyboard shortcuts?',
+    a: 'Press ⌘K (Ctrl+K) or / anywhere to search pages, events and actions. In tests: A–D or 1–4 to answer, Enter to check or continue, ←/→ to move between questions, M to bookmark, ? for the full list. In flashcards: Space to flip, 1–4 to rate.',
+    icon: 'settings',
   },
   {
     q: 'How do Teams work?',

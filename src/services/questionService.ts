@@ -8,6 +8,10 @@ export interface QuestionFilter {
   type?: 'MCQ' | 'FRQ' | 'All';
   difficulty?: 'Easy' | 'Medium' | 'Hard' | 'All';
   limit?: number;
+  /** Restrict to exactly these question ids (e.g. "retry missed"). */
+  ids?: string[];
+  /** Skip these ids (e.g. "only unanswered"). */
+  excludeIds?: string[];
 }
 
 export interface UserProgress {
@@ -43,15 +47,31 @@ export const questionService = {
   getQuestions(filter: QuestionFilter = {}): Question[] {
     let questions = [...combinedQuestionBank];
 
+    if (filter.ids && filter.ids.length) {
+      const wanted = new Set(filter.ids);
+      questions = questions.filter(q => wanted.has(q.id));
+    }
+    if (filter.excludeIds && filter.excludeIds.length) {
+      const skip = new Set(filter.excludeIds);
+      questions = questions.filter(q => !skip.has(q.id));
+    }
     if (filter.event) questions = questions.filter(q => q.event === filter.event);
     if (filter.subtopic && filter.event) questions = questions.filter(q => q.subtopic === filter.subtopic);
     if (filter.division && filter.division !== 'Both') questions = questions.filter(q => q.division === filter.division || q.division === 'Both');
     if (filter.type && filter.type !== 'All') questions = questions.filter(q => q.type === filter.type);
     if (filter.difficulty && filter.difficulty !== 'All') questions = questions.filter(q => q.difficulty === filter.difficulty);
 
-    questions = questions.sort(() => Math.random() - 0.5);
+    // Fisher–Yates: an unbiased shuffle (sort(() => Math.random() - 0.5) is skewed)
+    for (let i = questions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
     if (filter.limit) questions = questions.slice(0, filter.limit);
     return questions;
+  },
+
+  getById(id: string): Question | undefined {
+    return combinedQuestionBank.find(q => q.id === id);
   },
 
   getSubtopics(event: string): string[] {

@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Home, Calendar, Settings, Users, UserPlus, Download, LogOut, Trash2,
+  Calendar, Settings, Users, UserPlus, Download, LogOut, Trash2,
   ChevronRight, Pencil, Send, Plus, Pin, Edit2, X, Check, MoreHorizontal,
-  Palette, Shield, Tag, Image
+  Shield, Tag, Image, Copy, Crown, MessageSquare, ClipboardList, AlertTriangle, LayoutGrid, FileText,
 } from 'lucide-react';
+import { useToast } from '../components/Toast';
+import { eventMeta } from '../lib/events';
+import './Teams.css';
 import { useAuth } from '../contexts/AuthContext';
 import {
   firestoreService,
@@ -14,20 +17,28 @@ import {
 import PageLoadingScreen from '../components/PageLoadingScreen';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function formatTime(ts: any): string {
+function formatTime(ts: unknown): string {
   if (!ts) return '';
-  const d: Date = ts?.toDate ? ts.toDate() : new Date(ts);
+  const t = ts as { toDate?: () => Date };
+  const d: Date = typeof t.toDate === 'function' ? t.toDate() : new Date(ts as string | number);
   return d.toLocaleString('default', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 }
 
 const BANNER_PRESETS = [
-  'linear-gradient(135deg,#1e3a5f,#2563eb)',
-  'linear-gradient(135deg,#14532d,#16a34a)',
-  'linear-gradient(135deg,#581c87,#9333ea)',
-  'linear-gradient(135deg,#7f1d1d,#dc2626)',
-  'linear-gradient(135deg,#1c1917,#57534e)',
+  'linear-gradient(135deg,#1757c7,#06b6d4)',
   'linear-gradient(135deg,#0c4a6e,#0ea5e9)',
+  'linear-gradient(135deg,#065f46,#10b981)',
+  'linear-gradient(135deg,#1e3a8a,#6366f1)',
+  'linear-gradient(135deg,#7f1d1d,#f97316)',
+  'linear-gradient(135deg,#0f172a,#475569)',
 ];
+
+const EMOJIS = ['🧪','🔬','⚗️','🧬','🦠','⚡','🔭','🌿','🏗️','🧲','📐','🌊','🔥','💡','🏆'];
+const CAT_COLORS = ['#1f6feb','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899','#6366f1'];
+
+function initials(name: string) {
+  return name.split(/\s+/).filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
+}
 
 const ROLE_COLORS = ['#2563eb','#16a34a','#9333ea','#dc2626','#ea580c','#db2777','#0891b2'];
 
@@ -40,7 +51,10 @@ const DEFAULT_PERMISSIONS = {
 export default function Teams() {
   const location = useLocation();
   const { currentUser } = useAuth();
+  const toast = useToast();
   const uid = currentUser?.uid ?? '';
+  const [nameModal, setNameModal] = useState<{ mode: 'add' | 'edit'; value: string } | null>(null);
+  const [showJoinCode, setShowJoinCode] = useState(false);
 
   // ── State ──
   const [teams, setTeams] = useState<Team[]>([]);
@@ -66,7 +80,7 @@ export default function Teams() {
   
   const [customTests, setCustomTests] = useState<CustomTest[]>([]);
 
-  const [profiles, setProfiles] = useState<Record<string, any>>({});
+  const [profiles, setProfiles] = useState<Record<string, Record<string, string>>>({});
   const [roles, setRoles] = useState<TeamRole[]>([]);
   const [eventCategories, setEventCategories] = useState<EventCategory[]>([]);
 
@@ -86,7 +100,7 @@ export default function Teams() {
   const [showCatForm, setShowCatForm] = useState(false);
   const [newCatName, setNewCatName] = useState('');
   const [newCatEvents, setNewCatEvents] = useState('');
-  const [newCatColor, setNewCatColor] = useState('#2563eb');
+  const [newCatColor, setNewCatColor] = useState(CAT_COLORS[0]);
   const [newCatIcon, setNewCatIcon] = useState('');
   // Editing category events inline
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
@@ -188,7 +202,7 @@ export default function Teams() {
   };
 
   const loadProfiles = async (uids: string[]) => {
-    const profs: Record<string, any> = {};
+    const profs: Record<string, Record<string, string>> = {};
     for (const id of uids) {
       try { profs[id] = await firestoreService.getProfile(id); }
       catch { profs[id] = {}; }
@@ -214,16 +228,16 @@ export default function Teams() {
       setCreateNameInput('');
       await loadTeams();
       setActiveTeam(t);
-    } catch (err) { alert('Failed to create team.'); }
+    } catch { toast('Failed to create team', 'error'); }
   };
 
   const handleJoinTeam = async () => {
     if (!joinCodeInput) return;
     try {
       const t = await firestoreService.joinTeam(uid, joinCodeInput);
-      if (t) { setJoinCodeInput(''); await loadTeams(); setActiveTeam(t); }
-      else alert('Invalid join code');
-    } catch { alert('Failed to join team.'); }
+      if (t) { setJoinCodeInput(''); await loadTeams(); setActiveTeam(t); toast(`Joined ${t.name}`); }
+      else toast('Invalid join code', 'error');
+    } catch { toast('Failed to join team', 'error'); }
   };
 
   const handleLeaveTeam = async () => {
@@ -244,19 +258,26 @@ export default function Teams() {
     await firestoreService.updateSubteamRoster(activeTeam.id, activeSubteam.id, updated);
   };
 
-  const handleAddSubteam = async () => {
-    if (!activeTeam) return;
-    const name = prompt('Enter new subteam name:');
-    if (name) {
-      const s = await firestoreService.addSubteam(activeTeam.id, name);
-      setSubteams(p => [...p, s]); setActiveSubteam(s);
-    }
-  };
+  const handleAddSubteam = () => setNameModal({ mode: 'add', value: '' });
+  const handleEditSubteamName = () => activeSubteam && setNameModal({ mode: 'edit', value: activeSubteam.name });
 
-  const handleEditSubteamName = async () => {
-    if (!activeTeam || !activeSubteam) return;
-    const name = prompt('New subteam name:', activeSubteam.name);
-    if (name) { await firestoreService.updateSubteamName(activeTeam.id, activeSubteam.id, name); loadSubteams(activeTeam.id); }
+  const submitNameModal = async () => {
+    if (!activeTeam || !nameModal) return;
+    const name = nameModal.value.trim();
+    if (!name) return;
+    try {
+      if (nameModal.mode === 'add') {
+        const s = await firestoreService.addSubteam(activeTeam.id, name);
+        setSubteams(p => [...p, s]); setActiveSubteam(s);
+        toast(`Added ${name}`);
+      } else if (activeSubteam) {
+        await firestoreService.updateSubteamName(activeTeam.id, activeSubteam.id, name);
+        setSubteams(p => p.map(x => (x.id === activeSubteam.id ? { ...x, name } : x)));
+        setActiveSubteam(a => (a ? { ...a, name } : a));
+        toast('Subteam renamed');
+      }
+      setNameModal(null);
+    } catch { toast('Could not save subteam', 'error'); }
   };
 
   const handleSendStreamMessage = async () => {
@@ -299,7 +320,8 @@ export default function Teams() {
       setShowAssignmentModal(false);
       setAssignmentTitle(''); setAssignmentDesc(''); setAssignmentDueDate(''); setAssignmentCustomTestId('');
       loadAssignments(activeTeam.id);
-    } catch { alert('Failed to create assignment'); }
+      toast('Assignment created');
+    } catch { toast('Failed to create assignment', 'error'); }
   };
 
   const handleCreateRole = async () => {
@@ -337,6 +359,7 @@ export default function Teams() {
     setActiveTeam(t => t ? { ...t, name: settingsTeamName, bannerColor: settingsBanner } : t);
     setTeams(ts => ts.map(t => t.id === activeTeam.id ? { ...t, name: settingsTeamName, bannerColor: settingsBanner } : t));
     setSettingsSaving(false);
+    toast('Team settings saved');
   };
 
   const handleExportRoster = () => {
@@ -363,208 +386,221 @@ export default function Teams() {
   const pinnedMessages = streamMessages.filter(m => m.pinnedAt);
   const unpinnedMessages = streamMessages.filter(m => !m.pinnedAt);
 
-  if (loading) return <PageLoadingScreen loading={true} />;
+  if (loading) return <PageLoadingScreen loading label="Loading your teams" />;
+
+  const myName = getMemberName(uid) === 'Anonymous User'
+    ? (currentUser?.displayName || currentUser?.email?.split('@')[0] || 'You')
+    : getMemberName(uid);
+  const canAdmin = !!activeTeam && isAdmin(activeTeam);
+  const TABS: { id: string; label: string; icon: React.ReactNode; count?: number }[] = [
+    { id: 'roster', label: 'Roster', icon: <LayoutGrid size={15} /> },
+    { id: 'stream', label: 'Stream', icon: <MessageSquare size={15} />, count: streamMessages.length || undefined },
+    { id: 'assignments', label: 'Assignments', icon: <ClipboardList size={15} />, count: assignments.length || undefined },
+    { id: 'people', label: 'People', icon: <Users size={15} />, count: activeTeam?.members?.length },
+    { id: 'settings', label: 'Settings', icon: <Settings size={15} /> },
+  ];
+  const today = new Date().toISOString().slice(0, 10);
+
+  const copyJoinCode = async () => {
+    if (!activeTeam) return;
+    try { await navigator.clipboard.writeText(activeTeam.joinCode); toast('Join code copied'); }
+    catch { setShowJoinCode(true); }
+  };
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="teams-page">
-
+    <div className="tm ui-page">
       {/* ── Sidebar ── */}
-      <div className="teams-sidebar">
-        <div className="sidebar-header">
-          <div className="logo-container">
-            <div className="logo-icon"></div>
-            <span className="logo-text">Sciolytics</span>
-          </div>
+      <aside className="tm-side ui-card">
+        <div className="tm-side-head">
+          <span className="ui-eyebrow"><Users size={13} /> Teams</span>
         </div>
 
-        <nav className="sidebar-nav">
-          <Link to="/teams" className={location.pathname === '/teams' ? 'nav-item active' : 'nav-item'}>
-            <Home size={18} /> All Teams
-          </Link>
-          <Link to="/upcoming" className={location.pathname === '/upcoming' ? 'nav-item active' : 'nav-item'}>
-            <Calendar size={18} /> Upcoming <ChevronRight size={16} />
-          </Link>
-          <button
-            className="nav-item"
-            style={{ border: 'none', background: 'none', cursor: 'pointer', width: '100%', textAlign: 'left', fontSize: 'inherit', fontFamily: 'inherit' }}
-            onClick={() => setActiveTab('settings')}
-          >
-            <Settings size={18} /> Settings
-          </button>
-        </nav>
-
         {teams.length > 0 && (
-          <div className="your-teams">
-            <h4>YOUR TEAMS</h4>
+          <div className="tm-team-list">
             {teams.map(team => (
-              <div
+              <button
                 key={team.id}
-                className={`team-card ${activeTeam?.id === team.id ? 'active' : ''}`}
+                className={`tm-team${activeTeam?.id === team.id ? ' is-active' : ''}`}
                 onClick={() => setActiveTeam(team)}
-                style={{ cursor: 'pointer' }}
               >
-                <Users size={18} />
-                <div>
-                  <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '140px' }}>{team.name}</div>
-                  <div className="team-division">Division {team.division}</div>
-                </div>
-              </div>
+                <span className="tm-team-badge" style={{ background: team.bannerColor || 'var(--brand-gradient)' }}>{initials(team.name)}</span>
+                <span className="tm-team-text">
+                  <span className="tm-team-name">{team.name}</span>
+                  <span className="tm-team-meta">Division {team.division} · {team.members?.length ?? 0} members</span>
+                </span>
+              </button>
             ))}
           </div>
         )}
-      </div>
+
+        <button className={`tm-team tm-team-new${!activeTeam ? ' is-active' : ''}`} onClick={() => setActiveTeam(null)}>
+          <span className="tm-team-badge is-ghost"><Plus size={16} /></span>
+          <span className="tm-team-text"><span className="tm-team-name">Join or create</span></span>
+        </button>
+
+        <div className="tm-side-links">
+          <Link to="/upcoming" className={`tm-side-link${location.pathname === '/upcoming' ? ' is-active' : ''}`}>
+            <Calendar size={16} /> Upcoming events <ChevronRight size={14} className="tm-side-chev" />
+          </Link>
+          {activeTeam && (
+            <button className="tm-side-link" onClick={() => setActiveTab('settings')}>
+              <Settings size={16} /> Team settings
+            </button>
+          )}
+        </div>
+      </aside>
 
       {/* ── Main ── */}
-      <div className="teams-main">
+      <section className="tm-main">
         {!activeTeam ? (
-          /* No team - join/create */
-          <div style={{ padding: '3rem', maxWidth: '500px', margin: '0 auto' }}>
-            <h2>You don't have a team yet</h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-              Join an existing team or create a new one.
-            </p>
-            <div style={{ background: 'var(--bg-white)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px' }}>
-              <h3>Join a Team</h3>
-              <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                <input type="text" placeholder="Enter 6-character Join Code" value={joinCodeInput} onChange={e => setJoinCodeInput(e.target.value)}
-                  style={{ flex: 1, padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }} />
-                <button className="btn-primary" onClick={handleJoinTeam}>Join</button>
-              </div>
+          <div className="tm-empty">
+            <div className="tm-empty-head">
+              <div className="ui-empty-icon"><Users size={24} /></div>
+              <h1>{teams.length ? 'Add another team' : 'Bring your team together'}</h1>
+              <p>Rosters by event, a team stream, assignments, roles and a shared calendar. Join with a code from your captain, or start a team yourself.</p>
             </div>
-            <div style={{ background: 'var(--bg-white)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
-              <h3>Create a Team</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
-                <input type="text" placeholder="Team Name" value={createNameInput} onChange={e => setCreateNameInput(e.target.value)}
-                  style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }} />
-                <select value={createDivisionInput} onChange={e => setCreateDivisionInput(e.target.value)}
-                  style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
-                  <option value="B">Division B (Middle School)</option>
-                  <option value="C">Division C (High School)</option>
-                </select>
-                <button className="btn-primary" onClick={handleCreateTeam}>Create Team</button>
-              </div>
+            <div className="tm-empty-grid">
+              <form className="ui-card tm-empty-card" onSubmit={e => { e.preventDefault(); handleJoinTeam(); }}>
+                <span className="tm-empty-icon"><UserPlus size={18} /></span>
+                <h3>Join a team</h3>
+                <p className="ui-muted">Ask your captain for the 6-character code.</p>
+                <input className="ui-input tm-code-input" placeholder="ABC123" value={joinCodeInput} onChange={e => setJoinCodeInput(e.target.value.toUpperCase())} maxLength={8} aria-label="Join code" />
+                <button className="ui-btn ui-btn-ink" disabled={!joinCodeInput.trim()}>Join team</button>
+              </form>
+              <form className="ui-card tm-empty-card" onSubmit={e => { e.preventDefault(); handleCreateTeam(); }}>
+                <span className="tm-empty-icon is-alt"><Plus size={18} /></span>
+                <h3>Create a team</h3>
+                <p className="ui-muted">You’ll get a join code to share.</p>
+                <input className="ui-input" placeholder="Team name" value={createNameInput} onChange={e => setCreateNameInput(e.target.value)} aria-label="Team name" />
+                <div className="ui-segment tm-div-seg">
+                  <button type="button" className={createDivisionInput === 'B' ? 'is-active' : ''} onClick={() => setCreateDivisionInput('B')}>Division B</button>
+                  <button type="button" className={createDivisionInput === 'C' ? 'is-active' : ''} onClick={() => setCreateDivisionInput('C')}>Division C</button>
+                </div>
+                <button className="ui-btn ui-btn-primary" disabled={!createNameInput.trim()}>Create team</button>
+              </form>
             </div>
           </div>
         ) : (
           <>
             {/* ── Header ── */}
-            <div className="teams-header" style={{ background: activeTeam.bannerColor || BANNER_PRESETS[0] }}>
-              <div className="header-gradient">
-                <h1>{activeTeam.name}</h1>
-                <p>Division {activeTeam.division} • {activeTeam.members?.length || 0} member(s)</p>
-              </div>
-              <div className="header-actions">
-                <button className="icon-btn" title={`Join Code: ${activeTeam.joinCode}`}
-                  onClick={() => alert(`Join Code for ${activeTeam.name}:\n\n${activeTeam.joinCode}`)}>
-                  <UserPlus size={20} />
-                </button>
-                <button className="icon-btn" title="Export Roster as CSV" onClick={handleExportRoster}>
-                  <Download size={20} />
-                </button>
-                <button
-                  className="icon-btn"
-                  title={activeTeam.ownerId === uid ? 'Delete Team' : 'Leave Team'}
-                  onClick={handleLeaveTeam}
-                  style={{ color: '#ef4444' }}
-                >
-                  {activeTeam.ownerId === uid ? <Trash2 size={20} /> : <LogOut size={20} />}
-                </button>
-                <div className="user-menu">
-                  <div className="user-avatar"><Users size={20} /></div>
-                  <span>{getMemberName(uid)}</span>
+            <header className="tm-hero" style={{ background: activeTeam.bannerColor || 'var(--brand-gradient)' }}>
+              <div className="tm-hero-text">
+                <div className="tm-hero-chips">
+                  <span className="tm-hero-chip">Division {activeTeam.division}</span>
+                  <span className="tm-hero-chip">{activeTeam.members?.length || 0} member{activeTeam.members?.length === 1 ? '' : 's'}</span>
+                  {activeTeam.ownerId === uid && <span className="tm-hero-chip"><Crown size={12} /> Owner</span>}
                 </div>
+                <h1>{activeTeam.name}</h1>
               </div>
-            </div>
+              <div className="tm-hero-actions">
+                <button className="tm-code" onClick={copyJoinCode} title="Copy join code">
+                  <span className="tm-code-label">Join code</span>
+                  <span className="tm-code-value">{activeTeam.joinCode}</span>
+                  <Copy size={14} />
+                </button>
+                <button className="tm-glass" title="Export roster as CSV" onClick={handleExportRoster} aria-label="Export roster"><Download size={17} /></button>
+                <button className="tm-glass is-danger" title={activeTeam.ownerId === uid ? 'Delete team' : 'Leave team'} onClick={handleLeaveTeam} aria-label={activeTeam.ownerId === uid ? 'Delete team' : 'Leave team'}>
+                  {activeTeam.ownerId === uid ? <Trash2 size={17} /> : <LogOut size={17} />}
+                </button>
+              </div>
+            </header>
 
             {/* ── Tabs ── */}
-            <div className="teams-tabs">
-              {['roster', 'stream', 'assignments', 'people', 'settings'].map(tab => (
-                <button key={tab} className={activeTab === tab ? 'tab active' : 'tab'} onClick={() => setActiveTab(tab)}>
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            <nav className="tm-tabs" role="tablist">
+              {TABS.map(t => (
+                <button key={t.id} role="tab" aria-selected={activeTab === t.id} className={`tm-tab${activeTab === t.id ? ' is-active' : ''}`} onClick={() => setActiveTab(t.id)}>
+                  {t.icon} {t.label}
+                  {t.count !== undefined && <span className="tm-tab-count ui-tnum">{t.count}</span>}
                 </button>
               ))}
-            </div>
+            </nav>
 
-            {/* ═══════════ ROSTER TAB ═══════════ */}
+            {/* ═══════════ ROSTER ═══════════ */}
             {activeTab === 'roster' && (
-              <div className="roster-content">
-                <div className="roster-header">
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div className="tm-panel">
+                <div className="tm-toolbar">
+                  <div className="tm-subteams">
                     {subteams.map(st => (
-                      <button key={st.id} onClick={() => setActiveSubteam(st)}
-                        className={`toggle-btn ${activeSubteam?.id === st.id ? 'active' : ''}`}>
-                        {st.name}
-                      </button>
+                      <button key={st.id} onClick={() => setActiveSubteam(st)} className={`ui-chip${activeSubteam?.id === st.id ? ' is-active' : ''}`}>{st.name}</button>
                     ))}
+                    {subteams.length === 0 && <span className="ui-muted">No subteams yet</span>}
                   </div>
-                  <div className="subteam-controls">
-                    {activeSubteam && (
-                      <button className="subteam-btn" onClick={handleEditSubteamName}><Pencil size={16} /> Edit Name</button>
-                    )}
-                    <button className="add-subteam-btn" onClick={handleAddSubteam}>+ Add Subteam</button>
+                  <div className="tm-toolbar-actions">
+                    {activeSubteam && <button className="ui-btn ui-btn-outline ui-btn-sm" onClick={handleEditSubteamName}><Pencil size={14} /> Rename</button>}
+                    <button className="ui-btn ui-btn-primary ui-btn-sm" onClick={handleAddSubteam}><Plus size={14} /> Add subteam</button>
                   </div>
                 </div>
 
                 {activeSubteam && (
-                  <>
-                    {eventCategories.length === 0 ? (
-                      <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                        <p>No events configured yet.</p>
-                        <button className="btn-primary" style={{ marginTop: '12px' }} onClick={() => setActiveTab('settings')}>
-                          Configure Events in Settings
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="conflict-blocks">
-                        {eventCategories.map(cat => (
-                          <div key={cat.id} className="conflict-block" style={{ borderLeft: `4px solid ${cat.color}`, background: `color-mix(in srgb, ${cat.color} 8%, var(--bg-white))` }}>
-                            <div style={{ fontWeight: 700, marginBottom: '12px', color: cat.color, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              {cat.icon && <span style={{ fontSize: '1.2em', lineHeight: 1 }}>{cat.icon}</span>}
-                              {cat.name}
+                  eventCategories.length === 0 ? (
+                    <div className="ui-card ui-empty">
+                      <div className="ui-empty-icon"><Tag size={22} /></div>
+                      <h3>No event blocks yet</h3>
+                      <p>Group your events into conflict blocks (for example “Block 1” or “Chemistry Events”) and assign two members to each.</p>
+                      <button className="ui-btn ui-btn-primary" onClick={() => setActiveTab('settings')}>Set up event blocks</button>
+                    </div>
+                  ) : (
+                    <div className="tm-blocks">
+                      {eventCategories.map(cat => {
+                        const filled = cat.events.reduce((n, ev) => n + (teamMembers[ev]?.filter(Boolean).length ?? 0), 0);
+                        return (
+                          <div key={cat.id} className="ui-card tm-block" style={{ ['--cat' as string]: cat.color }}>
+                            <div className="tm-block-head">
+                              <span className="tm-block-title">
+                                {cat.icon && <span className="tm-block-emoji">{cat.icon}</span>}
+                                {cat.name}
+                              </span>
+                              <span className="tm-block-count ui-tnum">{filled}/{cat.events.length * 2} filled</span>
                             </div>
-                            {cat.events.map((eventName, ei) => (
-                              <div key={ei} className="event-assignment">
-                                <div className="event-header"><span className="event-name">{eventName}</span></div>
-                                <div className="member-inputs">
-                                  <input type="text" placeholder="Name" value={teamMembers[eventName]?.[0] || ''}
-                                    onChange={e => updateMember(eventName, 0, e.target.value)} />
-                                  <input type="text" placeholder="Name" value={teamMembers[eventName]?.[1] || ''}
-                                    onChange={e => updateMember(eventName, 1, e.target.value)} />
-                                </div>
-                              </div>
-                            ))}
+                            <div className="tm-events">
+                              {cat.events.map((eventName, ei) => {
+                                const m = eventMeta(eventName);
+                                return (
+                                  <div key={ei} className="tm-event">
+                                    <div className="tm-event-name">
+                                      <span className="tm-event-icon" style={{ color: m.color, background: `color-mix(in srgb, ${m.color} 12%, transparent)` }}><m.icon size={14} /></span>
+                                      {eventName}
+                                    </div>
+                                    <div className="tm-event-inputs">
+                                      {[0, 1].map(idx => (
+                                        <input
+                                          key={idx}
+                                          className="ui-input"
+                                          placeholder={`Partner ${idx + 1}`}
+                                          value={teamMembers[eventName]?.[idx] || ''}
+                                          onChange={e => updateMember(eventName, idx, e.target.value)}
+                                          aria-label={`${eventName} partner ${idx + 1}`}
+                                        />
+                                      ))}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </>
+                        );
+                      })}
+                    </div>
+                  )
                 )}
               </div>
             )}
 
-            {/* ═══════════ STREAM TAB ═══════════ */}
+            {/* ═══════════ STREAM ═══════════ */}
             {activeTab === 'stream' && (
-              <div style={{ padding: '24px' }}>
-                {/* Composer */}
-                <div style={{ background: 'var(--bg-white)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '24px', display: 'flex', gap: '12px' }}>
-                  <input type="text" placeholder="Announce something to your team..." value={newStreamMsg}
-                    onChange={e => setNewStreamMsg(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleSendStreamMessage()}
-                    style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid var(--border-color)' }} />
-                  <button className="btn-primary" onClick={handleSendStreamMessage} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 20px' }}>
-                    <Send size={18} /> Post
-                  </button>
-                </div>
+              <div className="tm-panel tm-narrow">
+                <form className="ui-card tm-composer" onSubmit={e => { e.preventDefault(); handleSendStreamMessage(); }}>
+                  <span className="tm-avatar">{initials(myName)}</span>
+                  <input className="ui-input" placeholder="Announce something to your team…" value={newStreamMsg} onChange={e => setNewStreamMsg(e.target.value)} aria-label="New message" />
+                  <button className="ui-btn ui-btn-primary" disabled={!newStreamMsg.trim()}><Send size={15} /> Post</button>
+                </form>
 
-                {/* Pinned */}
                 {pinnedMessages.length > 0 && (
-                  <div style={{ marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px', color: 'var(--primary-color)', fontWeight: 600, fontSize: '13px' }}>
-                      <Pin size={14} /> PINNED MESSAGES
-                    </div>
+                  <div className="tm-pinned">
+                    <span className="tm-section-label"><Pin size={13} /> Pinned</span>
                     {pinnedMessages.map(msg => (
-                      <StreamMsgCard key={msg.id} msg={msg} uid={uid} isAdmin={!!activeTeam && isAdmin(activeTeam)}
+                      <StreamMsgCard key={msg.id} msg={msg} uid={uid} isAdmin={canAdmin}
                         editingMsgId={editingMsgId} editMsgContent={editMsgContent}
                         openMsgMenu={openMsgMenu} menuRef={menuRef}
                         setEditingMsgId={setEditingMsgId} setEditMsgContent={setEditMsgContent}
@@ -572,129 +608,143 @@ export default function Teams() {
                         onEdit={handleEditMsg} onDelete={handleDeleteMsg} onPin={handlePinMsg}
                         pinned />
                     ))}
-                    <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', marginTop: '16px' }} />
                   </div>
                 )}
 
-                {/* Messages */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {unpinnedMessages.length === 0 && pinnedMessages.length === 0 ? (
-                    <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '2rem' }}>No messages yet. Be the first!</p>
-                  ) : (
-                    unpinnedMessages.map(msg => (
-                      <StreamMsgCard key={msg.id} msg={msg} uid={uid} isAdmin={!!activeTeam && isAdmin(activeTeam)}
+                {unpinnedMessages.length === 0 && pinnedMessages.length === 0 ? (
+                  <div className="ui-card ui-empty">
+                    <div className="ui-empty-icon"><MessageSquare size={22} /></div>
+                    <h3>No messages yet</h3>
+                    <p>Post practice times, reminders or shout-outs. Share custom tests here from the Create page.</p>
+                  </div>
+                ) : (
+                  <div className="tm-list">
+                    {unpinnedMessages.map(msg => (
+                      <StreamMsgCard key={msg.id} msg={msg} uid={uid} isAdmin={canAdmin}
                         editingMsgId={editingMsgId} editMsgContent={editMsgContent}
                         openMsgMenu={openMsgMenu} menuRef={menuRef}
                         setEditingMsgId={setEditingMsgId} setEditMsgContent={setEditMsgContent}
                         setOpenMsgMenu={setOpenMsgMenu}
                         onEdit={handleEditMsg} onDelete={handleDeleteMsg} onPin={handlePinMsg}
                         pinned={false} />
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* ═══════════ ASSIGNMENTS TAB ═══════════ */}
-            {activeTab === 'assignments' && (
-              <div style={{ padding: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                  <h2>Team Assignments</h2>
-                  <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px' }} onClick={() => setShowAssignmentModal(true)}>
-                    <Plus size={18} /> Create
-                  </button>
-                </div>
-                {showAssignmentModal && (
-                  <div style={{ background: 'var(--bg-white)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px' }}>
-                    <h3 style={{ marginBottom: '16px' }}>New Assignment</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <input type="text" placeholder="Title" value={assignmentTitle} onChange={e => setAssignmentTitle(e.target.value)}
-                        style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }} />
-                      <textarea placeholder="Description" value={assignmentDesc} onChange={e => setAssignmentDesc(e.target.value)}
-                        style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)', minHeight: '80px', fontFamily: 'inherit' }} />
-                      <input type="date" value={assignmentDueDate} onChange={e => setAssignmentDueDate(e.target.value)}
-                        style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }} />
-                      
-                      <select 
-                        value={assignmentCustomTestId} 
-                        onChange={e => setAssignmentCustomTestId(e.target.value)}
-                        style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }}
-                      >
-                        <option value="">-- Optional: Attach a Custom Test --</option>
-                        {customTests.map(t => (
-                          <option key={t.id} value={t.id}>{t.title}</option>
-                        ))}
-                      </select>
-
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <button className="btn-primary" onClick={handleAddAssignment}>Save</button>
-                        <button className="btn-secondary" onClick={() => setShowAssignmentModal(false)}>Cancel</button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {assignments.length === 0 ? (
-                  <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '2rem' }}>No assignments yet.</p>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {assignments.map(a => (
-                      <div key={a.id} style={{ background: 'var(--bg-white)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                          <h4 style={{ marginBottom: '4px' }}>{a.title}</h4>
-                          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '8px' }}>{a.description}</p>
-                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            {a.dueDate && <span style={{ fontSize: '12px', background: 'var(--bg-gray)', padding: '4px 8px', borderRadius: '4px' }}>Due: {a.dueDate}</span>}
-                            {a.customTestId && (
-                              <Link to={`/test/${a.customTestId}`} style={{ fontSize: '12px', background: 'var(--primary-color)', color: 'white', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none' }}>
-                                Take Test
-                              </Link>
-                            )}
-                          </div>
-                        </div>
-                        {isAdmin(activeTeam) && (
-                          <button onClick={async () => { if (a.id) { await firestoreService.deleteAssignment(activeTeam.id, a.id); loadAssignments(activeTeam.id); } }}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '4px' }}>
-                            <Trash2 size={16} />
-                          </button>
-                        )}
-                      </div>
                     ))}
                   </div>
                 )}
               </div>
             )}
 
-            {/* ═══════════ PEOPLE TAB ═══════════ */}
+            {/* ═══════════ ASSIGNMENTS ═══════════ */}
+            {activeTab === 'assignments' && (
+              <div className="tm-panel tm-narrow">
+                <div className="tm-panel-head">
+                  <div>
+                    <h2>Assignments</h2>
+                    <p className="ui-muted">Give the team tests to finish by a due date.</p>
+                  </div>
+                  {!showAssignmentModal && <button className="ui-btn ui-btn-primary" onClick={() => setShowAssignmentModal(true)}><Plus size={15} /> New assignment</button>}
+                </div>
+
+                {showAssignmentModal && (
+                  <form className="ui-card tm-form" onSubmit={e => { e.preventDefault(); handleAddAssignment(); }}>
+                    <h3>New assignment</h3>
+                    <label><span className="ui-label">Title</span><input className="ui-input" placeholder="e.g. Disease Detectives set #3" value={assignmentTitle} onChange={e => setAssignmentTitle(e.target.value)} autoFocus /></label>
+                    <label><span className="ui-label">Description</span><textarea className="ui-input" rows={3} placeholder="Instructions for the team" value={assignmentDesc} onChange={e => setAssignmentDesc(e.target.value)} /></label>
+                    <div className="tm-form-row">
+                      <label><span className="ui-label">Due date</span><input className="ui-input" type="date" value={assignmentDueDate} onChange={e => setAssignmentDueDate(e.target.value)} /></label>
+                      <label><span className="ui-label">Attach a test (optional)</span>
+                        <select className="ui-input" value={assignmentCustomTestId} onChange={e => setAssignmentCustomTestId(e.target.value)}>
+                          <option value="">None</option>
+                          {customTests.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                        </select>
+                      </label>
+                    </div>
+                    <div className="tm-form-actions">
+                      <button type="button" className="ui-btn ui-btn-ghost" onClick={() => setShowAssignmentModal(false)}>Cancel</button>
+                      <button className="ui-btn ui-btn-primary" disabled={!assignmentTitle.trim()}>Create assignment</button>
+                    </div>
+                  </form>
+                )}
+
+                {assignments.length === 0 ? (
+                  !showAssignmentModal && (
+                    <div className="ui-card ui-empty">
+                      <div className="ui-empty-icon"><ClipboardList size={22} /></div>
+                      <h3>No assignments yet</h3>
+                      <p>Create one and attach a custom test so everyone practices the same material.</p>
+                    </div>
+                  )
+                ) : (
+                  <div className="tm-list">
+                    {assignments.map(a => {
+                      const overdue = !!a.dueDate && a.dueDate < today;
+                      return (
+                        <div key={a.id} className="ui-card tm-assign">
+                          <span className={`tm-assign-icon${overdue ? ' is-late' : ''}`}><ClipboardList size={17} /></span>
+                          <div className="tm-assign-body">
+                            <h4>{a.title}</h4>
+                            {a.description && <p>{a.description}</p>}
+                            <div className="tm-assign-meta">
+                              {a.dueDate && (
+                                <span className={`ui-chip ${overdue ? 'ui-chip-danger' : a.dueDate === today ? 'ui-chip-warning' : ''}`}>
+                                  <Calendar size={12} /> {overdue ? 'Was due' : 'Due'} {new Date(a.dueDate + 'T12:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                </span>
+                              )}
+                              {a.customTestId && <Link to={`/test/${a.customTestId}`} className="ui-btn ui-btn-soft ui-btn-sm"><FileText size={13} /> Take test</Link>}
+                            </div>
+                          </div>
+                          {canAdmin && (
+                            <button className="ui-btn ui-btn-ghost ui-btn-sm ui-btn-icon tm-del" aria-label="Delete assignment"
+                              onClick={async () => { if (a.id && confirm(`Delete “${a.title}”?`)) { await firestoreService.deleteAssignment(activeTeam.id, a.id); loadAssignments(activeTeam.id); } }}>
+                              <Trash2 size={15} />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ═══════════ PEOPLE ═══════════ */}
             {activeTab === 'people' && (
-              <div style={{ padding: '24px' }}>
-                <h2>Team Members</h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+              <div className="tm-panel tm-narrow">
+                <div className="tm-panel-head">
+                  <div>
+                    <h2>People</h2>
+                    <p className="ui-muted">{activeTeam.members?.length || 0} members. Invite more with the join code <b>{activeTeam.joinCode}</b>.</p>
+                  </div>
+                  <button className="ui-btn ui-btn-outline" onClick={copyJoinCode}><Copy size={15} /> Copy invite code</button>
+                </div>
+                <div className="ui-card tm-people">
                   {activeTeam.members?.map(memberId => {
                     const memberRole = getMemberRole(memberId);
+                    const name = memberId === uid ? myName : getMemberName(memberId);
                     return (
-                      <div key={memberId} style={{ background: 'var(--bg-white)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div className="user-avatar"><Users size={20} /></div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: 600 }}>{getMemberName(memberId)}</div>
-                          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                      <div key={memberId} className="tm-person">
+                        <span className="tm-avatar" style={memberRole ? { background: memberRole.color } : undefined}>{initials(name)}</span>
+                        <div className="tm-person-body">
+                          <span className="tm-person-name">{name}{memberId === uid && <span className="ui-muted"> (you)</span>}</span>
+                          <span className="tm-person-role">
                             {memberId === activeTeam.ownerId
-                              ? <span style={{ color: '#f59e0b', fontWeight: 600 }}>👑 Owner</span>
+                              ? <span className="ui-chip ui-chip-warning"><Crown size={11} /> Owner</span>
                               : memberRole
-                                ? <span style={{ background: memberRole.color, color: 'white', padding: '2px 8px', borderRadius: '20px', fontSize: '12px', fontWeight: 600 }}>{memberRole.name}</span>
-                                : 'Member'
-                            }
-                          </div>
+                                ? <span className="ui-chip" style={{ background: `color-mix(in srgb, ${memberRole.color} 14%, transparent)`, color: memberRole.color, borderColor: 'transparent' }}>{memberRole.name}</span>
+                                : <span className="ui-chip">Member</span>}
+                          </span>
                         </div>
-                        {isAdmin(activeTeam) && memberId !== activeTeam.ownerId && (
+                        {canAdmin && memberId !== activeTeam.ownerId && (
                           <select
+                            className="ui-input tm-role-select"
                             value={activeTeam.memberRoles?.[memberId] || ''}
+                            aria-label={`Role for ${name}`}
                             onChange={async e => {
                               await firestoreService.assignMemberRole(activeTeam.id, memberId, e.target.value || null);
                               setActiveTeam(t => t ? { ...t, memberRoles: { ...t.memberRoles, [memberId]: e.target.value } } : t);
+                              toast('Role updated');
                             }}
-                            style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '13px' }}
                           >
-                            <option value="">Member (default)</option>
+                            <option value="">Member</option>
                             {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                           </select>
                         )}
@@ -705,254 +755,205 @@ export default function Teams() {
               </div>
             )}
 
-            {/* ═══════════ SETTINGS TAB ═══════════ */}
+            {/* ═══════════ SETTINGS ═══════════ */}
             {activeTab === 'settings' && (
-              <div style={{ padding: '24px', maxWidth: '700px' }}>
-
-                {/* General */}
-                <Section icon={<Pencil size={18} />} title="General">
-                  <label style={labelStyle}>Team Name</label>
-                  <input value={settingsTeamName} onChange={e => setSettingsTeamName(e.target.value)}
-                    style={inputStyle} />
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-                    <button className="btn-primary" onClick={handleSaveSettings} disabled={settingsSaving}>
-                      {settingsSaving ? 'Saving…' : 'Save Changes'}
-                    </button>
+              <div className="tm-panel tm-narrow">
+                <Section icon={<Pencil size={16} />} title="General" desc="Rename your team.">
+                  <label><span className="ui-label">Team name</span><input className="ui-input" value={settingsTeamName} onChange={e => setSettingsTeamName(e.target.value)} /></label>
+                  <div className="tm-form-actions">
+                    <button className="ui-btn ui-btn-primary" onClick={handleSaveSettings} disabled={settingsSaving}>{settingsSaving ? 'Saving…' : 'Save changes'}</button>
                   </div>
                 </Section>
 
-                {/* Banner */}
-                <Section icon={<Image size={18} />} title="Team Banner">
-                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <Section icon={<Image size={16} />} title="Banner" desc="The color behind your team header.">
+                  <div className="tm-banner-preview" style={{ background: settingsBanner }}><span>{settingsTeamName || activeTeam.name}</span></div>
+                  <div className="tm-swatches">
                     {BANNER_PRESETS.map(bg => (
-                      <button key={bg} onClick={() => setSettingsBanner(bg)}
-                        style={{ width: '80px', height: '44px', borderRadius: '8px', background: bg, border: settingsBanner === bg ? '3px solid var(--primary-color)' : '3px solid transparent', cursor: 'pointer' }} />
+                      <button key={bg} className={`tm-banner-swatch${settingsBanner === bg ? ' is-on' : ''}`} style={{ background: bg }} onClick={() => setSettingsBanner(bg)} aria-label="Banner preset" />
                     ))}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '10px' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 600 }}>Custom:</span>
-                      <input 
-                        type="color" 
-                        value={settingsBanner.startsWith('#') ? settingsBanner : '#4b6ba2'} 
-                        onChange={e => setSettingsBanner(e.target.value)} 
-                        style={{ width: '44px', height: '44px', padding: '0', border: 'none', borderRadius: '8px', cursor: 'pointer', background: 'none' }}
-                      />
-                    </div>
+                    <label className="tm-custom-color" title="Custom color">
+                      <input type="color" value={settingsBanner.startsWith('#') ? settingsBanner : '#1f6feb'} onChange={e => setSettingsBanner(e.target.value)} />
+                      Custom
+                    </label>
                   </div>
-                  <div style={{ marginTop: '10px', height: '56px', borderRadius: '12px', background: settingsBanner }} />
-                  <button className="btn-primary" onClick={handleSaveSettings} style={{ marginTop: '12px' }}>Apply Banner</button>
+                  <div className="tm-form-actions">
+                    <button className="ui-btn ui-btn-primary" onClick={handleSaveSettings}>Apply banner</button>
+                  </div>
                 </Section>
 
-                {/* Roles */}
-                <Section icon={<Shield size={18} />} title="Roles & Permissions">
-                  {/* existing roles */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
-                    {roles.length === 0 && <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>No custom roles yet.</p>}
+                <Section icon={<Shield size={16} />} title="Roles & permissions" desc="Give members specific powers.">
+                  <div className="tm-rows">
+                    {roles.length === 0 && <p className="ui-muted tm-small">No custom roles yet.</p>}
                     {roles.map(r => (
-                      <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '10px', background: 'var(--bg-gray)', border: '1px solid var(--border-color)' }}>
-                        <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: r.color, display: 'inline-block' }} />
-                        <span style={{ fontWeight: 600, flex: 1 }}>{r.name}</span>
-                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                          {Object.entries(r.permissions).filter(([, v]) => v).map(([k]) => k.replace('manage', '')).join(', ') || 'No perms'}
-                        </span>
-                        {isAdmin(activeTeam) && (
-                          <button onClick={async () => { if (r.id) { await firestoreService.deleteTeamRole(activeTeam.id, r.id); setRoles(p => p.filter(x => x.id !== r.id)); } }}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={14} /></button>
+                      <div key={r.id} className="tm-row">
+                        <span className="tm-dot" style={{ background: r.color }} />
+                        <span className="tm-row-title">{r.name}</span>
+                        <span className="tm-row-meta">{Object.entries(r.permissions).filter(([, v]) => v).map(([k]) => k.replace('manage', '')).join(', ') || 'No permissions'}</span>
+                        {canAdmin && (
+                          <button className="ui-btn ui-btn-ghost ui-btn-sm ui-btn-icon" aria-label={`Delete role ${r.name}`}
+                            onClick={async () => { if (r.id) { await firestoreService.deleteTeamRole(activeTeam.id, r.id); setRoles(p => p.filter(x => x.id !== r.id)); } }}>
+                            <Trash2 size={14} />
+                          </button>
                         )}
                       </div>
                     ))}
                   </div>
-                  {/* new role form */}
-                  <div style={{ background: 'var(--bg-gray)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                    <div style={{ fontWeight: 600, marginBottom: '12px' }}>Create New Role</div>
-                    <input placeholder="Role name" value={newRoleName} onChange={e => setNewRoleName(e.target.value)} style={{ ...inputStyle, marginBottom: '10px' }} />
-                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  <div className="tm-subform">
+                    <span className="tm-subform-title">New role</span>
+                    <input className="ui-input" placeholder="Role name, e.g. Captain" value={newRoleName} onChange={e => setNewRoleName(e.target.value)} />
+                    <div className="tm-colors">
                       {ROLE_COLORS.map(c => (
-                        <button key={c} onClick={() => setNewRoleColor(c)}
-                          style={{ width: '26px', height: '26px', borderRadius: '50%', background: c, border: newRoleColor === c ? '3px solid var(--text-primary)' : '3px solid transparent', cursor: 'pointer' }} />
+                        <button key={c} className={`tm-color${newRoleColor === c ? ' is-on' : ''}`} style={{ background: c }} onClick={() => setNewRoleColor(c)} aria-label={`Color ${c}`} />
                       ))}
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                    <div className="tm-perms">
                       {(Object.keys(DEFAULT_PERMISSIONS) as (keyof typeof DEFAULT_PERMISSIONS)[]).map(perm => (
-                        <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', cursor: 'pointer' }}>
-                          <input type="checkbox" checked={newRolePerms[perm]}
-                            onChange={e => setNewRolePerms(p => ({ ...p, [perm]: e.target.checked }))} />
+                        <label key={perm} className="tm-perm">
+                          <input type="checkbox" className="ui-switch" checked={newRolePerms[perm]} onChange={e => setNewRolePerms(p => ({ ...p, [perm]: e.target.checked }))} />
                           {perm.replace('manage', 'Manage ')}
                         </label>
                       ))}
                     </div>
-                    <button className="btn-primary" onClick={handleCreateRole}>Create Role</button>
+                    <div className="tm-form-actions">
+                      <button className="ui-btn ui-btn-primary ui-btn-sm" onClick={handleCreateRole} disabled={!newRoleName.trim()}><Plus size={14} /> Create role</button>
+                    </div>
                   </div>
                 </Section>
 
-                {/* Event Config */}
-                <Section icon={<Tag size={18} />} title="Event Categories (Roster)">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
-                    {eventCategories.length === 0 && <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>No categories yet. Add one below.</p>}
+                <Section icon={<Tag size={16} />} title="Event blocks" desc="Conflict blocks shown on the roster. Each event gets two partner slots.">
+                  <div className="tm-rows">
+                    {eventCategories.length === 0 && <p className="ui-muted tm-small">No blocks yet. Add one below.</p>}
                     {eventCategories.map(cat => (
-                      <div key={cat.id} style={{ padding: '12px 16px', borderRadius: '10px', borderLeft: `4px solid ${cat.color}`, background: 'var(--bg-gray)', border: `1px solid var(--border-color)`, borderLeftWidth: '4px', borderLeftColor: cat.color }}>
+                      <div key={cat.id} className="tm-cat" style={{ ['--cat' as string]: cat.color }}>
                         {editingCatId === cat.id ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            <input 
-                              type="text" 
-                              value={editCatName} 
-                              onChange={e => setEditCatName(e.target.value)} 
-                              style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-color)', fontSize: '14px', fontWeight: 600 }}
-                            />
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                              <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.4px', textTransform: 'uppercase' }}>Icon (optional - emoji or text)</div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ fontSize: '22px', minWidth: '32px', textAlign: 'center' }}>{editCatIcon || '-'}</span>
-                                <input
-                                  type="text"
-                                  placeholder="e.g. 🧪 or 🔬"
-                                  value={editCatIcon}
-                                  onChange={e => setEditCatIcon(e.target.value)}
-                                  maxLength={4}
-                                  style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-color)', fontSize: '18px', width: '80px' }}
-                                />
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                                  {['🧪','🔬','⚗️','🧬','🦠','⚡','🔭','🌿','🏗️','🧲','📐','🌊','🔥','💡','🏆'].map(em => (
-                                    <button key={em} onClick={() => setEditCatIcon(em)}
-                                      title={em}
-                                      style={{ background: editCatIcon === em ? 'var(--primary-color)' : 'var(--bg-white)', border: `1px solid ${editCatIcon === em ? 'var(--primary-color)' : 'var(--border-color)'}`, borderRadius: '6px', padding: '2px 4px', fontSize: '16px', cursor: 'pointer' }}>
-                                      {em}
-                                    </button>
-                                  ))}
-                                  {editCatIcon && (
-                                    <button onClick={() => setEditCatIcon('')}
-                                      style={{ background: 'none', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '2px 6px', fontSize: '11px', cursor: 'pointer', color: '#ef4444' }}>
-                                      ✕ Clear
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          <div className="tm-cat-edit">
+                            <input className="ui-input" value={editCatName} onChange={e => setEditCatName(e.target.value)} aria-label="Block name" />
+                            <EmojiPicker value={editCatIcon} onChange={setEditCatIcon} />
+                            <div className="tm-tags">
                               {editCatEvents.map((ev, i) => (
-                                <div key={i} style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-white)', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '2px 6px', fontSize: '12px' }}>
+                                <span key={i} className="ui-chip">
                                   {ev}
-                                  <button onClick={() => setEditCatEvents(p => p.filter((_, idx) => idx !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: '4px', color: '#ef4444', padding: 0 }}><X size={12} /></button>
-                                </div>
+                                  <button className="tm-tag-x" onClick={() => setEditCatEvents(p => p.filter((_, idx) => idx !== i))} aria-label={`Remove ${ev}`}><X size={11} /></button>
+                                </span>
                               ))}
                             </div>
-                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                              <input 
-                                type="text" 
-                                placeholder="Add event..." 
-                                value={newEventInput} 
-                                onChange={e => setNewEventInput(e.target.value)}
-                                onKeyDown={e => { if (e.key === 'Enter' && newEventInput.trim()) { setEditCatEvents(p => [...p, newEventInput.trim()]); setNewEventInput(''); } }}
-                                style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-color)', fontSize: '12px', flex: 1 }}
-                              />
-                              <button onClick={() => { if (newEventInput.trim()) { setEditCatEvents(p => [...p, newEventInput.trim()]); setNewEventInput(''); } }} style={{ background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', cursor: 'pointer', fontSize: '12px' }}>Add</button>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '4px' }}>
-                              <button onClick={() => setEditingCatId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '12px' }}>Cancel</button>
-                              <button onClick={() => cat.id && handleSaveCategoryEdit(cat.id)} style={{ background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 12px', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Save</button>
+                            <form className="tm-inline" onSubmit={e => { e.preventDefault(); if (newEventInput.trim()) { setEditCatEvents(p => [...p, newEventInput.trim()]); setNewEventInput(''); } }}>
+                              <input className="ui-input" placeholder="Add an event…" value={newEventInput} onChange={e => setNewEventInput(e.target.value)} />
+                              <button className="ui-btn ui-btn-outline ui-btn-sm">Add</button>
+                            </form>
+                            <div className="tm-form-actions">
+                              <button className="ui-btn ui-btn-ghost ui-btn-sm" onClick={() => setEditingCatId(null)}>Cancel</button>
+                              <button className="ui-btn ui-btn-primary ui-btn-sm" onClick={() => cat.id && handleSaveCategoryEdit(cat.id)}>Save</button>
                             </div>
                           </div>
                         ) : (
                           <>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                {cat.icon && <span style={{ fontSize: '1.15em' }}>{cat.icon}</span>}
-                                {cat.name}
-                              </span>
-                              <div style={{ display: 'flex', gap: '8px' }}>
-                                <button onClick={() => { setEditingCatId(cat.id || null); setEditCatName(cat.name); setEditCatIcon(cat.icon || ''); setEditCatEvents(cat.events); setNewEventInput(''); }}
-                                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}><Edit2 size={14} /></button>
-                                <button onClick={async () => { if (cat.id) { await firestoreService.deleteEventCategory(activeTeam.id, cat.id); setEventCategories(p => p.filter(c => c.id !== cat.id)); } }}
-                                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}><Trash2 size={14} /></button>
+                            <div className="tm-cat-head">
+                              <span className="tm-row-title">{cat.icon && <span>{cat.icon}</span>} {cat.name}</span>
+                              <div className="tm-cat-actions">
+                                <button className="ui-btn ui-btn-ghost ui-btn-sm ui-btn-icon" aria-label={`Edit ${cat.name}`}
+                                  onClick={() => { setEditingCatId(cat.id || null); setEditCatName(cat.name); setEditCatIcon(cat.icon || ''); setEditCatEvents(cat.events); setNewEventInput(''); }}>
+                                  <Edit2 size={14} />
+                                </button>
+                                <button className="ui-btn ui-btn-ghost ui-btn-sm ui-btn-icon" aria-label={`Delete ${cat.name}`}
+                                  onClick={async () => { if (cat.id && confirm(`Delete block “${cat.name}”?`)) { await firestoreService.deleteEventCategory(activeTeam.id, cat.id); setEventCategories(p => p.filter(c => c.id !== cat.id)); } }}>
+                                  <Trash2 size={14} />
+                                </button>
                               </div>
                             </div>
-                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>{cat.events.join(', ')}</div>
+                            <div className="tm-tags">{cat.events.map(ev => <span key={ev} className="ui-chip">{ev}</span>)}</div>
                           </>
                         )}
                       </div>
                     ))}
                   </div>
                   {!showCatForm ? (
-                    <button className="btn-secondary" onClick={() => setShowCatForm(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Plus size={16} /> Add Category
-                    </button>
+                    <button className="ui-btn ui-btn-outline" onClick={() => setShowCatForm(true)}><Plus size={15} /> Add block</button>
                   ) : (
-                    <div style={{ background: 'var(--bg-gray)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                      <input placeholder="Category name (e.g. Block 1)" value={newCatName} onChange={e => setNewCatName(e.target.value)} style={{ ...inputStyle, marginBottom: '10px' }} />
-                      <input placeholder="Events (comma separated)" value={newCatEvents} onChange={e => setNewCatEvents(e.target.value)} style={{ ...inputStyle, marginBottom: '10px' }} />
-                      
-                      {/* Icon picker */}
-                      <div style={{ marginBottom: '12px' }}>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Icon (optional)</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: '22px', minWidth: '32px', textAlign: 'center' }}>{newCatIcon || '-'}</span>
-                          <input
-                            type="text"
-                            placeholder="e.g. 🧪"
-                            value={newCatIcon}
-                            onChange={e => setNewCatIcon(e.target.value)}
-                            maxLength={4}
-                            style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border-color)', fontSize: '18px', width: '80px' }}
-                          />
-                          {['🧪','🔬','⚗️','🧬','🦠','⚡','🔭','🌿','🏗️','🧲','📐','🌊','🔥','💡','🏆'].map(em => (
-                            <button key={em} onClick={() => setNewCatIcon(em)}
-                              title={em}
-                              style={{ background: newCatIcon === em ? 'var(--primary-color)' : 'var(--bg-white)', border: `1px solid ${newCatIcon === em ? 'var(--primary-color)' : 'var(--border-color)'}`, borderRadius: '6px', padding: '2px 4px', fontSize: '16px', cursor: 'pointer' }}>
-                              {em}
-                            </button>
-                          ))}
-                          {newCatIcon && (
-                            <button onClick={() => setNewCatIcon('')}
-                              style={{ background: 'none', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '2px 6px', fontSize: '11px', cursor: 'pointer', color: '#ef4444' }}>
-                              ✕ Clear
-                            </button>
-                          )}
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                        {['#2563eb','#16a34a','#9333ea','#dc2626','#ea580c','#db2777'].map(c => (
-                          <button key={c} onClick={() => setNewCatColor(c)}
-                            style={{ width: '26px', height: '26px', borderRadius: '50%', background: c, border: newCatColor === c ? '3px solid var(--text-primary)' : '3px solid transparent', cursor: 'pointer' }} />
+                    <div className="tm-subform">
+                      <span className="tm-subform-title">New block</span>
+                      <input className="ui-input" placeholder="Block name, e.g. Block 1" value={newCatName} onChange={e => setNewCatName(e.target.value)} />
+                      <input className="ui-input" placeholder="Events, comma separated (e.g. Anatomy & Physiology, Codebusters)" value={newCatEvents} onChange={e => setNewCatEvents(e.target.value)} />
+                      <EmojiPicker value={newCatIcon} onChange={setNewCatIcon} />
+                      <div className="tm-colors">
+                        {CAT_COLORS.map(c => (
+                          <button key={c} className={`tm-color${newCatColor === c ? ' is-on' : ''}`} style={{ background: c }} onClick={() => setNewCatColor(c)} aria-label={`Color ${c}`} />
                         ))}
                       </div>
-                      <div style={{ display: 'flex', gap: '10px' }}>
-                        <button className="btn-primary" onClick={handleAddCategory}>Add</button>
-                        <button className="btn-secondary" onClick={() => { setShowCatForm(false); setNewCatIcon(''); }}>Cancel</button>
+                      <div className="tm-form-actions">
+                        <button className="ui-btn ui-btn-ghost ui-btn-sm" onClick={() => { setShowCatForm(false); setNewCatIcon(''); }}>Cancel</button>
+                        <button className="ui-btn ui-btn-primary ui-btn-sm" onClick={handleAddCategory} disabled={!newCatName.trim()}>Add block</button>
                       </div>
                     </div>
                   )}
                 </Section>
 
-                {/* Danger Zone */}
-                <Section icon={<Palette size={18} />} title="Danger Zone">
-                  <button
-                    onClick={handleLeaveTeam}
-                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px', borderRadius: '8px', border: '1px solid #ef4444', background: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: 600 }}
-                  >
-                    {activeTeam.ownerId === uid ? <><Trash2 size={16} /> Delete Team</> : <><LogOut size={16} /> Leave Team</>}
+                <Section icon={<AlertTriangle size={16} />} title="Danger zone" desc={activeTeam.ownerId === uid ? 'Deleting removes the team for everyone.' : 'You can rejoin later with the code.'} danger>
+                  <button className="ui-btn ui-btn-danger" onClick={handleLeaveTeam}>
+                    {activeTeam.ownerId === uid ? <><Trash2 size={15} /> Delete team</> : <><LogOut size={15} /> Leave team</>}
                   </button>
                 </Section>
               </div>
             )}
           </>
         )}
-      </div>
+      </section>
+
+      {/* Subteam name modal */}
+      {nameModal && (
+        <div className="ui-modal-backdrop" onMouseDown={() => setNameModal(null)}>
+          <form className="ui-modal tm-modal" onMouseDown={e => e.stopPropagation()} onSubmit={e => { e.preventDefault(); submitNameModal(); }}>
+            <h3>{nameModal.mode === 'add' ? 'New subteam' : 'Rename subteam'}</h3>
+            <input className="ui-input" autoFocus placeholder="e.g. Team A" value={nameModal.value} onChange={e => setNameModal({ ...nameModal, value: e.target.value })} />
+            <div className="tm-form-actions">
+              <button type="button" className="ui-btn ui-btn-ghost" onClick={() => setNameModal(null)}>Cancel</button>
+              <button className="ui-btn ui-btn-primary" disabled={!nameModal.value.trim()}>{nameModal.mode === 'add' ? 'Add subteam' : 'Save'}</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Join code fallback (clipboard blocked) */}
+      {showJoinCode && activeTeam && (
+        <div className="ui-modal-backdrop" onMouseDown={() => setShowJoinCode(false)}>
+          <div className="ui-modal tm-modal" onMouseDown={e => e.stopPropagation()}>
+            <h3>Join code for {activeTeam.name}</h3>
+            <div className="tm-big-code">{activeTeam.joinCode}</div>
+            <div className="tm-form-actions"><button className="ui-btn ui-btn-primary" onClick={() => setShowJoinCode(false)}>Done</button></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
-const labelStyle: React.CSSProperties = { display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' };
-const inputStyle: React.CSSProperties = { width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--input-border, var(--border-color))', background: 'var(--input-bg)', color: 'var(--input-text)', fontSize: '14px', boxSizing: 'border-box' };
 
-function Section({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
+function Section({ icon, title, desc, children, danger }: { icon: React.ReactNode; title: string; desc?: string; children: React.ReactNode; danger?: boolean }) {
   return (
-    <div style={{ background: 'var(--bg-white)', borderRadius: '16px', border: '1px solid var(--border-color)', padding: '24px', marginBottom: '20px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-        <span style={{ color: 'var(--primary-color)' }}>{icon}</span>
-        <h3 style={{ margin: 0 }}>{title}</h3>
+    <section className={`ui-card tm-section${danger ? ' is-danger' : ''}`}>
+      <div className="tm-section-head">
+        <span className="tm-section-icon">{icon}</span>
+        <div>
+          <h3>{title}</h3>
+          {desc && <p>{desc}</p>}
+        </div>
       </div>
-      {children}
+      <div className="tm-section-body">{children}</div>
+    </section>
+  );
+}
+
+function EmojiPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="tm-emoji">
+      <span className="tm-emoji-current">{value || '–'}</span>
+      <div className="tm-emoji-list">
+        {EMOJIS.map(em => (
+          <button key={em} type="button" className={`tm-emoji-btn${value === em ? ' is-on' : ''}`} onClick={() => onChange(em)} aria-label={`Icon ${em}`}>{em}</button>
+        ))}
+        {value && <button type="button" className="tm-emoji-clear" onClick={() => onChange('')}>Clear</button>}
+      </div>
     </div>
   );
 }
@@ -974,90 +975,52 @@ function StreamMsgCard({ msg, uid, isAdmin, editingMsgId, editMsgContent, openMs
   const isEditing = editingMsgId === msg.id;
 
   return (
-    <div style={{ background: pinned ? 'color-mix(in srgb, var(--primary-color) 6%, var(--bg-white))' : 'var(--bg-white)', padding: '16px', borderRadius: '12px', border: `1px solid ${pinned ? 'var(--primary-color)' : 'var(--border-color)'}`, position: 'relative' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ fontWeight: 600, marginBottom: '4px' }}>{msg.authorName}</div>
-        {canModify && (
-          <div style={{ position: 'relative' }} ref={openMsgMenu === msg.id ? menuRef : undefined}>
-            <button onClick={() => setOpenMsgMenu(openMsgMenu === msg.id ? null : (msg.id || null))}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', padding: '2px 6px' }}>
-              <MoreHorizontal size={18} />
-            </button>
-            {openMsgMenu === msg.id && (
-              <div style={{ position: 'absolute', right: 0, top: '100%', background: 'var(--bg-white)', border: '1px solid var(--border-color)', borderRadius: '10px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 50, minWidth: '140px', overflow: 'hidden' }}>
-                {msg.authorId === uid && (
-                  <button onClick={() => { setEditingMsgId(msg.id || null); setEditMsgContent(msg.content); setOpenMsgMenu(null); }} style={menuItemStyle}>
-                    <Edit2 size={14} /> Edit
-                  </button>
-                )}
-                <button onClick={() => { onPin(msg); setOpenMsgMenu(null); }} style={menuItemStyle}>
-                  <Pin size={14} /> {msg.pinnedAt ? 'Unpin' : 'Pin'}
-                </button>
-                <button onClick={() => { onDelete(msg); setOpenMsgMenu(null); }} style={{ ...menuItemStyle, color: '#ef4444' }}>
-                  <Trash2 size={14} /> Delete
-                </button>
-              </div>
-            )}
+    <article className={`ui-card tm-msg${pinned ? ' is-pinned' : ''}`}>
+      <span className="tm-avatar">{initials(msg.authorName || '?')}</span>
+      <div className="tm-msg-body">
+        <div className="tm-msg-head">
+          <span className="tm-msg-author">{msg.authorName}</span>
+          <span className="tm-msg-time">{formatTime(msg.timestamp)}{msg.editedAt ? ' · edited' : ''}</span>
+          {pinned && <Pin size={12} className="tm-msg-pin" />}
+          {canModify && (
+            <div className="tm-msg-menu-wrap" ref={openMsgMenu === msg.id ? menuRef : undefined}>
+              <button className="ui-btn ui-btn-ghost ui-btn-sm ui-btn-icon" aria-label="Message actions" onClick={() => setOpenMsgMenu(openMsgMenu === msg.id ? null : (msg.id || null))}>
+                <MoreHorizontal size={16} />
+              </button>
+              {openMsgMenu === msg.id && (
+                <div className="tm-menu">
+                  {msg.authorId === uid && (
+                    <button onClick={() => { setEditingMsgId(msg.id || null); setEditMsgContent(msg.content); setOpenMsgMenu(null); }}><Edit2 size={14} /> Edit</button>
+                  )}
+                  <button onClick={() => { onPin(msg); setOpenMsgMenu(null); }}><Pin size={14} /> {msg.pinnedAt ? 'Unpin' : 'Pin'}</button>
+                  <button className="danger" onClick={() => { onDelete(msg); setOpenMsgMenu(null); }}><Trash2 size={14} /> Delete</button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {isEditing ? (
+          <form className="tm-inline" onSubmit={e => { e.preventDefault(); onEdit(msg); }}>
+            <input className="ui-input" value={editMsgContent} onChange={e => setEditMsgContent(e.target.value)} autoFocus />
+            <button className="ui-btn ui-btn-primary ui-btn-sm ui-btn-icon" aria-label="Save"><Check size={15} /></button>
+            <button type="button" className="ui-btn ui-btn-ghost ui-btn-sm ui-btn-icon" onClick={() => setEditingMsgId(null)} aria-label="Cancel"><X size={15} /></button>
+          </form>
+        ) : (
+          <p className="tm-msg-text">{msg.content}</p>
+        )}
+
+        {msg.customTestId && (
+          <div className="tm-attach">
+            <span className="tm-attach-icon"><FileText size={16} /></span>
+            <div className="tm-attach-text">
+              <span className="tm-attach-title">{msg.customTestTitle || 'Custom test'}</span>
+              <span className="tm-attach-sub">Shared test</span>
+            </div>
+            <Link to={`/test/${msg.customTestId}`} className="ui-btn ui-btn-primary ui-btn-sm">Take test</Link>
           </div>
         )}
       </div>
-
-      {isEditing ? (
-        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-          <input value={editMsgContent} onChange={e => setEditMsgContent(e.target.value)}
-            style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)' }}
-            onKeyDown={e => e.key === 'Enter' && onEdit(msg)} />
-          <button onClick={() => onEdit(msg)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary-color)' }}><Check size={18} /></button>
-          <button onClick={() => setEditingMsgId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}><X size={18} /></button>
-        </div>
-      ) : (
-        <div style={{ color: 'var(--text-primary)' }}>{msg.content}</div>
-      )}
-
-      {/* Attached test card */}
-      {msg.customTestId && (
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(124,58,237,0.08) 100%)',
-          border: '1px solid rgba(37,99,235,0.25)',
-          borderRadius: '12px', padding: '14px 16px', marginTop: '10px', gap: '12px',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #2563eb, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ fontSize: '18px' }}>📝</span>
-            </div>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {msg.customTestTitle || 'Custom Test'}
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Custom Test</div>
-            </div>
-          </div>
-          <Link
-            to={`/test/${msg.customTestId}`}
-            style={{
-              flexShrink: 0, padding: '8px 16px',
-              background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
-              color: 'white', borderRadius: '8px', textDecoration: 'none',
-              fontWeight: 600, fontSize: '13px', whiteSpace: 'nowrap',
-            }}
-          >
-            Take Test →
-          </Link>
-        </div>
-      )}
-
-      <div style={{ display: 'flex', gap: '12px', marginTop: '6px', fontSize: '11px', color: 'var(--text-secondary)' }}>
-        <span>Sent {formatTime(msg.timestamp)}</span>
-        {msg.editedAt && <span>• Edited {formatTime(msg.editedAt)}</span>}
-        {msg.pinnedAt && <span style={{ color: 'var(--primary-color)' }}>• 📌 Pinned</span>}
-      </div>
-    </div>
+    </article>
   );
 }
-
-const menuItemStyle: React.CSSProperties = {
-  display: 'flex', alignItems: 'center', gap: '8px', width: '100%',
-  padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer',
-  fontSize: '14px', color: 'var(--text-primary)', textAlign: 'left',
-};

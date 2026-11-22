@@ -1,5 +1,5 @@
 import { getGenerativeModel, Schema } from 'firebase/ai';
-import { ai } from '../config/firebase';
+import { ai } from '../config/ai';
 
 const gradingSchema = Schema.object({
   properties: {

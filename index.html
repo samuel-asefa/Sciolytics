@@ -1,30 +1,61 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="blue" data-brightness="default" data-bg-style="dynamic-gradient">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png+xml" href="/sciolytics.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <title>Sciolytics | #1 Science Olympiad Practice & Analytics</title>
-    <meta name="description" content="Sciolytics is the ultimate Science Olympiad practice platform. Access comprehensive tests, analytics, and preparation materials to dominate your Science Olympiad competitions." />
-    <meta name="keywords" content="Science Olympiad, Science Olympiad practice, Sciolytics, Science Olympiad tests, Science Olympiad analytics, Science Olympiad preparation, Science Olympiad study tool, Scioly practice" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0f1c" media="(prefers-color-scheme: dark)" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400..600&family=Instrument+Serif:ital@0;1&display=swap"
+    />
+
+    <!-- Apply saved theme before first paint (prevents a light/dark flash) -->
+    <script>
+      (function () {
+        try {
+          var d = document.documentElement;
+          var t = localStorage.getItem('theme');
+          var b = localStorage.getItem('brightness');
+          var s = localStorage.getItem('bgStyle');
+          if (!b) b = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default';
+          if (t) d.setAttribute('data-theme', t);
+          d.setAttribute('data-brightness', b);
+          if (s) d.setAttribute('data-bg-style', s);
+        } catch (e) {}
+      })();
+    </script>
+
+    <title>Sciolytics | Free Science Olympiad Practice Tests, Flashcards & Analytics</title>
+    <meta name="description" content="Sciolytics is a free Science Olympiad study platform: thousands of real tournament questions, AI-graded free response, flashcards, cheat sheets, event wikis, team tools and deep analytics for Division B and C." />
+    <meta name="keywords" content="Science Olympiad, Science Olympiad practice, Science Olympiad practice tests, Scioly, Science Olympiad flashcards, Science Olympiad cheat sheet, Science Olympiad study guide, Division C, Division B, Sciolytics" />
     <meta name="author" content="Sciolytics" />
     <meta name="robots" content="index, follow" />
     <meta name="googlebot" content="index, follow" />
     <meta name="google-site-verification" content="ZS9qT9Q0eaQe0GyUdbL14xlJrhSv3LWljfJ9KugIZxM" />
-    
-    <meta property="og:title" content="Sciolytics | #1 Science Olympiad Practice & Analytics" />
-    <meta property="og:description" content="Sciolytics is the ultimate Science Olympiad practice platform. Access comprehensive tests, analytics, and preparation materials to dominate your Science Olympiad competitions." />
+
+    <meta property="og:title" content="Sciolytics | Free Science Olympiad Practice" />
+    <meta property="og:description" content="Thousands of real tournament questions, AI-graded free response, flashcards, cheat sheets and analytics for every Science Olympiad event." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://sciolytics.com/" />
-    <meta property="og:image" content="https://sciolytics.com/sciolytics.png" />
+    <meta property="og:image" content="https://sciolytics.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="Sciolytics" />
     <meta property="og:locale" content="en_US" />
-    
+
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Sciolytics | #1 Science Olympiad Practice & Analytics" />
-    <meta name="twitter:description" content="Sciolytics is the ultimate Science Olympiad practice platform. Access comprehensive tests, analytics, and preparation materials to dominate your Science Olympiad competitions." />
-    <meta name="twitter:image" content="https://sciolytics.com/sciolytics.png" />
+    <meta name="twitter:title" content="Sciolytics | Free Science Olympiad Practice" />
+    <meta name="twitter:description" content="Thousands of real tournament questions, AI-graded free response, flashcards, cheat sheets and analytics for every Science Olympiad event." />
+    <meta name="twitter:image" content="https://sciolytics.com/og-image.jpg" />
     <meta name="twitter:creator" content="@Sciolytics" />
 
     <link rel="canonical" href="https://sciolytics.com/" />
@@ -35,23 +66,23 @@
       "@type": "WebApplication",
       "name": "Sciolytics",
       "url": "https://sciolytics.com",
-      "description": "Sciolytics is the ultimate Science Olympiad practice platform with comprehensive tests and analytics.",
+      "description": "Free Science Olympiad practice platform with real tournament questions, AI-graded free response, flashcards, cheat sheets, event wikis and analytics.",
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "All",
-      "offers": {
-        "@type": "Offer",
-        "price": "0"
-      },
-      "author": {
-        "@type": "Organization",
-        "name": "Sciolytics"
-      },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@type": "Organization", "name": "Sciolytics" },
       "keywords": "Science Olympiad, Science Olympiad practice, Sciolytics"
     }
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static fallback for crawlers / no-JS; replaced when the app mounts -->
+      <main style="max-width:720px;margin:15vh auto;padding:0 24px;font-family:system-ui,sans-serif;text-align:center">
+        <h1>Sciolytics: free Science Olympiad practice</h1>
+        <p>Real tournament questions, AI-graded free response, flashcards, cheat sheets, event wikis and analytics for Division B and C.</p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

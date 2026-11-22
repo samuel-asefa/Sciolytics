@@ -1,0 +1,328 @@
+/* ── Deck browser ── */
+.flash-hero {
+  display: grid;
+  grid-template-columns: 2fr repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.flash-hero-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px;
+  text-decoration: none;
+  color: inherit;
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--primary-color) 16%, transparent), transparent 55%),
+    var(--bg-white);
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s;
+}
+
+.flash-hero-main:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.flash-hero-main > div { display: flex; flex-direction: column; }
+.flash-hero-label { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-tertiary); }
+.flash-hero-num { font-size: 52px; font-weight: 700; letter-spacing: -0.05em; line-height: 1.05; }
+.flash-hero-sub { font-size: 13.5px; color: var(--text-secondary); }
+.flash-hero-main.is-clear .flash-hero-num { color: var(--success); }
+
+.flash-stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 18px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.flash-stat svg { color: var(--primary-color); margin-bottom: 6px; }
+.flash-stat span { font-size: 28px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; }
+.flash-stat small { font-size: 12.5px; color: var(--text-secondary); }
+.flash-stat-link svg { color: var(--warning); }
+.flash-stat-link:hover { border-color: color-mix(in srgb, var(--warning) 40%, var(--border-color)); }
+.flash-stat-link.is-muted { opacity: 0.7; }
+
+.flash-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+.flash-toolbar .ui-chip { height: 32px; }
+
+.deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.deck {
+  position: relative;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.deck-stack { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+
+.deck-stack span {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: -5px;
+  height: 20px;
+  border-radius: 14px 14px 0 0;
+  background: var(--bg-white);
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  opacity: 0.7;
+}
+
+.deck-stack span + span { left: 20px; right: 20px; top: -10px; opacity: 0.45; }
+
+.deck-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+
+.deck-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--ev);
+  background: color-mix(in srgb, var(--ev) 13%, transparent);
+}
+
+.deck-due {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--ev);
+}
+
+.deck h3 { font-size: 15.5px; letter-spacing: -0.015em; }
+.deck-meta { font-size: 12.5px; color: var(--text-tertiary); }
+
+.deck-bar {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--bg-gray);
+  overflow: hidden;
+  margin: 12px 0 8px;
+}
+
+.deck-bar span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: inherit; transition: width 0.6s var(--ease-out); }
+.deck-bar-seen { background: color-mix(in srgb, var(--ev) 30%, transparent); }
+.deck-bar-mastered { background: var(--ev); }
+
+.deck-foot { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); }
+.deck-foot b { color: var(--text-primary); font-weight: 650; }
+
+/* ── Session ── */
+.flash-session { max-width: 760px; display: flex; flex-direction: column; gap: 14px; }
+
+.flash-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.flash-bar-title { display: flex; flex-direction: column; align-items: center; }
+.flash-bar-name { font-weight: 700; font-size: 15px; letter-spacing: -0.02em; }
+.flash-bar-count { font-size: 12px; color: var(--text-tertiary); font-family: var(--font-mono); }
+.flash-bar .is-on { background: var(--bg-gray); color: var(--text-primary); }
+
+.flash-session > .ui-progress span { background: var(--ev); }
+
+.flash-options { padding: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: end; animation: popIn 0.2s var(--ease-out); }
+
+.flash-stage { perspective: 1600px; margin-top: 6px; }
+
+.flash-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 360px;
+  border: none;
+  background: none;
+  padding: 0;
+  text-align: left;
+  color: inherit;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.3, 1.25, 0.5, 1);
+  animation: cardIn 0.35s var(--ease-out);
+}
+
+@keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
+
+.flash-card.is-flipped { transform: rotateY(180deg); }
+
+.flash-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 26px;
+  border-radius: 24px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 30px 60px -30px rgba(15, 23, 42, 0.35);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: auto;
+}
+
+.flash-front::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--ev);
+  border-radius: 24px 24px 0 0;
+}
+
+.flash-back {
+  transform: rotateY(180deg);
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--ev) 12%, transparent), transparent 50%),
+    var(--surface-solid);
+}
+
+.flash-face-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.flash-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ev);
+  background: color-mix(in srgb, var(--ev) 12%, transparent);
+}
+
+.flash-sub { font-size: 12px; color: var(--text-tertiary); font-family: var(--font-mono); }
+
+.flash-missed {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--warning) 16%, transparent);
+  color: var(--warning-ink);
+}
+
+.flash-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 18px 0; }
+
+.flash-q {
+  font-size: clamp(18px, 2.4vw, 23px);
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  white-space: pre-wrap;
+}
+
+.flash-opts { list-style: none; display: grid; gap: 6px; margin-top: 16px; }
+.flash-opts li { display: flex; gap: 10px; font-size: 14.5px; color: var(--text-secondary); }
+.flash-opts b { font-family: var(--font-mono); font-size: 12.5px; color: var(--text-tertiary); width: 14px; }
+
+.flash-a {
+  font-size: clamp(20px, 2.8vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+  white-space: pre-wrap;
+}
+
+.flash-exp {
+  margin-top: 14px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+}
+
+.flash-hint { font-size: 12px; color: var(--text-tertiary); display: inline-flex; gap: 4px; align-items: center; }
+
+.flash-rate {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+
+.flash-rate.is-ready { opacity: 1; }
+
+.flash-rate-btn {
+  --c: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 8px;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-white);
+  color: var(--text-primary);
+}
+
+.flash-rate-btn:not(:disabled):hover {
+  border-color: var(--c);
+  background: color-mix(in srgb, var(--c) 9%, var(--bg-white));
+  transform: translateY(-2px);
+}
+
+.flash-rate-btn.is-again { --c: var(--danger); }
+.flash-rate-btn.is-hard { --c: var(--warning); }
+.flash-rate-btn.is-good { --c: var(--success); }
+.flash-rate-btn.is-easy { --c: var(--primary-color); }
+
+.flash-rate-label { font-weight: 650; font-size: 14px; color: var(--c); }
+.flash-rate-int { font-size: 12px; color: var(--text-tertiary); font-family: var(--font-mono); }
+.flash-rate-btn .ui-kbd { margin-top: 4px; }
+
+.flash-keys { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 12px; color: var(--text-tertiary); }
+
+.flash-done { padding: 40px 28px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+.flash-done-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--ev, var(--primary-color));
+  box-shadow: 0 16px 36px -14px var(--ev, var(--primary-color));
+  animation: popIn 0.4s var(--ease-spring);
+}
+
+.flash-done h2 { font-size: 26px; letter-spacing: -0.03em; }
+.flash-done p { max-width: 440px; }
+
+.flash-tally { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; width: 100%; max-width: 420px; }
+.flash-tally-item { display: flex; flex-direction: column; padding: 10px; border-radius: 12px; background: var(--bg-gray); }
+.flash-tally-item b { font-size: 22px; letter-spacing: -0.03em; }
+.flash-tally-item span { font-size: 12px; color: var(--text-secondary); }
+.flash-tally-item.is-again b { color: var(--danger); }
+.flash-tally-item.is-hard b { color: var(--warning); }
+.flash-tally-item.is-good b { color: var(--success); }
+.flash-tally-item.is-easy b { color: var(--primary-color); }
+
+.flash-done-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
+
+@media (max-width: 900px) {
+  .flash-hero { grid-template-columns: 1fr 1fr 1fr; }
+  .flash-hero-main { grid-column: 1 / -1; }
+}
+
+@media (max-width: 560px) {
+  .flash-hero { grid-template-columns: 1fr 1fr; }
+  .flash-hero .flash-stat:last-child { grid-column: 1 / -1; }
+  .flash-hero-main { flex-direction: column; align-items: flex-start; }
+  .flash-card { min-height: 420px; }
+  .flash-face { padding: 20px; }
+  .flash-rate { gap: 6px; }
+  .flash-rate-btn { padding: 10px 4px; }
+  .flash-rate-btn .ui-kbd { display: none; }
+  .flash-options { grid-template-columns: 1fr; }
+}

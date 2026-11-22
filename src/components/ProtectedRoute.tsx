@@ -1,25 +1,20 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useUserData } from '../contexts/UserDataContext';
-import PageLoadingScreen from './PageLoadingScreen';
+import { BootSplash } from './PageLoadingScreen';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { currentUser, loading: authLoading } = useAuth();
-  const { loaded: dataLoaded } = useUserData();
+  const { currentUser, loading } = useAuth();
+  const location = useLocation();
 
-  // Show loading screen while auth resolves OR initial data is being fetched
-  const isLoading = authLoading || (!!currentUser && !dataLoaded);
-
-  if (isLoading) {
-    return <PageLoadingScreen loading={true} />;
-  }
+  if (loading) return <BootSplash />;
 
   if (!currentUser) {
-    return <Navigate to="/login" replace />;
+    // Remember where they were headed so sign-in can bring them back.
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
   }
 
   return <>{children}</>;

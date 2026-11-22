@@ -1,0 +1,194 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   polish.css: brings legacy page styles (App.css) in line with the design
+   system, and adds the responsive behaviour App.css never had.
+   Loaded after App.css.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Buttons ── */
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset, 0 6px 16px -6px color-mix(in srgb, var(--primary-color) 60%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: var(--primary-color-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset, 0 10px 22px -8px color-mix(in srgb, var(--primary-color) 70%, transparent);
+}
+
+.btn-primary:disabled, .btn-secondary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn-secondary {
+  flex: none;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong, var(--border-color));
+}
+
+.btn-secondary:not(:disabled):hover {
+  border-color: color-mix(in srgb, var(--primary-color) 45%, var(--border-color));
+  color: var(--primary-ink, var(--primary-color));
+  background: var(--bg-white);
+}
+
+/* ── Card-like legacy containers ── */
+.stat-card,
+.chart-container,
+.profile-card,
+.leaderboard-container,
+.calendar-container,
+.school-selector,
+.compare-selector,
+.events-list-view,
+.results-container .stat-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.analytics-header h1,
+.profile-header h1,
+.events-header h1 {
+  font-size: clamp(26px, 3.2vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.analytics-header p,
+.profile-header p { color: var(--text-secondary); }
+
+/* tabs used by analytics / about */
+.analytics-tabs { border-bottom: 1px solid var(--border-color); gap: 4px; }
+.tab-btn { border-radius: 10px 10px 0 0; font-weight: 600; }
+.tab-btn.active { color: var(--primary-ink, var(--primary-color)); border-bottom-color: var(--primary-color); }
+
+.nav-link.active { background: var(--bg-white); }
+.nav-item.active { background: var(--primary-soft); color: var(--primary-ink, var(--primary-color)); }
+
+/* Settings theme circles */
+.theme-circle {
+  border-radius: 50%;
+  border: 3px solid var(--surface-solid);
+  box-shadow: 0 0 0 1px var(--border-color);
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s;
+}
+
+.theme-circle:hover { transform: scale(1.08); }
+.theme-circle.active { box-shadow: 0 0 0 2px var(--text-primary); transform: scale(1.1); }
+
+/* Modals from legacy components */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(5, 8, 18, 0.45);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-content {
+  background: var(--surface-solid);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.5);
+}
+
+/* Tables */
+.leaderboard-header { color: var(--text-tertiary); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+.leaderboard-row:hover { background: var(--bg-gray); }
+
+/* Calendar */
+.calendar-day { border-color: var(--border-color); }
+.calendar-day.today { background: var(--primary-softer); }
+.today-number { background: var(--primary-color); }
+
+/* Recharts tooltips in dark mode */
+.recharts-default-tooltip {
+  background: var(--surface-solid) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-lg);
+}
+
+.recharts-cartesian-axis-tick text { fill: var(--text-tertiary); }
+.recharts-cartesian-grid line { stroke: var(--border-color); }
+
+/* ── Responsive (App.css had none) ── */
+@media (max-width: 1024px) {
+  .analytics-content,
+  .compare-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  .school-selector,
+  .compare-selector { position: static; }
+
+}
+
+@media (max-width: 768px) {
+  .practice-content,
+  .dashboard-grid,
+  .results-stats,
+  .conflict-blocks {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+
+  .leaderboard-header,
+  .leaderboard-row { grid-template-columns: 40px 1fr 80px !important; }
+
+  .leaderboard-header > :nth-child(4),
+  .leaderboard-row > :nth-child(4) { display: none; }
+
+  .calendar-day { min-height: 64px !important; padding: 4px !important; }
+  .cal-event-pill { font-size: 10px !important; padding: 1px 4px !important; }
+  .calendar-day-header { font-size: 11px !important; }
+
+  .events-header,
+  .events-controls,
+  .dashboard-header,
+  .profile-header,
+  .roster-header,
+  .header-actions {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .search-input { width: 100% !important; }
+  .profile-page { padding: 0 !important; }
+  .profile-card { padding: 20px !important; }
+  .member-inputs input { width: 100% !important; }
+  .modal-content { width: 100% !important; max-width: 100% !important; max-height: 90vh; overflow-y: auto; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr !important; }
+  .analytics-tabs { overflow-x: auto; flex-wrap: nowrap; }
+  .tab-btn { flex-shrink: 0; }
+}
+

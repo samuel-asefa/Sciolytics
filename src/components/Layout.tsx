@@ -1,46 +1,135 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MoreVertical, User, Settings, LogOut, Bell, CheckCircle2, Calendar, ClipboardList } from 'lucide-react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import {
+  User, Settings, LogOut, Bell, CheckCircle2, Calendar, ClipboardList, ChevronDown, Menu, X,
+  Search, Moon, Sun, BookOpen, Layers, FileText, Bookmark, HelpCircle, Info, Mail, HeartHandshake,
+  LayoutDashboard, PenTool, BarChart3, Users, Globe, PlusSquare, Handshake,
+} from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import BackgroundRenderer from './BackgroundRenderer';
+import CommandPalette from './CommandPalette';
+import Logo from './Logo';
 import { notificationService } from '../services/notificationService';
 import type { AppNotification } from '../services/notificationService';
+import '../styles/layout.css';
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
+
+interface NavItem { to: string; label: string; icon: typeof User; desc?: string }
+
+const PRIMARY: NavItem[] = [
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/practice', label: 'Practice', icon: PenTool },
+];
+
+const STUDY: NavItem[] = [
+  { to: '/wiki', label: 'Event Wiki', icon: BookOpen, desc: 'Rules, notes & reference for every event' },
+  { to: '/flashcards', label: 'Flashcards', icon: Layers, desc: 'Spaced-repetition decks from real questions' },
+  { to: '/cheatsheets', label: 'Cheat Sheets', icon: FileText, desc: 'Build print-ready note sheets' },
+  { to: '/bookmarks', label: 'Bookmarks', icon: Bookmark, desc: 'Questions you saved for later' },
+];
+
+const SECONDARY: NavItem[] = [
+  { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { to: '/teams', label: 'Teams', icon: Users },
+  { to: '/community', label: 'Community', icon: Globe },
+  { to: '/create', label: 'Create', icon: PlusSquare },
+];
+
+const MORE: NavItem[] = [
+  { to: '/partner', label: 'Partner Mode', icon: Handshake },
+  { to: '/help', label: 'Help & FAQ', icon: HelpCircle },
+  { to: '/about', label: 'About', icon: Info },
+  { to: '/contact', label: 'Contact', icon: Mail },
+  { to: '/join', label: 'Join the team', icon: HeartHandshake },
+];
+
+/** Routes that should feel full-focus (no footer). */
+const FOCUS_ROUTES = ['/practice/test', '/test/', '/partner/'];
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const { isDark, toggleDark } = useTheme();
 
-  const userMenuRef = useRef<HTMLDivElement>(null);
-  const notificationsRef = useRef<HTMLDivElement>(null);
-  // Track which uid we've already synced so we don't re-scan Firestore on every navigation
+  const [openMenu, setOpenMenu] = useState<null | 'study' | 'user' | 'notifs'>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [scrolled, setScrolled] = useState(false);
+
+  const navRef = useRef<HTMLElement>(null);
   const syncedUidRef = useRef<string>('');
 
-  const isActive = (path: string) => location.pathname === path;
+  // Close menus on route change
+  useEffect(() => {
+    setOpenMenu(null);
+    setDrawerOpen(false);
+  }, [location.pathname]);
 
-  // ── Real-time subscription + one-time sync ────────────────────────────────
+  // Real-time notifications + one-time team sync per session
   useEffect(() => {
     if (!currentUser) return;
-
-    // Subscribe to real-time notification updates from Firestore
-    const unsubscribe = notificationService.subscribe(currentUser.uid, setNotifications);
-
-    // Only sync team activity once per session per user (not on every navigation)
+    let unsubscribe = () => {};
+    try {
+      unsubscribe = notificationService.subscribe(currentUser.uid, setNotifications);
+    } catch (err) {
+      console.error(err);
+    }
     if (syncedUidRef.current !== currentUser.uid) {
       syncedUidRef.current = currentUser.uid;
       notificationService.syncFromTeamActivity(currentUser.uid).catch(console.error);
     }
-
     return () => unsubscribe();
   }, [currentUser]);
+
+  // Click outside closes dropdowns
+  useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) setOpenMenu(null);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, []);
+
+  // ⌘K / Ctrl+K / "/" opens the command palette; Esc closes menus
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const typing = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen(o => !o);
+      } else if (e.key === '/' && !typing) {
+        e.preventDefault();
+        setPaletteOpen(true);
+      } else if (e.key === 'Escape') {
+        setOpenMenu(null);
+        setDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = drawerOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [drawerOpen]);
+
+  const unread = notifications.filter(n => !n.read).length;
 
   const markAllRead = async () => {
     if (!currentUser) return;
@@ -49,44 +138,19 @@ export default function Layout({ children }: LayoutProps) {
 
   const handleNotifClick = async (notif: AppNotification) => {
     if (!currentUser) return;
-    if (!notif.read) {
-      await notificationService.markRead(currentUser.uid, notif.id);
-    }
-    setShowNotifications(false);
-    if (notif.teamId) {
-      navigate('/teams');
-    }
-  };
-
-  const handleProfileClick = () => {
-    navigate('/profile');
-    setShowUserMenu(false);
+    if (!notif.read) await notificationService.markRead(currentUser.uid, notif.id);
+    setOpenMenu(null);
+    if (notif.teamId) navigate('/teams');
   };
 
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Failed to logout:', error);
     }
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
-        setShowUserMenu(false);
-      }
-      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
-        setShowNotifications(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'User';
   const userInitials = currentUser?.displayName
@@ -95,185 +159,266 @@ export default function Layout({ children }: LayoutProps) {
 
   const getNotifIcon = (type: AppNotification['type']) => {
     switch (type) {
-      case 'team': return <User size={16} />;
-      case 'assignment': return <ClipboardList size={16} />;
-      case 'event': return <Calendar size={16} />;
-      default: return <Bell size={16} />;
+      case 'team': return <User size={15} />;
+      case 'assignment': return <ClipboardList size={15} />;
+      case 'event': return <Calendar size={15} />;
+      default: return <Bell size={15} />;
     }
   };
 
-  const getNotifColor = (type: AppNotification['type']) => {
-    switch (type) {
-      case 'team': return '#10b981';
-      case 'assignment': return '#f59e0b';
-      case 'event': return '#8b5cf6';
-      default: return '#3b82f6';
-    }
+  const notifTint: Record<string, string> = {
+    team: '#10b981', assignment: '#f59e0b', event: '#8b5cf6', system: '#3b82f6',
   };
+
+  const studyActive = STUDY.some(s => location.pathname.startsWith(s.to));
+  const isFocus = FOCUS_ROUTES.some(r => location.pathname.startsWith(r));
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+
+  const linkClass = ({ isActive }: { isActive: boolean }) => `nav-link${isActive ? ' active' : ''}`;
 
   return (
     <div className="layout">
       <BackgroundRenderer />
-      <nav className="navbar">
-        <div className="nav-left">
-          <Link to="/dashboard" className="logo-container">
-            <div className="logo-icon"></div>
-            <span className="logo-text">Sciolytics</span>
-          </Link>
-        </div>
+      <a href="#main" className="skip-link">Skip to content</a>
 
-        <div className="nav-center">
-          <Link to="/practice" className={isActive('/practice') ? 'nav-link active' : 'nav-link'}>
-            Practice
-          </Link>
-          <Link to="/dashboard" className={isActive('/dashboard') ? 'nav-link active' : 'nav-link'}>
-            Dashboard
-          </Link>
-          <Link to="/teams" className={isActive('/teams') ? 'nav-link active' : 'nav-link'}>
-            Teams
-          </Link>
-          <Link to="/wiki" className={isActive('/wiki') ? 'nav-link active' : 'nav-link'}>
-            Wiki
-          </Link>
-          <Link to="/analytics" className={isActive('/analytics') ? 'nav-link active' : 'nav-link'}>
-            Analytics
-          </Link>
-          <Link to="/create" className={isActive('/create') ? 'nav-link active' : 'nav-link'}>
-            Create
-          </Link>
-          <Link to="/community" className={isActive('/community') ? 'nav-link active' : 'nav-link'}>
-            Community
-          </Link>
-          <div className="nav-dropdown">
-            <button className="nav-link" onClick={() => setShowMoreMenu(!showMoreMenu)}>
-              More <MoreVertical size={14} style={{ display: 'inline', marginLeft: '4px' }} />
-            </button>
-            {showMoreMenu && (
-              <div className="dropdown-menu">
-                <Link to="/join" className="dropdown-item" onClick={() => setShowMoreMenu(false)}>Join Us</Link>
-                <Link to="/contact" className="dropdown-item" onClick={() => setShowMoreMenu(false)}>Contact Us</Link>
-                <Link to="/about" className="dropdown-item" onClick={() => setShowMoreMenu(false)}>About Us</Link>
-                <Link to="/help" className="dropdown-item" onClick={() => setShowMoreMenu(false)}>Help</Link>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {/* Notifications */}
-          <div className="user-menu-container" ref={notificationsRef}>
+      <header ref={navRef} className={`app-nav${scrolled ? ' is-scrolled' : ''}`}>
+        <div className="app-nav-inner">
+          <div className="nav-left">
             <button
-              className="nav-link"
-              style={{ padding: '8px', position: 'relative', background: 'transparent', border: 'none', cursor: 'pointer' }}
-              onClick={() => setShowNotifications(!showNotifications)}
+              className="nav-icon-btn nav-burger"
+              aria-label="Open menu"
+              onClick={() => setDrawerOpen(true)}
             >
-              <Bell size={20} color="var(--text-secondary)" />
-              {notifications.some(n => !n.read) && (
-                <div style={{
-                  position: 'absolute',
-                  top: '6px',
-                  right: '8px',
-                  width: '8px',
-                  height: '8px',
-                  backgroundColor: '#ef4444',
-                  borderRadius: '50%',
-                  border: '2px solid var(--bg-nav)'
-                }} />
-              )}
+              <Menu size={20} />
             </button>
-
-            {showNotifications && (
-              <div className="dropdown-menu" style={{ width: '320px', right: '-60px', padding: 0, overflow: 'hidden' }}>
-                <div style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-white)' }}>
-                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>Notifications</h3>
-                  {notifications.some(n => !n.read) && (
-                    <button
-                      onClick={markAllRead}
-                      style={{ background: 'none', border: 'none', color: 'var(--primary-color)', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
-                    >
-                      Mark all as read
-                    </button>
-                  )}
-                </div>
-
-                <div style={{ maxHeight: '300px', overflowY: 'auto', background: 'var(--bg-white)' }}>
-                  {notifications.length > 0 ? notifications.map(notif => (
-                    <div
-                      key={notif.id}
-                      style={{
-                        padding: '12px 16px',
-                        borderBottom: '1px solid var(--border)',
-                        background: notif.read ? 'transparent' : 'rgba(59, 130, 246, 0.05)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        gap: '12px',
-                        alignItems: 'flex-start'
-                      }}
-                      onClick={() => handleNotifClick(notif)}
-                    >
-                      <div style={{ marginTop: '2px', color: getNotifColor(notif.type) }}>
-                        {getNotifIcon(notif.type)}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
-                          <span style={{ fontSize: '13px', fontWeight: notif.read ? 500 : 600, color: 'var(--text-primary)' }}>{notif.title}</span>
-                          <span style={{ fontSize: '11px', color: 'var(--text-secondary)', whiteSpace: 'nowrap', marginLeft: '8px' }}>{notif.time}</span>
-                        </div>
-                        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                          {notif.message}
-                        </p>
-                      </div>
-                      {!notif.read && (
-                        <div style={{ width: '8px', height: '8px', backgroundColor: '#3b82f6', borderRadius: '50%', marginTop: '6px', flexShrink: 0 }} />
-                      )}
-                    </div>
-                  )) : (
-                    <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px' }}>
-                      <CheckCircle2 size={32} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
-                      You're all caught up!
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            <Link to={currentUser ? '/dashboard' : '/'} className="logo-container" aria-label="Sciolytics home">
+              <Logo size={30} />
+            </Link>
           </div>
 
-          <div className="user-menu-container" ref={userMenuRef}>
-            <div className="user-menu" onClick={() => setShowUserMenu(!showUserMenu)}>
-              {currentUser?.photoURL ? (
-                <img src={currentUser.photoURL} alt="Profile" className="user-avatar-img" />
-              ) : (
-                <div className="user-avatar">
-                  {userInitials}
+          <nav className="nav-center" aria-label="Primary">
+            {currentUser ? (
+              <>
+                {PRIMARY.map(item => (
+                  <NavLink key={item.to} to={item.to} className={linkClass} end={item.to === '/practice'}>
+                    {item.label}
+                  </NavLink>
+                ))}
+                <div className="nav-dropdown">
+                  <button
+                    className={`nav-link${studyActive ? ' active' : ''}`}
+                    aria-expanded={openMenu === 'study'}
+                    onClick={() => setOpenMenu(openMenu === 'study' ? null : 'study')}
+                  >
+                    Study <ChevronDown size={14} className={`chev${openMenu === 'study' ? ' open' : ''}`} />
+                  </button>
+                  {openMenu === 'study' && (
+                    <div className="nav-popover nav-mega">
+                      {STUDY.map(item => (
+                        <Link key={item.to} to={item.to} className="mega-item">
+                          <span className="mega-icon"><item.icon size={17} /></span>
+                          <span>
+                            <span className="mega-title">{item.label}</span>
+                            <span className="mega-desc">{item.desc}</span>
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-              <span className="username">{displayName}</span>
-              <MoreVertical size={14} />
-            </div>
-            {showUserMenu && (
-              <div className="user-dropdown">
-                <button className="dropdown-item" onClick={handleProfileClick}>
-                  <User size={16} />
-                  Profile
-                </button>
-                <Link to="/settings" className="dropdown-item" onClick={() => setShowUserMenu(false)}>
-                  <Settings size={16} />
-                  Settings
-                </Link>
-                <div className="dropdown-divider"></div>
-                <button className="dropdown-item" onClick={handleLogout}>
-                  <LogOut size={16} />
-                  Logout
-                </button>
-              </div>
+                {SECONDARY.map(item => (
+                  <NavLink key={item.to} to={item.to} className={linkClass}>
+                    {item.label}
+                  </NavLink>
+                ))}
+              </>
+            ) : (
+              <>
+                <NavLink to="/wiki" className={linkClass}>Event Wiki</NavLink>
+                <Link to="/#features" className="nav-link">Features</Link>
+                <Link to="/#faq" className="nav-link">FAQ</Link>
+                <NavLink to="/about" className={linkClass}>About</NavLink>
+              </>
+            )}
+          </nav>
+
+          <div className="nav-right">
+            <button className="nav-search" onClick={() => setPaletteOpen(true)} aria-label="Search (Command K)">
+              <Search size={15} />
+              <span className="nav-search-label">Search</span>
+              <span className="nav-search-kbd"><kbd className="ui-kbd">{isMac ? '⌘' : 'Ctrl'}</kbd><kbd className="ui-kbd">K</kbd></span>
+            </button>
+
+            <button
+              className="nav-icon-btn"
+              onClick={toggleDark}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={isDark ? 'Light mode' : 'Dark mode'}
+            >
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            {currentUser ? (
+              <>
+                <div className="nav-dropdown">
+                  <button
+                    className="nav-icon-btn"
+                    aria-label={`Notifications${unread ? ` (${unread} unread)` : ''}`}
+                    onClick={() => setOpenMenu(openMenu === 'notifs' ? null : 'notifs')}
+                  >
+                    <Bell size={18} />
+                    {unread > 0 && <span className="nav-badge">{unread > 9 ? '9+' : unread}</span>}
+                  </button>
+                  {openMenu === 'notifs' && (
+                    <div className="nav-popover nav-notifs align-right">
+                      <div className="notifs-head">
+                        <h3>Notifications</h3>
+                        {unread > 0 && <button onClick={markAllRead}>Mark all read</button>}
+                      </div>
+                      <div className="notifs-list">
+                        {notifications.length > 0 ? notifications.map(notif => (
+                          <button
+                            key={notif.id}
+                            className={`notif-item${notif.read ? '' : ' unread'}`}
+                            onClick={() => handleNotifClick(notif)}
+                          >
+                            <span className="notif-icon" style={{ color: notifTint[notif.type] ?? '#3b82f6', background: `color-mix(in srgb, ${notifTint[notif.type] ?? '#3b82f6'} 12%, transparent)` }}>
+                              {getNotifIcon(notif.type)}
+                            </span>
+                            <span className="notif-body">
+                              <span className="notif-title-row">
+                                <span className="notif-title">{notif.title}</span>
+                                <span className="notif-time">{notif.time}</span>
+                              </span>
+                              <span className="notif-msg">{notif.message}</span>
+                            </span>
+                          </button>
+                        )) : (
+                          <div className="notifs-empty">
+                            <CheckCircle2 size={28} />
+                            <span>You're all caught up</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="nav-dropdown">
+                  <button
+                    className="user-chip"
+                    aria-label="Account menu"
+                    aria-expanded={openMenu === 'user'}
+                    onClick={() => setOpenMenu(openMenu === 'user' ? null : 'user')}
+                  >
+                    {currentUser.photoURL ? (
+                      <img src={currentUser.photoURL} alt="" className="user-avatar-img" referrerPolicy="no-referrer" />
+                    ) : (
+                      <span className="user-avatar">{userInitials}</span>
+                    )}
+                    <ChevronDown size={14} className={`chev${openMenu === 'user' ? ' open' : ''}`} />
+                  </button>
+                  {openMenu === 'user' && (
+                    <div className="nav-popover nav-user align-right">
+                      <div className="user-card">
+                        <span className="user-card-name">{displayName}</span>
+                        <span className="user-card-email">{currentUser.email}</span>
+                      </div>
+                      <Link to="/profile" className="menu-item"><User size={16} />Profile</Link>
+                      <Link to="/settings" className="menu-item"><Settings size={16} />Settings</Link>
+                      <div className="menu-divider" />
+                      {MORE.map(item => (
+                        <Link key={item.to} to={item.to} className="menu-item"><item.icon size={16} />{item.label}</Link>
+                      ))}
+                      <div className="menu-divider" />
+                      <button className="menu-item danger" onClick={handleLogout}><LogOut size={16} />Log out</button>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <Link to="/login" state={{ from: location.pathname }} className="ui-btn ui-btn-ink ui-btn-sm nav-signin">
+                Sign in
+              </Link>
             )}
           </div>
         </div>
-      </nav>
+      </header>
 
-      <main className="main-content">
+      {/* Mobile drawer */}
+      {drawerOpen && (
+        <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)}>
+          <aside className="drawer" onClick={e => e.stopPropagation()} aria-label="Menu">
+            <div className="drawer-head">
+              <Logo size={28} />
+              <button className="nav-icon-btn" aria-label="Close menu" onClick={() => setDrawerOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <button className="drawer-search" onClick={() => { setDrawerOpen(false); setPaletteOpen(true); }}>
+              <Search size={16} /> Search events, pages, actions…
+            </button>
+            {currentUser ? (
+              <>
+                <DrawerGroup title="Train" items={[...PRIMARY, ...SECONDARY.slice(0, 1)]} />
+                <DrawerGroup title="Study" items={STUDY} />
+                <DrawerGroup title="Together" items={[...SECONDARY.slice(1), MORE[0]]} />
+                <DrawerGroup title="Sciolytics" items={MORE.slice(1)} />
+                <div className="drawer-foot">
+                  <Link to="/settings" className="menu-item"><Settings size={16} />Settings</Link>
+                  <button className="menu-item danger" onClick={handleLogout}><LogOut size={16} />Log out</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <DrawerGroup title="Explore" items={[STUDY[0], ...MORE.slice(1)]} />
+                <div className="drawer-foot">
+                  <Link to="/login" className="ui-btn ui-btn-primary" style={{ width: '100%' }}>Sign in with Google</Link>
+                </div>
+              </>
+            )}
+          </aside>
+        </div>
+      )}
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+
+      <main id="main" className="main-content">
         {children}
       </main>
+
+      {!isFocus && (
+        <footer className="app-footer">
+          <div className="app-footer-inner">
+            <span className="app-footer-brand">
+              <Logo size={20} />
+              <span className="ui-muted">© {new Date().getFullYear()}</span>
+            </span>
+            <nav className="app-footer-links" aria-label="Footer">
+              <Link to="/wiki">Wiki</Link>
+              <Link to="/help">Help</Link>
+              <Link to="/about">About</Link>
+              <Link to="/contact">Contact</Link>
+              <Link to="/join">Join us</Link>
+            </nav>
+            <span className="app-footer-note">Not affiliated with or endorsed by Science Olympiad, Inc.</span>
+          </div>
+        </footer>
+      )}
+    </div>
+  );
+}
+
+function DrawerGroup({ title, items }: { title: string; items: NavItem[] }) {
+  return (
+    <div className="drawer-group">
+      <span className="drawer-group-title">{title}</span>
+      {items.map(item => (
+        <NavLink key={item.to} to={item.to} className={({ isActive }) => `drawer-link${isActive ? ' active' : ''}`}>
+          <item.icon size={18} />
+          {item.label}
+        </NavLink>
+      ))}
     </div>
   );
 }

@@ -192,7 +192,8 @@ export default function AboutUs() {
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
-          gap: '24px',
+          flexWrap: 'wrap',
+          gap: '8px 24px',
           borderBottom: '1px solid var(--border)',
           marginBottom: '32px',
           paddingBottom: '8px'
